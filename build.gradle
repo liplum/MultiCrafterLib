@@ -1,0 +1,221 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    ext {
+        MindustryVersion = property('MindustryVersion') as String
+        KotlinVersion = property('KotlinVersion') as String
+        GameLaunchVersion = property('GameLaunchVersion') as String
+        sdkRoot = System.getenv('ANDROID_HOME') ?: System.getenv('ANDROID_SDK_ROOT')
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KotlinVersion"
+    }
+}
+// Add any plugin you want
+plugins {
+}
+var useKotlin = Boolean.parseBoolean(property("UseKotlin") as String)
+apply plugin: "java"
+version '1.0'
+sourceSets.main.java.srcDirs = ["src"]
+if (useKotlin) {
+    apply plugin: "kotlin"
+    sourceSets.main.kotlin.srcDirs = ["src"]
+}
+
+targetCompatibility = 8
+sourceCompatibility = 8
+
+repositories {
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+}
+
+dependencies {
+    compileOnly "com.github.Anuken.Arc:arc-core:$MindustryVersion"
+    compileOnly "com.github.Anuken.Mindustry:core:$MindustryVersion"
+    testCompileOnly "com.github.Anuken.Arc:arc-core:$MindustryVersion"
+    testCompileOnly "com.github.Anuken.Mindustry:core:$MindustryVersion"
+    testImplementation "com.github.Anuken.Mindustry:desktop:$MindustryVersion"
+    testImplementation "com.github.Anuken.Mindustry:server:$MindustryVersion"
+}
+
+task jarAndroid {
+    dependsOn "jar"
+
+    doLast {
+        if (!sdkRoot || !new File(sdkRoot).exists()) throw new GradleException("No valid Android SDK found. Ensure that ANDROID_HOME is set to your Android SDK directory.")
+
+        def platformRoot = new File("$sdkRoot/platforms/").listFiles().sort().reverse().find { f -> new File(f, "android.jar").exists() }
+
+        if (!platformRoot) throw new GradleException("No android.jar found. Ensure that you have an Android platform installed.")
+
+        //collect dependencies needed for desugaring
+        def dependencies = (configurations.compileClasspath.asList() + configurations.runtimeClasspath.asList() + [new File(platformRoot, "android.jar")]).collect { "--classpath $it.path" }.join(" ")
+
+        //dex and desugar files - this requires d8 in your PATH
+        def paras = "$dependencies --min-api 14 --output ${project.archivesBaseName}Android.jar ${project.archivesBaseName}Desktop.jar".toString()
+        try {
+            "d8 $paras".execute(null, new File("$buildDir/libs")).waitForProcessOutput(System.out, System.err)
+        } catch (Exception ignored) {
+            logger.lifecycle("d8 cannot be found in your PATH, so trying to use an absolute path.")
+            def cmdOutput = new ByteArrayOutputStream()
+            "where d8".execute().waitForProcessOutput(cmdOutput, System.err)
+            def d8FullPath = cmdOutput.toString().replace("\r", "").replace("\n", "")
+            logger.lifecycle("d8 was found at $d8FullPath")
+            "$d8FullPath $paras".execute(null, new File("$buildDir/libs")).waitForProcessOutput(System.out, System.err)
+        }
+    }
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFileName = "${project.archivesBaseName}Desktop.jar"
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+
+    from(rootDir) {
+        // add something into your Jar
+        include "mod.hjson"
+        include "icon.png"
+    }
+
+    from("assets/") {
+        include "**"
+    }
+}
+
+import org.apache.tools.ant.taskdefs.condition.Os
+
+def copyJarFile(jarFile, modsFolder) {
+    copy {
+        from jarFile
+        into modsFolder
+    }
+}
+
+def getOutputJar() {
+    var jarFile = new File("$buildDir/libs/${project.archivesBaseName}Desktop.jar")
+    if (!jarFile.exists()) {
+        logger.lifecycle("Jar cannot be found at ${jarFile.path}")
+        return null
+    }
+    return jarFile
+}
+
+task copyJar {
+    dependsOn jar
+    doLast {
+        var jarFile = getOutputJar()
+        if(jarFile == null) return
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+            var APPDATA = System.getenv("APPDATA")
+            var modsFolder = APPDATA + '/Mindustry/mods'
+            mkdir modsFolder
+            copyJarFile(jarFile, modsFolder)
+        }
+    }
+}
+
+task copyJarServer {
+    dependsOn jar
+    doLast {
+        var jarFile = getOutputJar()
+        if(jarFile == null) return
+        var modsFolder = new File("$rootDir/config/mods")
+        copyJarFile(jarFile, modsFolder)
+    }
+}
+
+task deploy(type: Jar) {
+    dependsOn jarAndroid
+    dependsOn jar
+    archiveFileName = "${project.archivesBaseName}.jar"
+
+    from {
+        [
+                zipTree("$buildDir/libs/${project.archivesBaseName}Desktop.jar"),
+                zipTree("$buildDir/libs/${project.archivesBaseName}Android.jar")
+        ]
+    }
+
+    doLast {
+        delete {
+            delete "$buildDir/libs/${project.archivesBaseName}Desktop.jar"
+            delete "$buildDir/libs/${project.archivesBaseName}Android.jar"
+        }
+    }
+}
+
+class DownloadTask extends DefaultTask {
+    @Input
+    String sourceUrl
+    @Input
+    boolean overwrite = false
+    @OutputFile
+    File targetFile
+
+    @TaskAction
+    void download() {
+        if (!targetFile.exists() || overwrite) {
+            logger.lifecycle("Downloading file from $sourceUrl into ${targetFile.path}, please wait for a while.")
+            ant.get(src: sourceUrl, dest: targetFile)
+        }
+    }
+}
+
+task downloadDesktop(type: DownloadTask) {
+    sourceUrl = "http://github.com/Anuken/Mindustry/releases/download/${GameLaunchVersion}/Mindustry.jar"
+    targetFile = new File("$rootDir/run/Mindustry${GameLaunchVersion}.jar")
+    if (!targetFile.exists()) {
+        logger.lifecycle("Downloading Mindustry ${GameLaunchVersion}.")
+    } else {
+        logger.lifecycle("You have already downloaded this Mindustry.")
+    }
+}
+
+task downloadServer(type: DownloadTask) {
+    sourceUrl = "https://github.com/Anuken/Mindustry/releases/download/${GameLaunchVersion}/server-release.jar"
+    targetFile = new File("$rootDir/run/MindustryServer${GameLaunchVersion}.jar")
+    if (!targetFile.exists()) {
+        logger.lifecycle("Downloading Mindustry Server ${GameLaunchVersion}.")
+    } else {
+        logger.lifecycle("You have already downloaded this Mindustry Server.")
+    }
+}
+
+task runMod(dependsOn: classes, type: JavaExec) {
+    dependsOn copyJar
+    dependsOn downloadDesktop
+    def gameFile = new File("$rootDir/run/Mindustry${GameLaunchVersion}.jar")
+    mainClass.set("-jar")
+    args = [gameFile.path]
+}
+
+task runGame(dependsOn: classes, type: JavaExec) {
+    dependsOn downloadDesktop
+    def gameFile = new File("$rootDir/run/Mindustry${GameLaunchVersion}.jar")
+    mainClass.set("-jar")
+    args = [gameFile.path]
+}
+
+
+task runModServer(dependsOn: classes, type: JavaExec) {
+    dependsOn copyJarServer
+    dependsOn downloadServer
+    def gameFile = new File("$rootDir/run/MindustryServer${GameLaunchVersion}.jar")
+    mainClass.set("-jar")
+    standardInput = System.in
+    args = [gameFile.path]
+}
+
+task runServer(dependsOn: classes, type: JavaExec) {
+    dependsOn downloadServer
+    def gameFile = new File("$rootDir/run/MindustryServer${GameLaunchVersion}.jar")
+    mainClass.set("-jar")
+    standardInput = System.in
+    args = [gameFile.path]
+}
