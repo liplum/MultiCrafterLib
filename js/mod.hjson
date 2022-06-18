@@ -1,0 +1,7 @@
+displayName: "MultiCrafter Lib Test Js"
+name: "multi-crafter-test"
+author: "[#42a5f5[]]Liplum[[]]"
+description: "MultiCrafter Lib Test Js"
+version: 1.0
+minGameVersion: 136
+java: false

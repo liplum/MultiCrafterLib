@@ -1,8 +1,8 @@
-displayName: "Template Mod"
-name: "template"
-author: "[#FBC02D[]]YourName[[]]"
-main: "MultiCrafterMod"
-description: "A template for Mindustry modding. Repository is on github.com/liplum/MdtModTemplate."
+displayName: "MultiCrafter Lib"
+name: "multi-crafter"
+author: "[#42a5f5[]]Liplum[[]]"
+main: "net.liplum.multicraft.MultiCrafterMod"
+description: "A Mindustry mod providing MultiCrafter library for JavaScript mods."
 version: 1.0
-minGameVersion: 135
+minGameVersion: 136
 java: true

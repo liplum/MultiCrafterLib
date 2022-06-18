@@ -158,3 +158,6 @@ android/libs/
 ## Run Mindustry game in project will generate those
 run
 cache
+build
+lib/build
+js/build

@@ -7,5 +7,8 @@ pluginManagement {
 }
 include(
     "main",
+    "js",
+    "app",
     "lib",
 )
+include("app")
