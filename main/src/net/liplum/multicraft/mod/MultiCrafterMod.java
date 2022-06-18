@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package net.liplum.multicraft.mod;
 
 import mindustry.mod.Mod;
 

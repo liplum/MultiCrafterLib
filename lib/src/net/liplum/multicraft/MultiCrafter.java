@@ -42,6 +42,7 @@ public class MultiCrafter extends Block {
     @Override
     public void init() {
         _recipes = MultiCrafterAnalyzer.analyze(this, this.recipes);
+        setupBlockByRecipes();
         super.init();
     }
 
@@ -52,6 +53,7 @@ public class MultiCrafter extends Block {
     public void setupBlockByRecipes() {
         int maxItemAmount = 0;
         float maxFluidAmount = 0f;
+        float maxPower = 0f;
         for (Recipe recipe : _recipes) {
             Seq<ItemStack> items = recipe.input.items;
             Seq<LiquidStack> fluids = recipe.input.fluids;
@@ -59,6 +61,8 @@ public class MultiCrafter extends Block {
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
             hasItems |= !items.isEmpty();
             hasLiquids |= !fluids.isEmpty();
+            maxPower = Math.max(recipe.maxPower(), maxPower);
+            hasPower |= maxPower > 0f;
         }
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * liquidCapacityMultiplier), liquidCapacity);

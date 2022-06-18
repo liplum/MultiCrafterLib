@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package net.liplum.multicraft.mod;
 
 public class TestBlocks {
     public static void load(){
