@@ -1,7 +1,7 @@
 displayName: "Template Mod"
 name: "template"
 author: "[#FBC02D[]]YourName[[]]"
-main: "example.TemplateMod"
+main: "MultiCrafterMod"
 description: "A template for Mindustry modding. Repository is on github.com/liplum/MdtModTemplate."
 version: 1.0
 minGameVersion: 135
