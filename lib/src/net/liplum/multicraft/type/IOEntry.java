@@ -8,8 +8,8 @@ import mindustry.type.Liquid;
 import mindustry.type.LiquidStack;
 
 public class IOEntry {
-    public Seq<ItemStack> items = new Seq<>();
-    public Seq<LiquidStack> fluids = new Seq<>();
+    public Seq<ItemStack> items = new Seq<>(ItemStack.class);
+    public Seq<LiquidStack> fluids = new Seq<>(LiquidStack.class);
     public float power = 0f;
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
@@ -64,9 +64,9 @@ public class IOEntry {
     @Override
     public String toString() {
         return "IOEntry{" +
-                "items=" + items +
-                "fluids=" + fluids +
-                "power=" + power +
-                "}";
+            "items=" + items +
+            "fluids=" + fluids +
+            "power=" + power +
+            "}";
     }
 }

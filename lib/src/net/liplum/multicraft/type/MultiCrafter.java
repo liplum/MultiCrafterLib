@@ -41,13 +41,13 @@ public class MultiCrafter extends Block {
           // String ==> Any --- Value may be a Seq<String>, Seq<Map>, String or Map
           items:["mod-id-item/1","mod-id-item2/1"],
           fluids:["mod-id-liquid/10.5","mod-id-gas/10"]
-          power:10
+          power: 3 pre tick
         },
         output:{
           items:["mod-id-item/1","mod-id-item2/1"],
           fluids:["mod-id-liquid/10.5","mod-id-gas/10"]
         },
-        craftTime:120
+        craftTime: 120
       }
     ]
      */
@@ -159,7 +159,7 @@ public class MultiCrafter extends Block {
                 // if <= 0, instantly produced
                 craftingTime += craftTimeNeed > 0 ? edelta() : craftTimeNeed;
                 warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
-                setCurPowerStore((getCurPowerStore() - cur.input.power) * delta());
+                setCurPowerStore((getCurPowerStore() + (cur.output.power - cur.input.power) * delta()));
 
                 //continuously output fluid based on efficiency
                 if (cur.isOutputFluid()) {
@@ -220,9 +220,6 @@ public class MultiCrafter extends Block {
                     }
                 }
             }
-
-            float powerOutput = cur.output.power;
-            setCurPowerStore(getCurPowerStore() + powerOutput);
 
             if (wasVisible) {
                 craftEffect.at(x, y);
