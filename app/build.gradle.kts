@@ -28,6 +28,7 @@ fun copyJarFile(jarFile: File, modsFolder: File) {
 }
 tasks {
     register("copyJar") {
+        dependsOn(":js:zip")
         dependsOn(":main:jar")
         doLast {
             val jarFile = getOutputJar() ?: return@doLast

@@ -1,7 +1,7 @@
 displayName: "MultiCrafter Lib"
 name: "multi-crafter"
 author: "[#42a5f5[]]Liplum[[]]"
-main: "net.liplum.multicraft.MultiCrafterMod"
+main: "net.liplum.multicraftmod.MultiCrafterMod"
 description: "A Mindustry mod providing MultiCrafter library for JavaScript mods."
 version: 1.0
 minGameVersion: 136

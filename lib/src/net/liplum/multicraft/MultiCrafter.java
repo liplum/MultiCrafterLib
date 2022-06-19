@@ -6,6 +6,7 @@ import mindustry.gen.Building;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
+import rhino.JavaAdapter;
 
 public class MultiCrafter extends Block {
     public float itemCapacityMultiplier = 1f;
@@ -29,7 +30,7 @@ public class MultiCrafter extends Block {
      */
     public Seq<ObjectMap<String, Object>> recipes = new Seq<>();
     /**
-     * The analyzed recipes.
+     * The resolved recipes.
      */
     public Seq<Recipe> _recipes;
 
