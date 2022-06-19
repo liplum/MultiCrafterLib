@@ -5,7 +5,7 @@ function getClass(name){
 	return NativeJavaClass(scripts.scope, loader.loadClass(name));
 };
 
-const multiCrafterClz = getClass("net.liplum.multicraft.MultiCrafter")
+const multiCrafterClz = getClass("net.liplum.multicraft.type.MultiCrafter")
 module.exports = {
     MultiCrafter : multiCrafterClz
 }

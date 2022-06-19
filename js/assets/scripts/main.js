@@ -8,14 +8,19 @@ function setup(block){
     block.buildVisibility = BuildVisibility.shown
     block.category = Category.crafting
 }
-const testCrafter = extend(GenericCrafter, "test-crafter", {})
-setup(testCrafter)
-testCrafter.consumePower(1.0)
-testCrafter.consumeItem(Items.coal, 1)
-testCrafter.outputItem = ItemStack(Items.surgeAlloy,1)
-
-const multi= require("multi-crafter/lib")
-const multiCrafter = multi.MultiCrafter("test-multi-crafter")
-setup(multiCrafter)
+const multi = require("multi-crafter/lib")
+const c = multi.MultiCrafter("test-multi-crafter")
+setup(c)
+c.recipes = [
+{
+    input:{
+        items : ["copper/1"]
+    },
+    output:{
+        items : ["coal/1"]
+    },
+    craftTime : 120.0
+}
+]
 
 print(">>>>>MultiCrafter Test JavaScript loaded.")
