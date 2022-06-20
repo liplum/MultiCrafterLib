@@ -31,7 +31,6 @@ import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
 import mindustry.world.meta.Stat;
-import net.liplum.multicraft.Arrow;
 import net.liplum.multicraft.ConsumeFluidDynamic;
 import net.liplum.multicraft.FluidImage;
 import net.liplum.multicraft.MultiCrafterAnalyzer;
@@ -41,7 +40,7 @@ import static mindustry.Vars.tilesize;
 public class MultiCrafter extends Block {
     public float itemCapacityMultiplier = 1f;
     public float fluidCapacityMultiplier = 1f;
-    public float powerCapacityMultiplier = 50f;
+    public float powerCapacityMultiplier = 1f;
     /*
     [ ==> Seq
       { ==> ObjectMap
@@ -111,6 +110,7 @@ public class MultiCrafter extends Block {
         hasItems = false;
         hasPower = false;
         hasLiquids = false;
+        outputsPower = false;
         if (resolvedRecipes == null) { // if the recipe is already set in another way, don't analyze it again.
             resolvedRecipes = MultiCrafterAnalyzer.analyze(this, this.recipes);
         }
@@ -361,28 +361,18 @@ public class MultiCrafter extends Block {
                     t.background(Tex.whiteui);
                     t.setColor(Pal.darkestGray);
                     buildIOEntry(t, recipe.input, true);
-                    t.table(arrow -> {
-                        arrow.background(Tex.button);
-                        Table a = new Table();
-                        a.background(Tex.button);
-                        a.add(new Arrow()).color(Pal.accent)
-                            .grow();
-                        arrow.add(a).grow().row();
-                        arrow.add(recipe.craftTime + Core.bundle.get("unit.seconds"))
-                            .grow();
-                    }).grow();
+                    t.add((int) recipe.craftTime + " " + Core.bundle.get("unit.seconds")).grow();
                     buildIOEntry(t, recipe.output, false);
                 }).pad(10f).grow();
                 stat.row();
             }
             stat.row();
+            stat.defaults().grow();
         });
     }
 
     protected void buildIOEntry(Table table, IOEntry entry, boolean isInput) {
         table.table(t -> {
-            // For design
-            t.background(Tex.button);
             if (isInput) t.left();
             else t.right();
             Table mat = new Table();
@@ -397,9 +387,7 @@ public class MultiCrafter extends Block {
             t.add(mat);
             t.row();
             Table power = new Table();
-            // For design
-            power.background(Tex.button);
-            power.add((isInput ? "-" : "+") + (entry.power * 60f));
+            power.add((isInput ? "-" : "+") + (int) (entry.power * 60f));
             power.image(Icon.power).color(Pal.power);
             if (isInput) power.left();
             else power.right();
@@ -485,9 +473,10 @@ public class MultiCrafter extends Block {
             isConsumeFluid |= recipe.isConsumeFluid();
         }
         hasPower = maxPower > 0f;
+        outputsPower = hasPower;
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
-        liquidCapacity = Math.max((int) (maxFluidAmount * fluidCapacityMultiplier), liquidCapacity);
-        powerCapacity = Math.max(maxPower * powerCapacityMultiplier, powerCapacity);
+        liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
+        powerCapacity = Math.max(maxPower * 60f * powerCapacityMultiplier, powerCapacity);
     }
 
     protected void setupConsumers() {

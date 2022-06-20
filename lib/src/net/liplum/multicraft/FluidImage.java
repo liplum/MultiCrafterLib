@@ -27,7 +27,7 @@ public class FluidImage extends Stack {
                 t.left().bottom();
                 t.add(amount >= 1000 ?
                                 UI.formatAmount((long) (amount * multiplier)) :
-                        Mathf.round(amount * multiplier) + "")
+                        Mathf.round(amount * multiplier) + "").fontScale(0.9f)
                         .style(Styles.outlineLabel);
                 t.pack();
             }));
