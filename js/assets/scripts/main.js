@@ -8,6 +8,7 @@ function setup(block){
     block.buildVisibility = BuildVisibility.shown
     block.category = Category.crafting
 }
+/*
 const multi = require("multi-crafter/lib")
 const c = multi.MultiCrafter("test-multi-crafter")
 setup(c)
@@ -49,5 +50,5 @@ c.recipes = [{
     },
     craftTime : 240.0
 }]
-
+*/
 print(">>>>>MultiCrafter Test JavaScript loaded.")

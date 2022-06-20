@@ -1,0 +1,42 @@
+type: net.liplum.multicraft.type.MultiCrafter
+size : 10
+requirements: [
+  copper/200
+  lead/500
+  graphite/100
+  titanium/300
+  surge-alloy/50
+  phase-fabric/70
+]
+category: crafting
+recipes : [{
+  input:{
+      fluids: "ozone/1.5"
+      power : 5
+  },
+  output:{
+      items : [
+        "coal/1",
+        "copper/1",
+        "lead/1",
+        {
+            item: "graphite",
+            amount : 2
+        }
+      ],
+      power : 2
+  },
+  craftTime : 250.0
+},{
+  input:{
+      items : [
+      "cyber-io-ic/1",
+      "lead/1"
+      ],
+      power : 5
+  },
+  output:{
+      fluids : "cyber-io-cyberion/1.2"
+  },
+  craftTime : 210.0
+}]

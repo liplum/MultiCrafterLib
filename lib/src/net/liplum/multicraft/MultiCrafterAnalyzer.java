@@ -1,8 +1,10 @@
 package net.liplum.multicraft;
 
+import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Log;
 import arc.util.Nullable;
+import arc.util.serialization.JsonValue;
 import mindustry.Vars;
 import mindustry.content.Liquids;
 import mindustry.type.Item;
@@ -13,9 +15,7 @@ import mindustry.world.Block;
 import net.liplum.multicraft.type.IOEntry;
 import net.liplum.multicraft.type.Recipe;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MultiCrafterAnalyzer {
     private static final String[] inputAlias = {
@@ -25,9 +25,41 @@ public class MultiCrafterAnalyzer {
         "output", "out", "o"
     };
 
+    public static Object preProcessArc(Object seq) {
+        try {
+            return processFunc(seq);
+        } catch (Exception e) {
+            Log.err("Can't convert Seq in preprocess " + seq, e);
+            return Collections.emptyList();
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    public static Object processFunc(Object o) {
+        if (o instanceof Seq) {
+            Seq seq = (Seq) o;
+            ArrayList list = new ArrayList(seq.size);
+            for (Object e : new Seq.SeqIterable<>(seq)) {
+                list.add(processFunc(e));
+            }
+            return list;
+        } else if (o instanceof ObjectMap) {
+            ObjectMap objMap = (ObjectMap) o;
+            HashMap map = new HashMap();
+            for (ObjectMap.Entry<Object, Object> entry : new ObjectMap.Entries<Object, Object>(objMap)) {
+                map.put(entry.key, processFunc(entry.value));
+            }
+            return map;
+        }else if(o instanceof JsonValue){
+            return JsonConverter.convert((JsonValue) o);
+        }
+        return o;
+    }
+
     @SuppressWarnings({"rawtypes"})
     public static Seq<Recipe> analyze(Block meta, Object o) {
-        Seq<Recipe> recipes = new Seq<>();
+        o = preProcessArc(o);
+        Seq<Recipe> recipes = new Seq<>(Recipe.class);
         int index = 0;
         if (o instanceof List) { // A list of recipe
             List all = (List) o;
@@ -106,7 +138,7 @@ public class MultiCrafterAnalyzer {
                 } else if (items instanceof Map) {
                     ItemStack entry = analyzeItemMap((Map) items);
                     res.items.add(entry);
-                }  else throw new MulticrafterRecipeAnalyzerException("Unsupported type of item " + items);
+                } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of item " + items);
             }
             // Fluids
             Object fluids = ioRawMap.get("fluids");

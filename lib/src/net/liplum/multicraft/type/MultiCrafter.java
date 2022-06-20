@@ -9,6 +9,7 @@ import arc.struct.EnumSet;
 import arc.struct.Seq;
 import arc.util.ArcRuntimeException;
 import arc.util.Eachable;
+import arc.util.Nullable;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
@@ -55,6 +56,7 @@ public class MultiCrafter extends Block {
     /**
      * The resolved recipes.
      */
+    @Nullable
     public Seq<Recipe> resolvedRecipes;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
