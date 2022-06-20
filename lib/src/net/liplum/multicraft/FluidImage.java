@@ -1,6 +1,7 @@
 package net.liplum.multicraft;
 
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Mathf;
 import arc.scene.ui.Image;
 import arc.scene.ui.layout.Stack;
 import arc.scene.ui.layout.Table;
@@ -26,7 +27,7 @@ public class FluidImage extends Stack {
                 t.left().bottom();
                 t.add(amount >= 1000 ?
                                 UI.formatAmount((long) (amount * multiplier)) :
-                                (amount * multiplier) + "")
+                        Mathf.round(amount * multiplier) + "")
                         .style(Styles.outlineLabel);
                 t.pack();
             }));

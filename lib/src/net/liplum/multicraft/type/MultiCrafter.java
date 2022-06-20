@@ -1,5 +1,6 @@
 package net.liplum.multicraft.type;
 
+import arc.Core;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
@@ -14,18 +15,25 @@ import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
+import mindustry.gen.Icon;
 import mindustry.gen.Sounds;
+import mindustry.gen.Tex;
+import mindustry.graphics.Pal;
 import mindustry.logic.LAccess;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
 import mindustry.type.Liquid;
 import mindustry.type.LiquidStack;
+import mindustry.ui.ItemImage;
 import mindustry.world.Block;
 import mindustry.world.consumers.ConsumeItemDynamic;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
+import mindustry.world.meta.Stat;
+import net.liplum.multicraft.Arrow;
 import net.liplum.multicraft.ConsumeFluidDynamic;
+import net.liplum.multicraft.FluidImage;
 import net.liplum.multicraft.MultiCrafterAnalyzer;
 
 import static mindustry.Vars.tilesize;
@@ -346,6 +354,57 @@ public class MultiCrafter extends Block {
     @Override
     public void setStats() {
         super.setStats();
+        stats.add(Stat.output, stat -> {
+            stat.row();
+            for (Recipe recipe : resolvedRecipes) {
+                stat.table(t -> {
+                    t.background(Tex.whiteui);
+                    t.setColor(Pal.darkestGray);
+                    buildIOEntry(t, recipe.input, true);
+                    t.table(arrow -> {
+                        arrow.background(Tex.button);
+                        Table a = new Table();
+                        a.background(Tex.button);
+                        a.add(new Arrow()).color(Pal.accent)
+                            .grow();
+                        arrow.add(a).grow().row();
+                        arrow.add(recipe.craftTime + Core.bundle.get("unit.seconds"))
+                            .grow();
+                    }).grow();
+                    buildIOEntry(t, recipe.output, false);
+                }).pad(10f).grow();
+                stat.row();
+            }
+            stat.row();
+        });
+    }
+
+    protected void buildIOEntry(Table table, IOEntry entry, boolean isInput) {
+        table.table(t -> {
+            // For design
+            t.background(Tex.button);
+            if (isInput) t.left();
+            else t.right();
+            Table mat = new Table();
+            for (ItemStack stack : entry.items) {
+                mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
+                    .pad(2f);
+            }
+            for (LiquidStack stack : entry.fluids) {
+                mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
+                    .pad(2f);
+            }
+            t.add(mat);
+            t.row();
+            Table power = new Table();
+            // For design
+            power.background(Tex.button);
+            power.add((isInput ? "-" : "+") + (entry.power * 60f));
+            power.image(Icon.power).color(Pal.power);
+            if (isInput) power.left();
+            else power.right();
+            t.add(power).grow();
+        }).pad(10f).grow();
     }
 
     @Override
@@ -439,6 +498,7 @@ public class MultiCrafter extends Block {
         }
         if (isConsumeFluid) {
             ConsumeFluidDynamic.Pair pair = new ConsumeFluidDynamic.Pair();
+            pair.displayMultiplier = 60f;
             consume(new ConsumeFluidDynamic(
                 (MultiCrafterBuild b) -> {
                     Recipe cur = b.getCurRecipe();

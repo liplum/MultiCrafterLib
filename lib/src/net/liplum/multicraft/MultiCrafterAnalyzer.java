@@ -424,7 +424,7 @@ public class MultiCrafterAnalyzer {
      * Only work on single threading.
      */
     public static void error(String content) {
-        Log.err("[" + curBlock + "-" + index + "]" + content);
+        Log.err("[" + curBlock + "](at " + index + ")\n" + content);
     }
 
     /**
