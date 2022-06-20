@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package net.liplum.multicraftmod;
 
 import arc.util.Log;
 import mindustry.Vars;
