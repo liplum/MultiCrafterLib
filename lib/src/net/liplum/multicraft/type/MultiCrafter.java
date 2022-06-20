@@ -111,10 +111,10 @@ public class MultiCrafter extends Block {
         hasPower = false;
         hasLiquids = false;
         outputsPower = false;
-        if (resolvedRecipes == null) { // if the recipe is already set in another way, don't analyze it again.
-            resolvedRecipes = MultiCrafterAnalyzer.analyze(this, this.recipes);
+        if (resolvedRecipes == null && recipes != null) { // if the recipe is already set in another way, don't analyze it again.
+            resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
         }
-        if (resolvedRecipes.isEmpty())
+        if (resolvedRecipes == null || resolvedRecipes.isEmpty())
             throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) +
                 " has no recipe!");
         decorateRecipes();

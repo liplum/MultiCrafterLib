@@ -14,6 +14,16 @@ public class ConsumeFluidDynamic extends Consume {
     public static class Pair {
         public LiquidStack[] fluids;
         public float displayMultiplier;
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof Pair) {
+                Pair b = (Pair) obj;
+                return this.fluids == b.fluids &&
+                    this.displayMultiplier == b.displayMultiplier;
+            }
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -39,7 +49,7 @@ public class ConsumeFluidDynamic extends Consume {
         table.table(cont -> {
             table.update(() -> {
                 Pair pair = fluids.get(build);
-                if (current.o != pair) {
+                if (!current.o.equals(pair)) {
                     rebuild(build, cont);
                     current.o = pair;
                 }
