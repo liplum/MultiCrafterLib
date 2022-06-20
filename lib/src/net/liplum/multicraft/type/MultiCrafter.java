@@ -117,6 +117,9 @@ public class MultiCrafter extends Block {
         super.init();
     }
 
+    @Nullable
+    public static Table hoveredInfo;
+
     public class MultiCrafterBuild extends Building {
         public float craftingTime;
         public float warmup;
@@ -124,6 +127,7 @@ public class MultiCrafter extends Block {
 
         public void setCurRecipeIndexFromRemote(int index) {
             curRecipeIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
+            rebuildHoveredInfoIfNeed();
         }
 
         public Recipe getCurRecipe() {
@@ -190,24 +194,30 @@ public class MultiCrafter extends Block {
         @Override
         public boolean shouldConsume() {
             Recipe cur = getCurRecipe();
-            for (ItemStack output : cur.output.items) {
-                if (items.get(output.item) + output.amount > itemCapacity) {
-                    return false;
+            if (hasItems) {
+
+                for (ItemStack output : cur.output.items) {
+                    if (items.get(output.item) + output.amount > itemCapacity) {
+                        return false;
+                    }
                 }
             }
-            if (cur.isOutputFluid() && stopProductionWhenFullFluid) {
-                boolean allFull = true;
-                for (LiquidStack output : cur.output.fluids) {
-                    if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
-                        if (!dumpExtraFluid) {
-                            return false;
-                        }
-                    } else
-                        allFull = false; //if there's still space left, it's not full for all fluids
-                }
 
-                //if there is no space left for any fluid, it can't reproduce
-                if (allFull) return false;
+            if (hasLiquids) {
+                if (cur.isOutputFluid() && stopProductionWhenFullFluid) {
+                    boolean allFull = true;
+                    for (LiquidStack output : cur.output.fluids) {
+                        if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
+                            if (!dumpExtraFluid) {
+                                return false;
+                            }
+                        } else
+                            allFull = false; //if there's still space left, it's not full for all fluids
+                    }
+
+                    //if there is no space left for any fluid, it can't reproduce
+                    if (allFull) return false;
+                }
             }
             return enabled;
         }
@@ -312,6 +322,24 @@ public class MultiCrafter extends Block {
         public float progress() {
             Recipe cur = getCurRecipe();
             return Mathf.clamp(cur.craftTime > 0f ? craftingTime / cur.craftTime : 1f);
+        }
+
+        @Override
+        public void display(Table table) {
+            super.display(table);
+            hoveredInfo = table;
+        }
+
+        public void rebuildHoveredInfoIfNeed() {
+            try {
+                Table info = hoveredInfo;
+                if (info != null) {
+                    info.clear();
+                    display(info);
+                }
+            } catch (Exception ignored) {
+                // Maybe null pointer or cast exception
+            }
         }
     }
 

@@ -10,33 +10,25 @@ requirements: [
 ]
 category: crafting
 recipes : [{
-  input:{
-      fluids: "ozone/1.5"
-      power : 5
-  },
+  input: ozone/1.5
   output:{
       items : [
-        "coal/1",
-        "copper/1",
-        "lead/1",
-        {
-            item: "graphite",
-            amount : 2
-        }
-      ],
+        coal/1
+        copper/1
+        lead/1
+        graphite/2
+      ]
       power : 2
-  },
+  }
   craftTime : 250.0
 },{
   input:{
       items : [
-      "cyber-io-ic/1",
-      "lead/1"
-      ],
+      cyber-io-ic/1
+      lead/1
+      ]
       power : 5
-  },
-  output:{
-      fluids : "cyber-io-cyberion/1.2"
-  },
+  }
+  output: cyber-io-cyberion/1.2
   craftTime : 210.0
 }]

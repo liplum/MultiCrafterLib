@@ -25,11 +25,20 @@ public class MultiCrafterAnalyzer {
         "output", "out", "o"
     };
 
+    /**
+     * Only work on single threading.
+     */
+    private static String curBlock = "";
+    /**
+     * Only work on single threading.
+     */
+    private static int index = 0;
+
     public static Object preProcessArc(Object seq) {
         try {
             return processFunc(seq);
         } catch (Exception e) {
-            Log.err("Can't convert Seq in preprocess " + seq, e);
+            error("Can't convert Seq in preprocess " + seq, e);
             return Collections.emptyList();
         }
     }
@@ -50,7 +59,7 @@ public class MultiCrafterAnalyzer {
                 map.put(entry.key, processFunc(entry.value));
             }
             return map;
-        }else if(o instanceof JsonValue){
+        } else if (o instanceof JsonValue) {
             return JsonConverter.convert((JsonValue) o);
         }
         return o;
@@ -58,35 +67,38 @@ public class MultiCrafterAnalyzer {
 
     @SuppressWarnings({"rawtypes"})
     public static Seq<Recipe> analyze(Block meta, Object o) {
+        curBlock = genName(meta);
         o = preProcessArc(o);
         Seq<Recipe> recipes = new Seq<>(Recipe.class);
-        int index = 0;
+        index = 0;
         if (o instanceof List) { // A list of recipe
             List all = (List) o;
             for (Object recipeMapObj : all) {
                 Map recipeMap = (Map) recipeMapObj;
-                analyzeRecipe(recipeAt(meta, index), recipeMap, recipes);
+                analyzeRecipe(recipeMap, recipes);
                 index++;
             }
         } else if (o instanceof Map) { // Only one recipe
             Map recipeMap = (Map) o;
-            analyzeRecipe(recipeAt(meta, index), recipeMap, recipes);
+            analyzeRecipe(recipeMap, recipes);
+        } else {
+            throw new RecipeAnalyzerException("Unsupported recipe list from <" + o + ">");
         }
         return recipes;
     }
 
     @SuppressWarnings("rawtypes")
-    public static void analyzeRecipe(String recipeIndex, Map recipeMap, Seq<Recipe> to) {
+    public static void analyzeRecipe(Map recipeMap, Seq<Recipe> to) {
         try {
             Recipe recipe = new Recipe();
             Object inputsRaw = findValueByAlias(recipeMap, inputAlias);
             if (inputsRaw == null) {
-                Log.warn("Recipe of " + recipeIndex + " doesn't have any input, so skip it.");
+                Log.warn("Recipe doesn't have any input, so skip it");
                 return;
             }
             Object outputsRaw = findValueByAlias(recipeMap, outputAlias);
             if (outputsRaw == null) {
-                Log.warn("Recipe of " + recipeIndex + " doesn't have any output, so skip it.");
+                Log.warn("Recipe doesn't have any output, so skip it");
                 return;
             }
             recipe.input = analyzeIOEntry("input", inputsRaw);
@@ -94,9 +106,9 @@ public class MultiCrafterAnalyzer {
             Object craftTimeObj = recipeMap.get("craftTime");
             recipe.craftTime = analyzeFloat(craftTimeObj);
             if (!recipe.isAnyEmpty()) to.add(recipe);
-            else Log.warn("Recipe of " + recipeIndex + " is empty, so skip it.", recipe);
+            else Log.warn("Recipe is empty, so skip it", recipe);
         } catch (Exception e) {
-            Log.err("Can't load a recipe of " + recipeIndex + " because " + e, e);
+            error("Can't load a recipe", e);
         }
     }
 
@@ -108,10 +120,6 @@ public class MultiCrafterAnalyzer {
             if (tried != null) return tried;
         }
         return null;
-    }
-
-    public static String recipeAt(Block meta, int index) {
-        return genName(meta) + " at " + index;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -133,12 +141,10 @@ public class MultiCrafterAnalyzer {
                 if (items instanceof List) { // ["mod-id-item/1","mod-id-item2"]
                     analyzeItems((List) items, res.items);
                 } else if (items instanceof String) {
-                    ItemStack entry = analyzeItemPair((String) items);
-                    res.items.add(entry);
+                    analyzeItemPair((String) items, res.items);
                 } else if (items instanceof Map) {
-                    ItemStack entry = analyzeItemMap((Map) items);
-                    res.items.add(entry);
-                } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of item " + items);
+                    analyzeItemMap((Map) items, res.items);
+                } else throw new RecipeAnalyzerException("Unsupported type of items at " + meta + " from <" + items + ">");
             }
             // Fluids
             Object fluids = ioRawMap.get("fluids");
@@ -146,12 +152,10 @@ public class MultiCrafterAnalyzer {
                 if (fluids instanceof List) { // ["mod-id-item/1","mod-id-item2"]
                     analyzeFluids((List) fluids, res.fluids);
                 } else if (fluids instanceof String) {
-                    LiquidStack entry = analyzeFluidPair((String) fluids);
-                    res.fluids.add(entry);
+                    analyzeFluidPair((String) fluids, res.fluids);
                 } else if (fluids instanceof Map) {
-                    LiquidStack entry = analyzeFluidMap((Map) fluids);
-                    res.fluids.add(entry);
-                } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of fluid " + fluids);
+                    analyzeFluidMap((Map) fluids, res.fluids);
+                } else throw new RecipeAnalyzerException("Unsupported type of fluids at " + meta + " from <" + fluids + ">");
             }
             // power
             Object powerObj = ioRawMap.get("power");
@@ -165,14 +169,14 @@ public class MultiCrafterAnalyzer {
                     analyzeAnyPair((String) content, res.items, res.fluids);
                 } else if (content instanceof Map) {
                     analyzeAnyMap((Map) content, res.items, res.fluids);
-                } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of " + meta + "" + content);
+                } else throw new RecipeAnalyzerException("Unsupported type of content at " + meta + " from <" + content + ">");
             }
         } else if (ioEntry instanceof String) {
             /*
                 input/output : "item/1"
              */
             analyzeAnyPair((String) ioEntry, res.items, res.fluids);
-        } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of " + meta + " " + ioEntry);
+        } else throw new RecipeAnalyzerException("Unsupported type of " + meta + " <" + ioEntry + ">");
         return res;
     }
 
@@ -180,77 +184,29 @@ public class MultiCrafterAnalyzer {
     public static void analyzeItems(List items, Seq<ItemStack> to) {
         for (Object entryRaw : items) {
             if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
-                ItemStack entry = analyzeItemPair((String) entryRaw);
-                to.add(entry);
+                analyzeItemPair((String) entryRaw, to);
             } else if (entryRaw instanceof Map) {
                 // if the input is Map as { item : "copper", amount : 1 }
-                ItemStack entry = analyzeItemMap((Map) entryRaw);
-                to.add(entry);
-            } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of ItemStack " + entryRaw);
+                analyzeItemMap((Map) entryRaw, to);
+            } else {
+                error("Unsupported type of items <" + entryRaw + ">, so skip them");
+            }
         }
     }
 
-    public static ItemStack analyzeItemPair(String pair) throws NumberFormatException, MulticrafterRecipeAnalyzerException {
-        String[] id2Amount = pair.split("/");
-        if (id2Amount.length != 1 && id2Amount.length != 2)
-            throw new MulticrafterRecipeAnalyzerException(Arrays.toString(id2Amount) + "doesn't contains 1 or 2 entries.");
-        String itemID = id2Amount[0];
-        Item item = findItem(itemID);
-        if (item == null) throw new MulticrafterRecipeAnalyzerException(itemID + " doesn't exist in items.");
-        ItemStack entry = new ItemStack();
-        entry.item = item;
-        if (id2Amount.length == 2) {
-            String amountStr = id2Amount[1];
-            entry.amount = Integer.parseInt(amountStr);// throw NumberFormatException
-        } else {
-            entry.amount = 1;
-        }
-        return entry;
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static void analyzeFluids(List fluids, Seq<LiquidStack> to) {
-        for (Object entryRaw : fluids) {
-            if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
-                LiquidStack entry = analyzeFluidPair((String) entryRaw);
-                to.add(entry);
-            } else if (entryRaw instanceof Map) {
-                // if the input is Map as { item : "water", amount : 1.2 }
-                LiquidStack entry = analyzeFluidMap((Map) entryRaw);
-                to.add(entry);
-            } else throw new MulticrafterRecipeAnalyzerException("Unsupported type of LiquidStack " + entryRaw);
-        }
-    }
-
-    public static LiquidStack analyzeFluidPair(String pair) {
-        String[] id2Amount = pair.split("/");
-        if (id2Amount.length != 1 && id2Amount.length != 2)
-            throw new MulticrafterRecipeAnalyzerException(Arrays.toString(id2Amount) + "doesn't contains 1 or 2 entries.");
-        String fluidID = id2Amount[0];
-        Liquid fluid = findFluid(fluidID);
-        if (fluid == null) throw new MulticrafterRecipeAnalyzerException(fluidID + " doesn't exist in fluids.");
-        LiquidStack entry = new LiquidStack(Liquids.water, 0f);
-        entry.liquid = fluid;
-        if (id2Amount.length == 2) {
-            String amountStr = id2Amount[1];
-            entry.amount = Float.parseFloat(amountStr);// throw NumberFormatException
-        } else {
-            entry.amount = 1f;
-        }
-        return entry;
-    }
-
-    /**
-     * @param pair "mod-id-item/1" or "mod-id-gas"
-     */
-    public static void analyzeAnyPair(String pair, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
-        String[] id2Amount = pair.split("/");
-        if (id2Amount.length != 1 && id2Amount.length != 2)
-            throw new MulticrafterRecipeAnalyzerException(Arrays.toString(id2Amount) + "doesn't contains 1 or 2 entries.");
-        String id = id2Amount[0];
-        // Find in item
-        Item item = findItem(id);
-        if (item != null) {
+    public static void analyzeItemPair(String pair, Seq<ItemStack> to) {
+        try {
+            String[] id2Amount = pair.split("/");
+            if (id2Amount.length != 1 && id2Amount.length != 2) {
+                error("<" + Arrays.toString(id2Amount) + "> doesn't contain 1 or 2 parts, so skip this");
+                return;
+            }
+            String itemID = id2Amount[0];
+            Item item = findItem(itemID);
+            if (item == null) {
+                error("<" + itemID + "> doesn't exist in all items, so skip this");
+                return;
+            }
             ItemStack entry = new ItemStack();
             entry.item = item;
             if (id2Amount.length == 2) {
@@ -259,11 +215,39 @@ public class MultiCrafterAnalyzer {
             } else {
                 entry.amount = 1;
             }
-            items.add(entry);
-            return;
+            to.add(entry);
+        } catch (Exception e) {
+            error("Can't analyze an item from <" + pair + ">, so skip it", e);
         }
-        Liquid fluid = findFluid(id);
-        if (fluid != null) {
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void analyzeFluids(List fluids, Seq<LiquidStack> to) {
+        for (Object entryRaw : fluids) {
+            if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
+                analyzeFluidPair((String) entryRaw, to);
+            } else if (entryRaw instanceof Map) {
+                // if the input is Map as { item : "water", amount : 1.2 }
+                analyzeFluidMap((Map) entryRaw, to);
+            } else {
+                error("Unsupported type of fluids <" + entryRaw + ">, so skip them");
+            }
+        }
+    }
+
+    public static void analyzeFluidPair(String pair, Seq<LiquidStack> to) {
+        try {
+            String[] id2Amount = pair.split("/");
+            if (id2Amount.length != 1 && id2Amount.length != 2) {
+                error("<" + Arrays.toString(id2Amount) + "> doesn't contain 1 or 2 parts, so skip this");
+                return;
+            }
+            String fluidID = id2Amount[0];
+            Liquid fluid = findFluid(fluidID);
+            if (fluid == null) {
+                error("<" + fluidID + "> doesn't exist in all fluids, so skip this");
+                return;
+            }
             LiquidStack entry = new LiquidStack(Liquids.water, 0f);
             entry.liquid = fluid;
             if (id2Amount.length == 2) {
@@ -272,70 +256,144 @@ public class MultiCrafterAnalyzer {
             } else {
                 entry.amount = 1f;
             }
-            fluids.add(entry);
-            return;
+            to.add(entry);
+        } catch (Exception e) {
+            error("Can't analyze a fluid from <" + pair + ">, so skip it", e);
         }
-        throw new MulticrafterRecipeAnalyzerException(pair + "isn't an item or a fluid.");
+    }
+
+    /**
+     * @param pair "mod-id-item/1" or "mod-id-gas"
+     */
+    public static void analyzeAnyPair(String pair, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
+        try {
+            String[] id2Amount = pair.split("/");
+            if (id2Amount.length != 1 && id2Amount.length != 2) {
+                error("<" + Arrays.toString(id2Amount) + "> doesn't contain 1 or 2 parts, so skip this");
+                return;
+            }
+            String id = id2Amount[0];
+            // Find in item
+            Item item = findItem(id);
+            if (item != null) {
+                ItemStack entry = new ItemStack();
+                entry.item = item;
+                if (id2Amount.length == 2) {
+                    String amountStr = id2Amount[1];
+                    entry.amount = Integer.parseInt(amountStr);// throw NumberFormatException
+                } else {
+                    entry.amount = 1;
+                }
+                items.add(entry);
+                return;
+            }
+            Liquid fluid = findFluid(id);
+            if (fluid != null) {
+                LiquidStack entry = new LiquidStack(Liquids.water, 0f);
+                entry.liquid = fluid;
+                if (id2Amount.length == 2) {
+                    String amountStr = id2Amount[1];
+                    entry.amount = Float.parseFloat(amountStr);// throw NumberFormatException
+                } else {
+                    entry.amount = 1f;
+                }
+                fluids.add(entry);
+                return;
+            }
+            error("Can't find the corresponding item or fluid from this <" + pair + ">, so skip it");
+        } catch (Exception e) {
+            error("Can't analyze this uncertain <" + pair + ">, so skip it", e);
+        }
     }
 
     @SuppressWarnings("rawtypes")
     public static void analyzeAnyMap(Map map, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
-        Object itemRaw = map.get("item");
-        if (itemRaw instanceof String) {
-            Item item = findItem((String) itemRaw);
-            if (item != null) {
-                ItemStack entry = new ItemStack();
+        try {
+
+            Object itemRaw = map.get("item");
+            if (itemRaw instanceof String) {
+                Item item = findItem((String) itemRaw);
+                if (item != null) {
+                    ItemStack entry = new ItemStack();
+                    entry.item = item;
+                    Object amountRaw = map.get("amount");
+                    entry.amount = analyzeInt(amountRaw);
+                    items.add(entry);
+                    return;
+                }
+            }
+            Object fluidRaw = map.get("fluid");
+            if (fluidRaw instanceof String) {
+                Liquid fluid = findFluid((String) fluidRaw);
+                if (fluid != null) {
+                    LiquidStack entry = new LiquidStack(Liquids.water, 0f);
+                    entry.liquid = fluid;
+                    Object amountRaw = map.get("amount");
+                    entry.amount = analyzeFloat(amountRaw);
+                    fluids.add(entry);
+                    return;
+                }
+            }
+            error("Can't find the corresponding item or fluid from <" + map + ">, so skip it");
+        } catch (Exception e) {
+            error("Can't analyze this uncertain <" + map + ">, so skip it", e);
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void analyzeItemMap(Map map, Seq<ItemStack> to) {
+        try {
+            ItemStack entry = new ItemStack();
+            Object itemID = map.get("item");
+            if (itemID instanceof String) {
+                Item item = findItem((String) itemID);
+                if (item == null) {
+                    error("<" + itemID + "> doesn't exist in all items, so skip this");
+                    return;
+                }
                 entry.item = item;
-                Object amountRaw = map.get("amount");
-                entry.amount = analyzeInt(amountRaw);
-                items.add(entry);
+            } else {
+                error("Can't recognize a fluid from <" + map + ">");
                 return;
             }
+            int amount = analyzeInt(map.get("amount"));
+            entry.amount = amount;
+            if (amount <= 0) {
+                error("Item amount is +" + amount + " <=0, so reset as 1");
+                entry.amount = 1;
+            }
+            to.add(entry);
+        } catch (Exception e) {
+            error("Can't analyze an item <" + map + ">, so skip it", e);
         }
-        Object fluidRaw = map.get("fluid");
-        if (fluidRaw instanceof String) {
-            Liquid fluid = findFluid((String) fluidRaw);
-            if (fluid != null) {
-                LiquidStack entry = new LiquidStack(Liquids.water, 0f);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public static void analyzeFluidMap(Map map, Seq<LiquidStack> to) {
+        try {
+            LiquidStack entry = new LiquidStack(Liquids.water, 0f);
+            Object itemID = map.get("fluid");
+            if (itemID instanceof String) {
+                Liquid fluid = findFluid((String) itemID);
+                if (fluid == null) {
+                    error(itemID + " doesn't exist in all fluids, so skip this");
+                    return;
+                }
                 entry.liquid = fluid;
-                Object amountRaw = map.get("amount");
-                entry.amount = analyzeFloat(amountRaw);
-                fluids.add(entry);
+            } else {
+                error("Can't recognize an item from <" + map + ">");
                 return;
             }
+            float amount = analyzeFloat(map.get("amount"));
+            entry.amount = amount;
+            if (amount <= 0f) {
+                error("Fluids amount is +" + amount + " <=0, so reset as 1.0f");
+                entry.amount = 1f;
+            }
+            to.add(entry);
+        } catch (Exception e) {
+            error("Can't analyze <" + map + ">, so skip it", e);
         }
-
-        throw new MulticrafterRecipeAnalyzerException("Unsupported amp of input/output " + map);
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static ItemStack analyzeItemMap(Map map) {
-        ItemStack entry = new ItemStack();
-        Object itemID = map.get("item");
-        if (itemID instanceof String) {
-            Item item = findItem((String) itemID);
-            if (item == null) throw new MulticrafterRecipeAnalyzerException(itemID + " doesn't exist in items.");
-            entry.item = item;
-        } else throw new MulticrafterRecipeAnalyzerException("Can't recognize the item from an ItemStack" + map);
-        int amount = analyzeInt(map.get("amount"));
-        if (amount <= 0) throw new MulticrafterRecipeAnalyzerException("Item amount should > 0 but " + amount);
-        entry.amount = amount;
-        return entry;
-    }
-
-    @SuppressWarnings("rawtypes")
-    public static LiquidStack analyzeFluidMap(Map map) {
-        LiquidStack entry = new LiquidStack(Liquids.water, 0f);
-        Object itemID = map.get("fluid");
-        if (itemID instanceof String) {
-            Liquid fluid = findFluid((String) itemID);
-            if (fluid == null) throw new MulticrafterRecipeAnalyzerException(itemID + " doesn't exist in fluids.");
-            entry.liquid = fluid;
-        } else throw new MulticrafterRecipeAnalyzerException("Can't recognize the item from an LiquidStack" + map);
-        float amount = analyzeFloat(map.get("amount"));
-        if (amount <= 0f) throw new MulticrafterRecipeAnalyzerException("Fluid amount should > 0.0f but " + amount);
-        entry.amount = amount;
-        return entry;
     }
 
     public static float analyzeFloat(@Nullable Object floatObj) {
@@ -362,9 +420,23 @@ public class MultiCrafterAnalyzer {
         }
     }
 
+    /**
+     * Only work on single threading.
+     */
+    public static void error(String content) {
+        Log.err("[" + curBlock + "-" + index + "]" + content);
+    }
+
+    /**
+     * Only work on single threading.
+     */
+    public static void error(String content, Throwable e) {
+        Log.err("[" + curBlock + "](at " + index + ")\n" + content, e);
+    }
 
     public static String genName(Block meta) {
-        return meta.localizedName + "[" + meta.name + "]";
+        if (meta.localizedName.equals(meta.name)) return meta.name;
+        else return meta.localizedName + "(" + meta.name + ")";
     }
 
     @Nullable
