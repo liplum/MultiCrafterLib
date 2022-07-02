@@ -10,6 +10,11 @@ buildscript {
 allprojects {
     group = "net.liplum"
     version = "1.0"
+    buildscript {
+        repositories {
+            maven { url = uri("https://www.jitpack.io") }
+        }
+    }
     repositories {
         mavenCentral()
         maven {

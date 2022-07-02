@@ -361,7 +361,7 @@ public class MultiCrafter extends Block {
                     t.background(Tex.whiteui);
                     t.setColor(Pal.darkestGray);
                     buildIOEntry(t, recipe.input, true);
-                    t.add((int) recipe.craftTime + " " + Core.bundle.get("unit.seconds")).grow();
+                    t.add((int) (recipe.craftTime / 60f) + " " + Core.bundle.get("unit.seconds")).grow();
                     buildIOEntry(t, recipe.output, false);
                 }).pad(10f).grow();
                 stat.row();

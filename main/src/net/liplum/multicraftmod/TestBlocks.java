@@ -6,6 +6,7 @@ import mindustry.content.Liquids;
 import mindustry.type.Category;
 import mindustry.type.ItemStack;
 import mindustry.type.LiquidStack;
+import mindustry.ui.dialogs.ModsDialog;
 import mindustry.world.meta.BuildVisibility;
 import net.liplum.multicraft.type.IOEntry;
 import net.liplum.multicraft.type.MultiCrafter;

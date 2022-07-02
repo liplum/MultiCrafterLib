@@ -1,16 +1,11 @@
 @file:Suppress("SpellCheckingInspection")
 
 plugins {
-    java
+    java // For zip
 }
 val OutputJarName: String by project
 version = "1.0"
 group = "net.liplum"
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 
 tasks.register<Zip>("zip") {
     group = "build"
