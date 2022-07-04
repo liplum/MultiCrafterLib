@@ -131,7 +131,8 @@ public class MultiCrafterAnalyzer {
                 input/output:{
                   items:[],
                   fluids:[],
-                  power:0
+                  power:0,
+                  heat:0
                 }
              */
             Map ioRawMap = (Map) ioEntry;
@@ -160,6 +161,8 @@ public class MultiCrafterAnalyzer {
             // power
             Object powerObj = ioRawMap.get("power");
             res.power = analyzeFloat(powerObj);
+            Object heatObj  = ioRawMap.get("heat");
+            res.heat = analyzeFloat(heatObj);
         } else if (ioEntry instanceof List) {
             /*
               input/output: []

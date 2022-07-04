@@ -1,14 +1,11 @@
 @file:Suppress("SpellCheckingInspection")
+
 import io.github.liplum.mindustry.*
+
 plugins {
     java
-    id("io.github.liplum.mgpp") version "1.0.6"
+    id("io.github.liplum.mgpp") version "1.0.12"
 }
-val OutputJarName: String by project
-val MindustryVersion: String by project
-val ArcVersion: String by project
-val PlumyVersion: String by project
-val OpenGalVersion: String by project
 sourceSets {
     main {
         java.srcDirs("src")
@@ -40,8 +37,11 @@ mindustry {
     }
     mods {
         worksWith {
-             add fromTask ":js:zip"
+            add fromTask ":js:zip"
         }
+    }
+    deploy {
+        baseName = "MultiCrafterLib"
     }
 }
 mindustryAssets {

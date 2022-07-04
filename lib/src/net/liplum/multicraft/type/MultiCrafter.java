@@ -11,6 +11,7 @@ import arc.struct.Seq;
 import arc.util.ArcRuntimeException;
 import arc.util.Eachable;
 import arc.util.Nullable;
+import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
@@ -26,6 +27,8 @@ import mindustry.type.Liquid;
 import mindustry.type.LiquidStack;
 import mindustry.ui.ItemImage;
 import mindustry.world.Block;
+import mindustry.world.blocks.heat.HeatBlock;
+import mindustry.world.blocks.heat.HeatConsumer;
 import mindustry.world.consumers.ConsumeItemDynamic;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
@@ -86,11 +89,28 @@ public class MultiCrafter extends Block {
     protected boolean isConsumeItem = false;
     protected boolean isConsumeFluid = false;
     protected boolean isConsumePower = false;
+    protected boolean isOutputHeat = false;
+    protected boolean isConsumeHeat = false;
     public float powerCapacity = 0f;
     /**
-     * It's used to display something of block or initialize the recipe index.
+     * For {@linkplain HeatConsumer},
+     * it's used to display something of block or initialize the recipe index.
      */
     public int defaultRecipeIndex = 0;
+    /**
+     * For {@linkplain HeatConsumer},
+     * after heat meets this requirement, excess heat will be scaled by this number.
+     */
+    public float overheatScale = 1f;
+    /**
+     * For {@linkplain HeatConsumer},
+     * maximum possible efficiency after overheat.
+     */
+    public float maxEfficiency = 4f;
+    /**
+     * For {@linkplain HeatBlock}
+     */
+    public float warmupRate = 0.15f;
 
     public MultiCrafter(String name) {
         super(name);
@@ -128,14 +148,25 @@ public class MultiCrafter extends Block {
     @Nullable
     public static Table hoveredInfo;
 
-    public class MultiCrafterBuild extends Building {
+    public class MultiCrafterBuild extends Building implements HeatBlock, HeatConsumer {
+        /**
+         * For {@linkplain HeatConsumer}, only enabled when the multicrafter requires heat input
+         */
+        public float[] sideHeat = new float[4];
+        /**
+         * For {@linkplain HeatConsumer} and {@linkplain HeatBlock},
+         * only enabled when the multicrafter requires heat as input or can output heat
+         */
+        public float heat = 0f;
         public float craftingTime;
         public float warmup;
         public int curRecipeIndex = defaultRecipeIndex;
 
         public void setCurRecipeIndexFromRemote(int index) {
             curRecipeIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
-            rebuildHoveredInfoIfNeed();
+            if (!Vars.headless) {
+                rebuildHoveredInfoIfNeed();
+            }
         }
 
         public Recipe getCurRecipe() {
@@ -169,6 +200,14 @@ public class MultiCrafter extends Block {
         public void updateTile() {
             Recipe cur = getCurRecipe();
             float craftTimeNeed = cur.craftTime;
+            // As HeatConsumer
+            if (cur.isConsumeHeat()) {
+                heat = calculateHeat(sideHeat);
+            }
+            if (cur.isOutputHeat()) {
+                float heatOutput = cur.output.heat;
+                heat = Mathf.approachDelta(heat, heatOutput * efficiency, warmupRate * delta());
+            }
             if (efficiency > 0 && getCurPowerStore() >= cur.input.power) {
                 // if <= 0, instantly produced
                 craftingTime += craftTimeNeed > 0 ? edelta() : craftTimeNeed;
@@ -268,6 +307,48 @@ public class MultiCrafter extends Block {
             }
         }
 
+        /**
+         * As {@linkplain HeatBlock}
+         */
+        @Override
+        public float heat() {
+            return heat;
+        }
+
+        /**
+         * As {@linkplain HeatBlock}
+         */
+        @Override
+        public float heatFrac() {
+            Recipe cur = getCurRecipe();
+            if (cur.isOutputHeat()) {
+                return heat / cur.output.heat;
+            } else {
+                return 0f;
+            }
+        }
+
+        /**
+         * As {@linkplain HeatConsumer}
+         */
+        @Override
+        public float[] sideHeat() {
+            return sideHeat;
+        }
+
+        /**
+         * As {@linkplain HeatConsumer}
+         */
+        @Override
+        public float heatRequirement() {
+            Recipe cur = getCurRecipe();
+            // When As HeatConsumer
+            if (isConsumeHeat && cur.isConsumeHeat()) {
+                return cur.input.heat;
+            }
+            return 0f;
+        }
+
         @Override
         public void buildConfiguration(Table table) {
             table.table(t -> {
@@ -318,7 +399,35 @@ public class MultiCrafter extends Block {
 
         // TODO: Serialization
         public float warmupTarget() {
-            return 1f;
+            Recipe cur = getCurRecipe();
+            // When As HeatConsumer
+            if (isConsumeHeat && cur.isConsumeHeat()) {
+                return Mathf.clamp(heat / cur.input.heat);
+            } else {
+                return 1f;
+            }
+        }
+
+        @Override
+        public void updateEfficiencyMultiplier() {
+            Recipe cur = getCurRecipe();
+            // When As HeatConsumer
+            if (isConsumeHeat && cur.isConsumeHeat()) {
+                efficiency *= efficiencyScale();
+                potentialEfficiency *= efficiencyScale();
+            }
+        }
+
+        public float efficiencyScale() {
+            Recipe cur = getCurRecipe();
+            // When As HeatConsumer
+            if (isConsumeHeat && cur.isConsumeHeat()) {
+                float heatRequirement = cur.input.heat;
+                float over = Math.max(heat - heatRequirement, 0f);
+                return Math.min(Mathf.clamp(heat / heatRequirement) + over / heatRequirement * overheatScale, maxEfficiency);
+            } else {
+                return 1f;
+            }
         }
 
         @Override
@@ -398,6 +507,7 @@ public class MultiCrafter extends Block {
     @Override
     public void setBars() {
         super.setBars();
+        // TODO: add heat bar
     }
 
     @Override
@@ -471,12 +581,20 @@ public class MultiCrafter extends Block {
             isOutputItem |= recipe.isOutputItem();
             isConsumeItem |= recipe.isConsumeItem();
             isConsumeFluid |= recipe.isConsumeFluid();
+            isConsumeHeat |= recipe.isConsumeHeat();
+            isOutputHeat |= recipe.isOutputHeat();
         }
         hasPower = maxPower > 0f;
         outputsPower = hasPower;
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
         powerCapacity = Math.max(maxPower * 60f * powerCapacityMultiplier, powerCapacity);
+        if (isOutputHeat) {
+            rotate = true;
+            rotateDraw = false;
+            canOverdrive = false;
+            drawArrow = true;
+        }
     }
 
     protected void setupConsumers() {

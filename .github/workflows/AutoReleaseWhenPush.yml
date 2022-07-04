@@ -20,15 +20,15 @@ jobs:
       - name: Get short commit hash
         run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
 
-      - name: Build MdtModTemplate
+      - name: Build MultiCrafter
         run: |
           chmod +x gradlew
           ./gradlew deploy
 
       - uses: actions/upload-artifact@v2
         with:
-          name: MdtModTemplate
-          path: build/libs/*.jar
+          name: MultiCrafter
+          path: build/tmp/deploy/*.jar
 
   upload:
     needs: build
@@ -41,7 +41,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: MdtModTemplate
+          name: MultiCrafter
           path: out
 
       - name: Delete and recreate tag

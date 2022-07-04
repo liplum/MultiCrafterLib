@@ -43,12 +43,20 @@ c.recipes = [{
         fluids : "water/1"
     },
     output:{
-        fluids : {
+        fluids:{
             fluid : "slag",
             amount : 1.5
         }
     },
     craftTime : 240.0
+},{
+    input:{
+        fluids : "water/1"
+    },
+    output:{
+        heat : 5
+    },
+    craftTime : 120.0
 }]
 
 print(">>>>>MultiCrafter Test JavaScript loaded.")

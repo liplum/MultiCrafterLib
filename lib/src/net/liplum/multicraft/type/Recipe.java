@@ -45,6 +45,16 @@ public class Recipe {
         return !input.items.isEmpty();
     }
 
+    public boolean isConsumeHeat() {
+        return input.heat > 0f;
+    }
+    public boolean isOutputHeat(){
+        return output.heat> 0f;
+    }
+    public boolean hasHeat(){
+        return isConsumeHeat() || isOutputHeat();
+    }
+
     public boolean hasItem() {
         return isConsumeItem() || isOutputItem();
     }
@@ -68,9 +78,9 @@ public class Recipe {
     @Override
     public String toString() {
         return "Recipe{" +
-                "input=" + input +
-                "output=" + output +
-                "craftTime" + craftTime +
-                "}";
+            "input=" + input +
+            "output=" + output +
+            "craftTime" + craftTime +
+            "}";
     }
 }

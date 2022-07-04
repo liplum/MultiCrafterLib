@@ -1,9 +1,10 @@
+import io.github.liplum.mindustry.*
+
 plugins {
     java
     `maven-publish`
+    id("io.github.liplum.mgpp") version "1.0.9"
 }
-val MindustryVersion: String by project
-val ArcVersion: String by project
 sourceSets {
     main {
         java.srcDir("src")
@@ -19,15 +20,17 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
-
+mindustry {
+    dependency {
+        mindustry mirror "d7312445a1"
+        arc on "123fbf12b9"
+    }
+}
 dependencies {
-    compileOnly("com.github.anuken.mindustryjitpack:core:$MindustryVersion")
-    compileOnly("com.github.Anuken.Arc:arc-core:$ArcVersion")
-    testImplementation("com.github.Anuken.Arc:arc-core:$ArcVersion")
+    importMindustry()
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testImplementation("com.github.liplum:TestUtils:v0.1")
-    // annotationProcessor "com.github.Anuken:jabel:$jabelVersion"
 }
 
 val sourcesJar by tasks.creating(Jar::class) {

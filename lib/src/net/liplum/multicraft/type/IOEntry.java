@@ -11,6 +11,7 @@ public class IOEntry {
     public Seq<ItemStack> items = new Seq<>(ItemStack.class);
     public Seq<LiquidStack> fluids = new Seq<>(LiquidStack.class);
     public float power = 0f;
+    public float heat = 0f;
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
 
@@ -42,7 +43,7 @@ public class IOEntry {
     }
 
     public boolean isEmpty() {
-        return items.isEmpty() && fluids.isEmpty() && power <= 0f;
+        return items.isEmpty() && fluids.isEmpty() && power <= 0f && heat <= 0f;
     }
 
     public int maxItemAmount() {
