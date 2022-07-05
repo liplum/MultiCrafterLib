@@ -516,21 +516,30 @@ public class MultiCrafter extends Block {
         else t.right();
         Table mat = new Table();
         IOEntry entry = isInput ? recipe.input : recipe.output;
+        int i = 0;
         for (ItemStack stack : entry.items) {
-            Cell<ItemImage> icon = mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
+            Cell<ItemImage> iconCell = mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
                 .pad(2f);
-            if(isInput) icon.left();
-            else icon.right();
+            if (isInput) iconCell.left();
+            else iconCell.right();
+            if (i != 0 && i % 3 == 0) {
+                mat.row();
+            }
+            i++;
         }
         for (LiquidStack stack : entry.fluids) {
-            Cell<FluidImage> icon = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
+            Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
                 .pad(2f);
-            if(isInput) icon.left();
-            else icon.right();
+            if (isInput) iconCell.left();
+            else iconCell.right();
+            if (i != 0 && i % 3 == 0) {
+                mat.row();
+            }
+            i++;
         }
-        t.add(mat);
-        if(isInput) mat.left();
-        else mat.right();
+        Cell<Table> matCell = t.add(mat);
+        if (isInput) matCell.left();
+        else matCell.right();
         t.row();
         // No redundant ui
         // Power
@@ -551,7 +560,7 @@ public class MultiCrafter extends Block {
             else heat.right();
             t.add(heat).grow().row();
         }
-        table.add(t).pad(12f).width(100f).fill();
+        Cell<Table> tCell = table.add(t).pad(12f).width(150f).fill();
     }
 
     @Override

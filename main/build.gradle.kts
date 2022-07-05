@@ -37,7 +37,7 @@ mindustry {
     }
     mods {
         worksWith {
-            add fromTask ":js:zip"
+            add fromTask ":js:jar"
         }
     }
     deploy {
