@@ -1,10 +1,7 @@
 type: net.liplum.multicraft.type.MultiCrafter
 size : 10
 requirements: [
-  copper/200
-  lead/500
   graphite/100
-  titanium/300
   surge-alloy/50
   phase-fabric/70
 ]

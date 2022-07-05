@@ -75,6 +75,10 @@ public class Recipe {
         return Math.max(input.power, output.power);
     }
 
+    public float maxHeat() {
+        return Math.max(input.heat, output.heat);
+    }
+
     @Override
     public String toString() {
         return "Recipe{" +

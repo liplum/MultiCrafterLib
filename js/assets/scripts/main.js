@@ -1,6 +1,5 @@
 function setup(block){
     block.requirements = ItemStack.with(
-        Items.lead, 8,
         Items.graphite, 5,
         Items.silicon, 3
     )
@@ -10,7 +9,7 @@ function setup(block){
 }
 
 const multi = require("multi-crafter/lib")
-const c = multi.MultiCrafter("test-multi-crafter")
+const c = multi.MultiCrafter("js")
 setup(c)
 c.recipes = [{
     input:{
@@ -56,6 +55,12 @@ c.recipes = [{
     output:{
         heat : 5
     },
+    craftTime : 120.0
+},{
+    input:{
+        heat : 8
+    },
+    output: "sand/1",
     craftTime : 120.0
 }]
 

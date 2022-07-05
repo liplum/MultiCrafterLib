@@ -1,16 +1,19 @@
 package net.liplum.multicraft.type;
 
-import arc.Core;
+import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
+import arc.math.Interp;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
+import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.EnumSet;
 import arc.struct.Seq;
 import arc.util.ArcRuntimeException;
 import arc.util.Eachable;
 import arc.util.Nullable;
+import arc.util.Time;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
@@ -25,6 +28,7 @@ import mindustry.type.Item;
 import mindustry.type.ItemStack;
 import mindustry.type.Liquid;
 import mindustry.type.LiquidStack;
+import mindustry.ui.Bar;
 import mindustry.ui.ItemImage;
 import mindustry.world.Block;
 import mindustry.world.blocks.heat.HeatBlock;
@@ -91,7 +95,10 @@ public class MultiCrafter extends Block {
     protected boolean isConsumePower = false;
     protected boolean isOutputHeat = false;
     protected boolean isConsumeHeat = false;
+    public Color heatColor = new Color(1f, 0.22f, 0.22f, 0.8f);
     public float powerCapacity = 0f;
+
+    public float visualMaxHeat = 0f;
     /**
      * For {@linkplain HeatConsumer},
      * it's used to display something of block or initialize the recipe index.
@@ -135,8 +142,7 @@ public class MultiCrafter extends Block {
             resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
         }
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
-            throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) +
-                " has no recipe!");
+            throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe!");
         decorateRecipes();
         setupBlockByRecipes();
         defaultRecipeIndex = Mathf.clamp(defaultRecipeIndex, 0, resolvedRecipes.size - 1);
@@ -191,9 +197,15 @@ public class MultiCrafter extends Block {
 
         @Override
         public float edelta() {
-            return this.efficiency *
-                Mathf.clamp(getCurPowerStore() / getCurRecipe().input.power) *
-                this.delta();
+            Recipe cur = getCurRecipe();
+            if (cur.input.power > 0f) {
+
+                return this.efficiency *
+                    Mathf.clamp(getCurPowerStore() / cur.input.power) *
+                    this.delta();
+            } else {
+                return this.efficiency * this.delta();
+            }
         }
 
         @Override
@@ -321,15 +333,17 @@ public class MultiCrafter extends Block {
         @Override
         public float heatFrac() {
             Recipe cur = getCurRecipe();
-            if (cur.isOutputHeat()) {
+            if (isOutputHeat && cur.isOutputHeat()) {
                 return heat / cur.output.heat;
-            } else {
-                return 0f;
+            } else if (isConsumeHeat && cur.isConsumeHeat()) {
+                return heat / cur.input.heat;
             }
+            return 0f;
         }
 
         /**
          * As {@linkplain HeatConsumer}
+         * Only for visual effects
          */
         @Override
         public float[] sideHeat() {
@@ -338,6 +352,7 @@ public class MultiCrafter extends Block {
 
         /**
          * As {@linkplain HeatConsumer}
+         * Only for visual effects
          */
         @Override
         public float heatRequirement() {
@@ -469,9 +484,24 @@ public class MultiCrafter extends Block {
                 stat.table(t -> {
                     t.background(Tex.whiteui);
                     t.setColor(Pal.darkestGray);
-                    buildIOEntry(t, recipe.input, true);
-                    t.add((int) (recipe.craftTime / 60f) + " " + Core.bundle.get("unit.seconds")).grow();
-                    buildIOEntry(t, recipe.output, false);
+                    buildIOEntry(t, recipe, true);
+                    // Time
+                    Table time = new Table();
+                    final float[] duration = {0f};
+                    float visualCraftTime = recipe.craftTime;
+                    time.update(() -> {
+                        duration[0] += Time.delta;
+                        if (duration[0] > visualCraftTime) {
+                            duration[0] = 0f;
+                        }
+                    });
+                    time.add(new Bar(() -> String.format("%.2f", recipe.craftTime / 60f),
+                            () -> Pal.accent,
+                            () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
+                        .width(200f).height(45f);
+                    t.add(time).pad(12f);
+                    // Output
+                    buildIOEntry(t, recipe, false);
                 }).pad(10f).grow();
                 stat.row();
             }
@@ -480,33 +510,57 @@ public class MultiCrafter extends Block {
         });
     }
 
-    protected void buildIOEntry(Table table, IOEntry entry, boolean isInput) {
-        table.table(t -> {
-            if (isInput) t.left();
-            else t.right();
-            Table mat = new Table();
-            for (ItemStack stack : entry.items) {
-                mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
-                    .pad(2f);
-            }
-            for (LiquidStack stack : entry.fluids) {
-                mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
-                    .pad(2f);
-            }
-            t.add(mat);
-            t.row();
+    protected void buildIOEntry(Table table, Recipe recipe, boolean isInput) {
+        Table t = new Table();
+        if (isInput) t.left();
+        else t.right();
+        Table mat = new Table();
+        IOEntry entry = isInput ? recipe.input : recipe.output;
+        for (ItemStack stack : entry.items) {
+            Cell<ItemImage> icon = mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
+                .pad(2f);
+            if(isInput) icon.left();
+            else icon.right();
+        }
+        for (LiquidStack stack : entry.fluids) {
+            Cell<FluidImage> icon = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
+                .pad(2f);
+            if(isInput) icon.left();
+            else icon.right();
+        }
+        t.add(mat);
+        if(isInput) mat.left();
+        else mat.right();
+        t.row();
+        // No redundant ui
+        // Power
+        if (entry.power > 0f) {
             Table power = new Table();
             power.add((isInput ? "-" : "+") + (int) (entry.power * 60f));
             power.image(Icon.power).color(Pal.power);
             if (isInput) power.left();
             else power.right();
-            t.add(power).grow();
-        }).pad(10f).grow();
+            t.add(power).grow().row();
+        }
+        //Heat
+        if (entry.heat > 0f) {
+            Table heat = new Table();
+            heat.add(isInput ? "-" : "+").color(Pal.accent).pad(6f);
+            heat.image(Icon.terrain).color(entry.heat > 0f ? heatColor : Pal.gray);
+            if (isInput) heat.left();
+            else heat.right();
+            t.add(heat).grow().row();
+        }
+        table.add(t).pad(12f).width(100f).fill();
     }
 
     @Override
     public void setBars() {
         super.setBars();
+        addBar("progress", (b) -> new Bar("bar.loadprogress", Pal.accent, b::progress));
+        if (isConsumeHeat || isOutputHeat) {
+            addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
+        }
         // TODO: add heat bar
     }
 
@@ -572,6 +626,7 @@ public class MultiCrafter extends Block {
         int maxItemAmount = 0;
         float maxFluidAmount = 0f;
         float maxPower = 0f;
+        float maxHeat = 0f;
         for (Recipe recipe : resolvedRecipes) {
             maxItemAmount = Math.max(recipe.maxItemAmount(), maxItemAmount);
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
@@ -583,7 +638,9 @@ public class MultiCrafter extends Block {
             isConsumeFluid |= recipe.isConsumeFluid();
             isConsumeHeat |= recipe.isConsumeHeat();
             isOutputHeat |= recipe.isOutputHeat();
+            maxHeat = Math.max(recipe.maxHeat(), maxHeat);
         }
+        if (visualMaxHeat <= 0f) visualMaxHeat = maxHeat;
         hasPower = maxPower > 0f;
         outputsPower = hasPower;
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);

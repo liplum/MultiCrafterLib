@@ -1,9 +1,10 @@
-import io.github.liplum.mindustry.*
+import io.github.liplum.mindustry.importMindustry
+import io.github.liplum.mindustry.mindustry
 
 plugins {
     java
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.0.9"
+    id("io.github.liplum.mgpp") version "1.0.12"
 }
 sourceSets {
     main {
@@ -32,20 +33,12 @@ dependencies {
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testImplementation("com.github.liplum:TestUtils:v0.1")
 }
-
 val sourcesJar by tasks.creating(Jar::class) {
     dependsOn(JavaPlugin.CLASSES_TASK_NAME)
     archiveClassifier.set("sources")
     from(sourceSets["main"].allSource)
 }
-
-publishing {
-    publications {
-        create<MavenPublication>("maven") {
-            from(components["java"])
-            afterEvaluate {
-                artifact(sourcesJar)
-            }
-        }
-    }
+java {
+    withSourcesJar()
+    withJavadocJar()
 }

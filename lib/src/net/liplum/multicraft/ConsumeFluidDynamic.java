@@ -44,14 +44,14 @@ public class ConsumeFluidDynamic extends Consume {
 
     @Override
     public void build(Building build, Table table) {
-        O<Pair> current = new O<>(fluids.get(build));
+        final Pair[] current = {fluids.get(build)};
 
         table.table(cont -> {
             table.update(() -> {
                 Pair pair = fluids.get(build);
-                if (!current.o.equals(pair)) {
+                if (!current[0].equals(pair)) {
                     rebuild(build, cont);
-                    current.o = pair;
+                    current[0] = pair;
                 }
             });
 
