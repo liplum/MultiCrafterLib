@@ -60,17 +60,24 @@ public class MultiCrafter extends Block {
         output:{
           items:["mod-id-item/1","mod-id-item2/1"],
           fluids:["mod-id-liquid/10.5","mod-id-gas/10"]
+          heat: 10
         },
         craftTime: 120
       }
     ]
+     */
+    /**
+     * For Json and Javascript to configure
      */
     public Object recipes;
     /**
      * The resolved recipes.
      */
     @Nullable
-    public Seq<Recipe> resolvedRecipes;
+    public Seq<Recipe> resolvedRecipes = null;
+    public String menu = "transform";
+    @Nullable
+    public RecipeSelector selector = null;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
     public int[] fluidsOutputDirections = {-1};
@@ -141,6 +148,9 @@ public class MultiCrafter extends Block {
         }
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
             throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe!");
+        if (selector == null) {
+            selector = RecipeSelector.get(menu);
+        }
         decorateRecipes();
         setupBlockByRecipes();
         defaultRecipeIndex = Mathf.clamp(defaultRecipeIndex, 0, resolvedRecipes.size - 1);
@@ -374,13 +384,7 @@ public class MultiCrafter extends Block {
 
         @Override
         public void buildConfiguration(Table table) {
-            table.table(t -> {
-                for (int i = 0; i < resolvedRecipes.size; i++) {
-                    Recipe recipe = resolvedRecipes.get(i);
-                    int finalI = i;
-                    t.button("" + i, () -> configure(finalI)).width(120f);
-                }
-            });
+            selector.build(MultiCrafter.this, this, table);
         }
 
         public float getCurPowerStore() {
@@ -503,36 +507,39 @@ public class MultiCrafter extends Block {
     @Override
     public void setStats() {
         super.setStats();
-        stats.add(Stat.output, stat -> {
+        stats.add(Stat.output, this::buildStats);
+    }
+
+    public void buildStats(Table stat) {
+        stat.row();
+        for (Recipe recipe : resolvedRecipes) {
+            Table t = new Table();
+            t.background(Tex.whiteui);
+            t.setColor(Pal.darkestGray);
+            // Input
+            buildIOEntry(t, recipe, true);
+            // Time
+            Table time = new Table();
+            final float[] duration = {0f};
+            float visualCraftTime = recipe.craftTime;
+            time.update(() -> {
+                duration[0] += Time.delta;
+                if (duration[0] > visualCraftTime) {
+                    duration[0] = 0f;
+                }
+            });
+            time.add(new Bar(() -> String.format("%.2f", recipe.craftTime / 60f),
+                    () -> Pal.accent,
+                    () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
+                .width(250f).height(45f);
+            t.add(time).pad(12f);
+            // Output
+            buildIOEntry(t, recipe, false);
+            stat.add(t).pad(10f).grow();
             stat.row();
-            for (Recipe recipe : resolvedRecipes) {
-                stat.table(t -> {
-                    t.background(Tex.whiteui);
-                    t.setColor(Pal.darkestGray);
-                    buildIOEntry(t, recipe, true);
-                    // Time
-                    Table time = new Table();
-                    final float[] duration = {0f};
-                    float visualCraftTime = recipe.craftTime;
-                    time.update(() -> {
-                        duration[0] += Time.delta;
-                        if (duration[0] > visualCraftTime) {
-                            duration[0] = 0f;
-                        }
-                    });
-                    time.add(new Bar(() -> String.format("%.2f", recipe.craftTime / 60f),
-                            () -> Pal.accent,
-                            () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
-                        .width(250f).height(45f);
-                    t.add(time).pad(12f);
-                    // Output
-                    buildIOEntry(t, recipe, false);
-                }).pad(10f).grow();
-                stat.row();
-            }
-            stat.row();
-            stat.defaults().grow();
-        });
+        }
+        stat.row();
+        stat.defaults().grow();
     }
 
     protected void buildIOEntry(Table table, Recipe recipe, boolean isInput) {
