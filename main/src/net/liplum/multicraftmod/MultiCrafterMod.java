@@ -4,7 +4,9 @@ import mindustry.mod.Mod;
 
 public class MultiCrafterMod extends Mod {
     public static final boolean DebugMode = true;
+
     public MultiCrafterMod() {
+
     }
 
     @Override

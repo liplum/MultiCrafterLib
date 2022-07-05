@@ -8,7 +8,6 @@ pluginManagement {
 include(
     "main",
     "js",
-    "app",
     "lib",
+    "standalone"
 )
-include("app")

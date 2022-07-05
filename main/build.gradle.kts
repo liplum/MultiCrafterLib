@@ -30,10 +30,10 @@ mindustry {
         arc on "123fbf12b9"
     }
     client {
-        mindustry be latest
+        mindustry be "22771"
     }
     server {
-        mindustry be latest
+        mindustry be "22771"
     }
     mods {
         worksWith {

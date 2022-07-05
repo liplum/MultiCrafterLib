@@ -1,0 +1,7 @@
+displayName: "Test Injection"
+name: "inject"
+author: "[#42a5f5[]]Liplum[[]]"
+description: "Injected with MultiCrafter lib."
+version: 1.0
+minGameVersion: 136
+java: false
