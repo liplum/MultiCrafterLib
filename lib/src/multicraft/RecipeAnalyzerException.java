@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 public class RecipeAnalyzerException extends RuntimeException{
     public RecipeAnalyzerException() {

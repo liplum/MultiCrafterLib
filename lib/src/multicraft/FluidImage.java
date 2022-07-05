@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;

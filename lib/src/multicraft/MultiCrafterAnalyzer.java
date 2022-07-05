@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 import arc.struct.ObjectMap;
 import arc.struct.Seq;
@@ -12,8 +12,6 @@ import mindustry.type.ItemStack;
 import mindustry.type.Liquid;
 import mindustry.type.LiquidStack;
 import mindustry.world.Block;
-import net.liplum.multicraft.type.IOEntry;
-import net.liplum.multicraft.type.Recipe;
 
 import java.util.*;
 

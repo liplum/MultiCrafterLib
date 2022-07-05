@@ -4,7 +4,7 @@ the mod from this release because it will always be the latest release.
 
 ## How to install current release
 
-1. Download the JAR file, it should have the name *"MdtModTemplate.jar"*
+1. Download the JAR file, it should have the name *"MultiCrafter.jar"*
 2. Move it to *Mindustry*'s mods directory:
     - **Linux**: `$HOME/.local/share/Mindustry/mods/`
     - **MacOS**: `$HOME/Library/Application Support/Mindustry/mods/`
@@ -13,5 +13,5 @@ the mod from this release because it will always be the latest release.
 
 ## How to install a stable one
 
-Or you can search for the mod's name -- **"MdtModTemplate"** by the **"Mod Browser"** in game, but it may be an at most
+Or you can search for the mod's name -- **"Multi Crafter"** by the **"Mod Browser"** in game, but it may be an at most
 5-hour-antique one.

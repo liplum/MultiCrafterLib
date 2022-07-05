@@ -1,4 +1,4 @@
-package net.liplum.multicraft.ui;
+package multicraft;
 
 import java.util.HashMap;
 

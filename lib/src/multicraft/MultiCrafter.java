@@ -1,4 +1,4 @@
-package net.liplum.multicraft.type;
+package multicraft;
 
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
@@ -14,6 +14,8 @@ import arc.util.ArcRuntimeException;
 import arc.util.Eachable;
 import arc.util.Nullable;
 import arc.util.Time;
+import arc.util.io.Reads;
+import arc.util.io.Writes;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.entities.Effect;
@@ -38,9 +40,6 @@ import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
 import mindustry.world.meta.Stat;
-import net.liplum.multicraft.ConsumeFluidDynamic;
-import net.liplum.multicraft.FluidImage;
-import net.liplum.multicraft.MultiCrafterAnalyzer;
 
 import static mindustry.Vars.tilesize;
 
@@ -98,7 +97,6 @@ public class MultiCrafter extends Block {
     public Color heatColor = new Color(1f, 0.22f, 0.22f, 0.8f);
     public float powerCapacity = 0f;
 
-    public float visualMaxHeat = 0f;
     /**
      * For {@linkplain HeatConsumer},
      * it's used to display something of block or initialize the recipe index.
@@ -161,11 +159,21 @@ public class MultiCrafter extends Block {
         public float[] sideHeat = new float[4];
         /**
          * For {@linkplain HeatConsumer} and {@linkplain HeatBlock},
-         * only enabled when the multicrafter requires heat as input or can output heat
+         * only enabled when the multicrafter requires heat as input or can output heat.
+         * Serialized
          */
         public float heat = 0f;
+        /**
+         * Serialized
+         */
         public float craftingTime;
+        /**
+         * Serialized
+         */
         public float warmup;
+        /**
+         * Serialized
+         */
         public int curRecipeIndex = defaultRecipeIndex;
 
         public void setCurRecipeIndexFromRemote(int index) {
@@ -412,7 +420,24 @@ public class MultiCrafter extends Block {
             return super.sense(sensor);
         }
 
-        // TODO: Serialization
+        @Override
+        public void write(Writes write) {
+            super.write(write);
+            write.f(craftingTime);
+            write.f(warmup);
+            write.i(curRecipeIndex);
+            write.f(heat);
+        }
+
+        @Override
+        public void read(Reads read, byte revision) {
+            super.read(read, revision);
+            craftingTime = read.f();
+            warmup = read.f();
+            curRecipeIndex = Mathf.clamp(read.i(), 0, resolvedRecipes.size - 1);
+            heat = read.f();
+        }
+
         public float warmupTarget() {
             Recipe cur = getCurRecipe();
             // When As HeatConsumer
@@ -498,7 +523,7 @@ public class MultiCrafter extends Block {
                     time.add(new Bar(() -> String.format("%.2f", recipe.craftTime / 60f),
                             () -> Pal.accent,
                             () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
-                        .width(200f).height(45f);
+                        .width(250f).height(45f);
                     t.add(time).pad(12f);
                     // Output
                     buildIOEntry(t, recipe, false);
@@ -522,17 +547,18 @@ public class MultiCrafter extends Block {
                 .pad(2f);
             if (isInput) iconCell.left();
             else iconCell.right();
-            if (i != 0 && i % 3 == 0) {
+            if (i != 0 && i % 2 == 0) {
                 mat.row();
             }
             i++;
         }
+        i++;
         for (LiquidStack stack : entry.fluids) {
             Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
                 .pad(2f);
             if (isInput) iconCell.left();
             else iconCell.right();
-            if (i != 0 && i % 3 == 0) {
+            if (i != 0 && i % 2 == 0) {
                 mat.row();
             }
             i++;
@@ -560,7 +586,7 @@ public class MultiCrafter extends Block {
             else heat.right();
             t.add(heat).grow().row();
         }
-        Cell<Table> tCell = table.add(t).pad(12f).width(150f).fill();
+        Cell<Table> tCell = table.add(t).pad(12f).width(120f).fill();
     }
 
     @Override
@@ -570,7 +596,6 @@ public class MultiCrafter extends Block {
         if (isConsumeHeat || isOutputHeat) {
             addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
         }
-        // TODO: add heat bar
     }
 
     @Override
@@ -635,7 +660,6 @@ public class MultiCrafter extends Block {
         int maxItemAmount = 0;
         float maxFluidAmount = 0f;
         float maxPower = 0f;
-        float maxHeat = 0f;
         for (Recipe recipe : resolvedRecipes) {
             maxItemAmount = Math.max(recipe.maxItemAmount(), maxItemAmount);
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
@@ -647,9 +671,7 @@ public class MultiCrafter extends Block {
             isConsumeFluid |= recipe.isConsumeFluid();
             isConsumeHeat |= recipe.isConsumeHeat();
             isOutputHeat |= recipe.isOutputHeat();
-            maxHeat = Math.max(recipe.maxHeat(), maxHeat);
         }
-        if (visualMaxHeat <= 0f) visualMaxHeat = maxHeat;
         hasPower = maxPower > 0f;
         outputsPower = hasPower;
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);

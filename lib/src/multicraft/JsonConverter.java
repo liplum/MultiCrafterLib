@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 import arc.util.Nullable;
 import arc.util.serialization.JsonValue;

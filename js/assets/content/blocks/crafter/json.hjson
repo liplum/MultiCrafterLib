@@ -1,4 +1,4 @@
-type: net.liplum.multicraft.type.MultiCrafter
+type: multicraft.MultiCrafter
 size : 10
 requirements: [
   graphite/100

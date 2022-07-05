@@ -1,4 +1,4 @@
-package net.liplum.multicraft.type;
+package multicraft;
 
 public class Recipe {
     public IOEntry input;

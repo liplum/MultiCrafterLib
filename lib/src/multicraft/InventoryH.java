@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 import mindustry.type.LiquidStack;
 import mindustry.world.modules.LiquidModule;

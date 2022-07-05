@@ -1,4 +1,4 @@
-package net.liplum.multicraft.type;
+package multicraft;
 
 import arc.struct.ObjectSet;
 import arc.struct.Seq;

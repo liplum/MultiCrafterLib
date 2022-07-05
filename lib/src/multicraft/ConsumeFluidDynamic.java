@@ -1,4 +1,4 @@
-package net.liplum.multicraft;
+package multicraft;
 
 import arc.func.Func;
 import arc.scene.ui.layout.Table;
