@@ -135,7 +135,8 @@ You need to unzip this and get its content ...
 
 In this way, you have to write JavaScript to create your block.
 
-How you can create a block is basically the same as [the way to add a mod dependency](https://github.com/liplum/MultiCrafterLib#as-a-mod-dependency)
+How you can create a block is basically the same as
+<a href="#as-a-mod-dependency">the way to add a mod dependency</a>
 in JavaScript but without a declaration of mod dependency.
 
 
