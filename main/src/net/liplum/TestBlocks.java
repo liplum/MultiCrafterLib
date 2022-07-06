@@ -1,4 +1,4 @@
-package net.liplum.multicraftmod;
+package net.liplum;
 
 import arc.struct.Seq;
 import mindustry.content.Items;
