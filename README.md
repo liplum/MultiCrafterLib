@@ -119,7 +119,7 @@ mineCrafter.recipes = [{
 
 ### Class Files Injection
 
-<details open>
+<details>
 <summary>Click to Open</summary>
 
 You can download a zip filling with classes you need [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
@@ -144,7 +144,7 @@ in JavaScript but without a declaration of mod dependency.
 
 ### Jitpack Dependency
 
-<details open>
+<details>
 <summary>Click to Open</summary>
 
 You can click here [![](https://jitpack.io/v/liplum/MultiCrafterLib.svg)](https://jitpack.io/#liplum/MultiCrafterLib)
