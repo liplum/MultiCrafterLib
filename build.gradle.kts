@@ -47,7 +47,7 @@ tasks {
     }
     register("getReleaseHeader") {
         doLast {
-            println("::set-output name=header::${rootProject.name}v$version")
+            println("::set-output name=header::${rootProject.name} v$version on Mindustry v136")
             println("::set-output name=version::v$version")
         }
     }

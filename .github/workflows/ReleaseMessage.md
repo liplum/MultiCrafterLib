@@ -1,9 +1,4 @@
-Test msg
+## How to use MultiCrafter Lib
+Please check [this introduction](https://github.com/liplum/MultiCrafterLib/blob/master/README.md) to learn about how to use this library.
 
-## How to install current release
-1. Download the JAR file, it should have the name *"MultiCrafter.jar"*
-2. Move it to *Mindustry*'s mods directory:
-    - **Linux**: `$HOME/.local/share/Mindustry/mods/`
-    - **MacOS**: `$HOME/Library/Application Support/Mindustry/mods/`
-    - **Steam**: `steam/steamapps/common/Mindustry/mods/`
-    - **Windows**:`%AppData%/Mindustry/mods/`
+Also, you can learn about the syntax from [this tutorial](https://github.com/liplum/MultiCrafterLib/blob/master/Info/Tutorial.md). 

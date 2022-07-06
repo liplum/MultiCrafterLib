@@ -37,6 +37,9 @@ tasks.jar {
     from(project(":lib").buildDir.resolve("classes/java/main")){
         include("**/**")
     }
+    from(project(":lib").projectDir.resolve("assets")) {
+        include("**/**")
+    }
 }
 mindustryAssets {
     root at "$projectDir/assets"

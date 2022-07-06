@@ -59,6 +59,13 @@ jobs:
         run: |
           bash gradlew getReleaseHeader
 
+      - name: Delete and recreate tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete "$VERSION" --yes || true
+          git push origin ":$VERSION" || true
+
       - name: Upload development build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

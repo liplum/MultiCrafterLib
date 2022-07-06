@@ -425,14 +425,14 @@ public class MultiCrafterAnalyzer {
      * Only work on single threading.
      */
     public static void error(String content) {
-        Log.err("[" + curBlock + "](at " + index + ")\n" + content);
+        Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content);
     }
 
     /**
      * Only work on single threading.
      */
     public static void error(String content, Throwable e) {
-        Log.err("[" + curBlock + "](at " + index + ")\n" + content, e);
+        Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content, e);
     }
 
     public static String genName(Block meta) {
