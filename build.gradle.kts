@@ -32,15 +32,23 @@ allprojects {
         }
     }
 }
+plugins {
+    distribution
+}
 tasks {
-    register("test") {
-        group = "verification"
+    named<Zip>("distZip") {
+        dependsOn(":lib:classes")
+        from(project("lib").buildDir.resolve("classes/java/main")) {
+            include("**/**")
+        }
+        from(project("lib").projectDir.resolve("assets")) {
+            include("**/**")
+        }
+    }
+    register("getReleaseHeader") {
         doLast {
-            allprojects.forEach {
-                it.tasks.withType<Test>().forEach { test ->
-                    test.executeTests()
-                }
-            }
+            println("::set-output name=header::${rootProject.name}v$version")
+            println("::set-output name=version::v$version")
         }
     }
 }

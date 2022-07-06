@@ -23,12 +23,15 @@ jobs:
       - name: Build MultiCrafter
         run: |
           chmod +x gradlew
-          ./gradlew deploy
+          ./gradlew :main:deploy
+          ./gradlew distZip
 
       - uses: actions/upload-artifact@v2
         with:
           name: MultiCrafter
-          path: build/tmp/deploy/*.jar
+          path: |
+            main/build/tmp/deploy/*.jar
+            build/distributions/*.jar
 
   upload:
     needs: build
@@ -44,17 +47,14 @@ jobs:
           name: MultiCrafter
           path: out
 
-      - name: Delete and recreate tag
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Retrieve Meta
+        id: retrieveMeta
         run: |
-          gh release delete AUTOR --yes || true
-          git push origin :AUTOR || true
-      - name: Get current date
-        id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          bash gradlew getReleaseHeader
+
       - name: Upload development build
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TODAY: ${{ steps.date.outputs.date }}
-        run: gh release create AUTOR --title "Auto-release on $TODAY" --notes-file "$GITHUB_WORKSPACE/.github/workflows/EveryAutoCommitMessage.md" out/*.jar
+          HEADER: ${{ steps.retrieveMeta.outputs.header }}
+          VERSION: ${{ steps.retrieveMeta.outputs.version }}
+        run: gh release create "$VERSION" --title "$HEADER" --notes-file "$GITHUB_WORKSPACE/.github/workflows/ReleaseMessage.md" out/*.*

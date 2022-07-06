@@ -3,7 +3,7 @@ package net.liplum.multicraftmod;
 import mindustry.mod.Mod;
 
 public class MultiCrafterMod extends Mod {
-    public static final boolean DebugMode = true;
+    public static final boolean DebugMode = false;
 
     public MultiCrafterMod() {
 
