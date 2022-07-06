@@ -28,7 +28,7 @@ Please check [this tutorial](Info/Tutorial.md) to learn about the syntax.
 ### As a Mod Dependency
 
 <details open>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 Add a mod dependency in your `mod.[h]json` file
 
@@ -120,9 +120,9 @@ mineCrafter.recipes = [{
 ### Class Files Injection
 
 <details>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
-You can download a zip filling with classes you need [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
+You should download a zip filled with `.class` files [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
 As a convention, it should be named as `MultiCrafter-<version>.zip`.
 
 You need to unzip this and get its content ...
@@ -146,7 +146,7 @@ in JavaScript but without a declaration of mod dependency.
 ### Jitpack Dependency
 
 <details>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 You can click here [![](https://jitpack.io/v/liplum/MultiCrafterLib.svg)](https://jitpack.io/#liplum/MultiCrafterLib)
 to fetch the latest version of MultiCrafter Lib.
@@ -185,7 +185,7 @@ youCrafter.menu = "Transform"
 ### Transform
 
 <details open>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 ![Transform 1](GFX/menu/transform-1.png)
 ![Transform 2](GFX/menu/transform-2.png)
@@ -195,7 +195,7 @@ youCrafter.menu = "Transform"
 ### Simple
 
 <details>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 ![Simple](GFX/menu/simple.png)
 
@@ -204,7 +204,7 @@ youCrafter.menu = "Transform"
 ### Number
 
 <details>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 ![Number](GFX/menu/number.png)
 
@@ -213,7 +213,7 @@ youCrafter.menu = "Transform"
 ### Detailed
 
 <details>
-<summary>Click to Open</summary>
+<summary>Click to Expand</summary>
 
 ![Detailed 1](GFX/menu/detailed-1.png)
 ![Detailed 2](GFX/menu/detailed-2.png)
