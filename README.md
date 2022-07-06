@@ -139,7 +139,12 @@ How you can create a block is basically the same as
 <a href="#as-a-mod-dependency">the way to add a mod dependency</a>
 in JavaScript but without a declaration of mod dependency.
 
+E.g.:
 
+```javascript
+const multi = require("multi-crafter/lib")
+const mineCrafter = multi.MultiCrafter("mine-crafter")
+```
 
 </details>
 
@@ -158,12 +163,15 @@ allprojects {
     repositories { maven { url 'https://jitpack.io' } }
 }
 ``` 
+
 2. Add the dependency
+
 ```groovy
  dependencies {
-   implementation 'com.github.liplum:MultiCrafterLib:<version>'
- }
+    implementation 'com.github.liplum:MultiCrafterLib:<version>'
+}
 ```
+
 </details>
 
 ## Menu Styles

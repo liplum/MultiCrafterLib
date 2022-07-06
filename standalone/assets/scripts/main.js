@@ -1,4 +1,4 @@
-const multi = require("multicraft/lib")
+const multi = require("multi-crafter/lib")
 const c = multi.MultiCrafter("standalone")
 c.requirements = ItemStack.with(
     Items.graphite, 5,
