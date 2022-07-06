@@ -46,7 +46,7 @@ jobs:
 
       - uses: actions/download-artifact@v2
         with:
-          name: MultiCrafter
+          name: MultiCrafterMod
           path: out
 
       - uses: actions/download-artifact@v2
