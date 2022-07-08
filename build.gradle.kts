@@ -1,3 +1,7 @@
+plugins {
+    distribution
+    `maven-publish`
+}
 buildscript {
     repositories {
         mavenCentral()
@@ -9,7 +13,7 @@ buildscript {
 }
 allprojects {
     group = "net.liplum"
-    version = "1.0"
+    version = "1.1"
     buildscript {
         repositories {
             maven { url = uri("https://www.jitpack.io") }
@@ -32,9 +36,7 @@ allprojects {
         }
     }
 }
-plugins {
-    distribution
-}
+
 tasks {
     named<Zip>("distZip") {
         dependsOn(":lib:classes")
