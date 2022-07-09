@@ -1,10 +1,9 @@
 import io.github.liplum.mindustry.importMindustry
-import io.github.liplum.mindustry.mindustry
 
 plugins {
     java
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.0.12"
+    id("io.github.liplum.mgpp")
 }
 sourceSets {
     main {
@@ -20,12 +19,6 @@ sourceSets {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
-}
-mindustry {
-    dependency {
-        mindustry mirror "d7312445a1"
-        arc on "123fbf12b9"
-    }
 }
 dependencies {
     importMindustry()

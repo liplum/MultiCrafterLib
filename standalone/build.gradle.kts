@@ -5,7 +5,7 @@ import io.github.liplum.mindustry.mindustryAssets
 
 plugins {
     java
-    id("io.github.liplum.mgpp") version "1.0.12"
+    id("io.github.liplum.mgpp")
 }
 sourceSets {
     main {
@@ -18,20 +18,16 @@ sourceSets {
     }
 }
 
-version = "1.0"
-group = "net.liplum"
-
 mindustry {
-    client {
-        mindustry be "22771"
-    }
-    server {
-        mindustry be "22771"
-    }
     deploy {
         baseName = "TestInjection"
     }
 }
+
+mindustryAssets {
+    root at "$projectDir/assets"
+}
+
 tasks.jar {
     dependsOn(":lib:classes")
     from(project(":lib").buildDir.resolve("classes/java/main")){
@@ -40,7 +36,4 @@ tasks.jar {
     from(project(":lib").projectDir.resolve("assets")) {
         include("**/**")
     }
-}
-mindustryAssets {
-    root at "$projectDir/assets"
 }

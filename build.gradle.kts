@@ -1,6 +1,7 @@
 plugins {
     distribution
     `maven-publish`
+    id("io.github.liplum.mgpp") version "1.0.13"
 }
 buildscript {
     repositories {
@@ -36,7 +37,21 @@ allprojects {
         }
     }
 }
-
+mindustry {
+    dependency {
+        mindustry mirror "d7312445a1"
+        arc on "123fbf12b9"
+    }
+    client {
+        mindustry be "22771"
+    }
+    server {
+        mindustry be "22771"
+    }
+    deploy {
+        baseName = "TestInjection"
+    }
+}
 tasks {
     named<Zip>("distZip") {
         dependsOn(":lib:classes")

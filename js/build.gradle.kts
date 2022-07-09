@@ -1,6 +1,6 @@
 plugins {
     java
-    id("io.github.liplum.mgpp") version "1.0.12"
+    id("io.github.liplum.mgpp")
 }
 mindustryAssets {
     root at "$projectDir/assets"

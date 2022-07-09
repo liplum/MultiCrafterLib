@@ -4,7 +4,7 @@ import io.github.liplum.mindustry.*
 
 plugins {
     java
-    id("io.github.liplum.mgpp") version "1.0.12"
+    id("io.github.liplum.mgpp")
 }
 sourceSets {
     main {
@@ -22,16 +22,6 @@ java {
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 mindustry {
-    dependency {
-        mindustry mirror "d7312445a1"
-        arc on "123fbf12b9"
-    }
-    client {
-        mindustry be "22771"
-    }
-    server {
-        mindustry be "22771"
-    }
     mods {
         worksWith {
             add fromTask ":js:jar"

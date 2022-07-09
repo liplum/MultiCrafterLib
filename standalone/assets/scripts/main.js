@@ -1,3 +1,4 @@
+print(">>>>>MultiCrafter Standalone JavaScript loaded.")
 const multi = require("multi-crafter/lib")
 const c = multi.MultiCrafter("standalone")
 c.requirements = ItemStack.with(
@@ -40,5 +41,3 @@ c.recipes = [{
     },
     craftTime : 120.0
 }]
-
-print(">>>>>MultiCrafter Standalone JavaScript loaded.")
