@@ -57,7 +57,7 @@ jobs:
       - name: Retrieve Meta
         id: retrieveMeta
         run: |
-          bash gradlew getReleaseHeader
+          ./gradlew getReleaseHeader
 
       - name: Upload development build
         env:
