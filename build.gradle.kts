@@ -1,7 +1,7 @@
 plugins {
     distribution
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.1.4"
+    id("io.github.liplum.mgpp") version "1.1.7"
 }
 buildscript {
     repositories {

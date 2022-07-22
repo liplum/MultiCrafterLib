@@ -670,8 +670,8 @@ public class MultiCrafter extends Block {
         for (Recipe recipe : resolvedRecipes) {
             maxItemAmount = Math.max(recipe.maxItemAmount(), maxItemAmount);
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
-            hasItems |= !recipe.hasItem();
-            hasLiquids |= !recipe.hasFluid();
+            hasItems |= recipe.hasItem();
+            hasLiquids |= recipe.hasFluid();
             maxPower = Math.max(recipe.maxPower(), maxPower);
             isOutputItem |= recipe.isOutputItem();
             isConsumeItem |= recipe.isConsumeItem();

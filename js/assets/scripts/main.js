@@ -65,3 +65,6 @@ c.recipes = [{
 }]
 
 print(">>>>>MultiCrafter Test JavaScript loaded.")
+
+const inHjson = multi.MultiCrafter("in-hjson")
+setup(inHjson)
