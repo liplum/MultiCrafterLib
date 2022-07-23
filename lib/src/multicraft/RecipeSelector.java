@@ -25,7 +25,9 @@ public abstract class RecipeSelector {
 
     public static RecipeSelector get(@Nullable String name) {
         if (name == null) return Transform;
-        return all.getOrDefault(name.toLowerCase(), Transform);
+        RecipeSelector inMap = all.get(name.toLowerCase());
+        if (inMap == null) return Transform;
+        else return inMap;
     }
 
     public RecipeSelector(String name) {
