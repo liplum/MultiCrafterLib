@@ -10,10 +10,7 @@ import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.EnumSet;
 import arc.struct.Seq;
-import arc.util.ArcRuntimeException;
-import arc.util.Eachable;
-import arc.util.Nullable;
-import arc.util.Time;
+import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
@@ -135,6 +132,7 @@ public class MultiCrafter extends Block {
         saveConfig = true;
         ambientSoundVolume = 0.03f;
         config(Integer.class, MultiCrafterBuild::setCurRecipeIndexFromRemote);
+        Log.info("MultiCrafter["+this.name + "] loaded.");
     }
 
     @Override
@@ -217,7 +215,6 @@ public class MultiCrafter extends Block {
         public float edelta() {
             Recipe cur = getCurRecipe();
             if (cur.input.power > 0f) {
-
                 return this.efficiency *
                     Mathf.clamp(getCurPowerStore() / cur.input.power) *
                     this.delta();
@@ -236,13 +233,17 @@ public class MultiCrafter extends Block {
             }
             if (cur.isOutputHeat()) {
                 float heatOutput = cur.output.heat;
-                heat = Mathf.approachDelta(heat, heatOutput * efficiency, warmupRate * delta());
+                heat = Mathf.approachDelta(heat, heatOutput * efficiency, warmupRate * edelta());
             }
-            if (efficiency > 0 && getCurPowerStore() >= cur.input.power) {
+            if (efficiency > 0 && (!hasPower || getCurPowerStore() >= cur.input.power)) {
                 // if <= 0, instantly produced
                 craftingTime += craftTimeNeed > 0 ? edelta() : craftTimeNeed;
                 warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
-                setCurPowerStore((getCurPowerStore() + (cur.output.power - cur.input.power) * delta()));
+                if (hasPower) {
+                    float powerChange = (cur.output.power - cur.input.power) * delta();
+                    if (!Mathf.zero(powerChange))
+                        setCurPowerStore((getCurPowerStore() + powerChange));
+                }
 
                 //continuously output fluid based on efficiency
                 if (cur.isOutputFluid()) {
@@ -388,10 +389,12 @@ public class MultiCrafter extends Block {
         }
 
         public float getCurPowerStore() {
+            if (power == null) return 0f;
             return power.status * powerCapacity;
         }
 
         public void setCurPowerStore(float powerStore) {
+            if (power == null) return;
             power.status = Mathf.clamp(powerStore / powerCapacity);
         }
 

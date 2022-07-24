@@ -1,0 +1,25 @@
+type: multicraft.MultiCrafter
+size : 4
+category: crafting
+requirements: [
+  graphite/100
+]
+menu: Simple
+recipes : [{
+  input: ozone/1.5
+  output: {
+      items: [
+        coal/1
+        copper/1
+        lead/1
+        graphite/2
+      ]
+  }
+  craftTime : 250.0
+},{
+  input:{
+      items: lead/1
+  }
+  output: ozone/1.5
+  craftTime : 210.0
+}]
