@@ -501,7 +501,7 @@ public class MultiCrafterAnalyzer {
      * <ul>
      *     <li> "Icon.xxx" from {@link Icon}
      *     <li> "copper", "water", "router" or "mono"
-     * <ul/>
+     * </ul>
      */
     @Nullable
     public static Prov<TextureRegion> findIcon(String name) {
