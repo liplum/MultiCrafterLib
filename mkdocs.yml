@@ -36,6 +36,7 @@ nav:
       - Overview: index.md
       - Usage: usage.md
       - Customize: customize.md
+      - API: api.md
 
 markdown_extensions:
   - pymdownx.tabbed:

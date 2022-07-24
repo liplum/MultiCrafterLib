@@ -8,8 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: |
-      (startsWith(github.event.head_commit.message,'[document]') ||
-      endsWith(github.event.head_commit.message,'[document]')) &&
+      contains(github.event.head_commit.message,'[document]') &&
       github.repository == 'liplum/MultiCrafterLib'
     steps:
       - uses: actions/checkout@v2
