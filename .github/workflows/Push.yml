@@ -54,17 +54,30 @@ jobs:
           name: MultiCrafterLibDist
           path: out
 
-      - name: Retrieve Meta
+      - name: Retrieve meta
         id: retrieveMeta
         run: |
           chmod +x gradlew
           ./gradlew getReleaseHeader
+
+      - name: Check if tag exists
+        id: checkTag
+        env:
+          VERSION: ${{ steps.retrieveMeta.outputs.version }}
+        run: |
+          if GIT_DIR=/.git git show-ref --tags "refs/tags/$VERSION"
+          then
+              echo "::set-output name=foundTag:true"
+          else
+              echo "::set-output name=foundTag:false"
+          fi
 
       - name: Create release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEADER: ${{ steps.retrieveMeta.outputs.header }}
           VERSION: ${{ steps.retrieveMeta.outputs.version }}
+        if: ${{ steps.checkTag.outputs.foundTag == 'false' }}
         run: |
           gh release create "$VERSION" --title "$HEADER" --notes-file "$GITHUB_WORKSPACE/.github/workflows/ReleaseMessage.md" out/*
           gh release upload "$VERSION" out/* --clobber
@@ -73,7 +86,6 @@ jobs:
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          HEADER: ${{ steps.retrieveMeta.outputs.header }}
           VERSION: ${{ steps.retrieveMeta.outputs.version }}
         run: |
           gh release upload "$VERSION" out/* --clobber
