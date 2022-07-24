@@ -1,5 +1,6 @@
 package multicraft;
 
+import arc.graphics.g2d.TextureRegion;
 import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Log;
@@ -460,5 +461,9 @@ public class MultiCrafterAnalyzer {
             }
         }
         return null;
+    }
+    @Nullable
+    public static TextureRegion findTexture(String name){
+        return new TextureRegion();
     }
 }

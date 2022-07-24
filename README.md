@@ -177,6 +177,7 @@ allprojects {
 ## Menu Styles
 
 You can select which menu style detailed-described blow you want with a case-insensitive name.
+The default menu style is `Transform`.
 
 Json:
 
@@ -228,9 +229,14 @@ youCrafter.menu = "Transform"
 
 </details>
 
-## Author
 
-**Programmer**: Liplum
+## Awesome
+
+Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
+
+-[Java] [Omaloon](https://github.com/xStaBUx/Omaloon-mod-public) by `xStaBUx`
+
+-[Json] [Z.P.G.M._Mod](https://github.com/r-omnom/Z.P.G.M._Mod) by `r-omnom`
 
 ## Licence
 
