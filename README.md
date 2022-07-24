@@ -1,12 +1,13 @@
 <div align="center">
 
-# MultiCrafter Lib [![Discord](GFX/Discord.png)](https://discord.gg/PDwyxM3waw)
+# [MultiCrafter Lib](https://liplum.github.io/MultiCrafterLib/) [![Discord](GFX/Discord.png)](https://discord.gg/PDwyxM3waw)
 
 [![Discord](https://img.shields.io/discord/937228972041842718?color=%23529b69&label=Discord&logo=Discord&style=for-the-badge)](https://discord.gg/PDwyxM3waw)
 [![TotalDownloads](https://img.shields.io/github/downloads/liplum/MultiCrafterLib/total?color=674ea7&label=Download&logo=docusign&logoColor=white&style=for-the-badge)](https://github.com/liplum/MultiCrafterLib/releases)
 [![](https://jitpack.io/v/liplum/MultiCrafterLib.svg)](https://jitpack.io/#liplum/MultiCrafterLib)
 
 A Mindustry MultiCrafter lib-mod for Json and JavaScript mods.
+Please check the [instruction](https://liplum.github.io/MultiCrafterLib/).
 ___
 </div>
 
@@ -15,100 +16,7 @@ ___
 
 ## How to Use
 
-~~There are three ways to use this MultiCrafter library.
-Please check [this tutorial](Info/Tutorial.md) to learn about the syntax.~~
-
-### As a Mod Dependency
-
-<details open>
-<summary>Click to Expand</summary>
-
-Add a mod dependency in your `mod.[h]json` file
-
-```hjson
-dependencies:["multi-crafter"]
-```
-
-<details>
-<summary>Json Usage</summary>
-
-Create a normal block file, such as named `multi-function-crafter.hjson`, in the `content/blocks/crafter` folder, and
-set its type to `multicraft.MultiCrafter`
-
-```hjson
-type: multicraft.MultiCrafter
-```
-
-You can add recipes like this:
-
-```hjson
-recipes : [{
-  input: ozone/1.5
-  output: {
-      items : [
-        copper/1
-        graphite/2
-      ]
-      power : 2.5
-  }
-  craftTime : 250.0
-},{
-  input: {
-      items : [
-        cyber-io-ic/1 // You can add moded items or fluids
-        lead/1
-      ]
-  }
-  output: {
-      fluids: [
-        cyber-io-cyberion/1.2    
-      ]
-  }
-  craftTime : 210.0
-}]
-```
-
-</details>
-
-<details>
-<summary>JavaScript Usage</summary>
-
-Import `multi-crafter/lib.js` in your script, and create a new block with its class name, `MultiCrafter`.
-
-```javascript
-const multi = require("multi-crafter/lib")
-const mineCrafter = multi.MultiCrafter("mine-crafter")
-```
-
-You can create recipes like this:
-
-``` javascript
-mineCrafter.recipes = [{
-  input: "ozone/1.5"
-  output: {
-      items : [
-        "copper/1","graphite/2"
-      ],
-      power : 2.5
-  },
-  craftTime : 250.0
-},{
-  input: {
-      items : [
-        // You can add moded items or fluids
-        "cyber-io-ic/1","lead/1"
-      ]
-  },
-  output: {
-      fluids: ["cyber-io-cyberion/1.2"]
-  }
-  craftTime : 210.0
-}]
-```
-
-</details>
-
-</details>
+Please check the [instruction](https://liplum.github.io/MultiCrafterLib/) to learn MultiCrafter.
 
 ### Class Files Injection
 

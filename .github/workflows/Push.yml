@@ -65,7 +65,7 @@ jobs:
         env:
           VERSION: ${{ steps.retrieveMeta.outputs.version }}
         run: |
-          if GIT_DIR="$GITHUB_WORKSPACE" git show-ref --tags "refs/tags/$VERSION"
+          if GIT_DIR="$GITHUB_WORKSPACE/.git" git show-ref --tags "refs/tags/$VERSION"
           then
               echo "::set-output name=foundTag:true"
           else

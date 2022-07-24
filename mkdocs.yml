@@ -34,7 +34,8 @@ theme:
 nav:
   - Home:
       - Overview: index.md
-      - Usage: usage.md
+      - Recipe: recipe.md
+      - Customize: customize.md
 
 markdown_extensions:
   - pymdownx.tabbed:
