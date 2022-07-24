@@ -11,8 +11,7 @@ ___
 </div>
 
 ## Showcase
-
-![Statistics](GFX/Statistics.gif)
+<img alt="Statistics" src="GFX/Statistics.gif" width="65%" height="65%"/>
 
 ## How to Use
 
