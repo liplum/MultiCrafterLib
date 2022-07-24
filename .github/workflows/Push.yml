@@ -57,6 +57,7 @@ jobs:
       - name: Retrieve Meta
         id: retrieveMeta
         run: |
+          chmod +x gradlew
           ./gradlew getReleaseHeader
 
       - name: Upload development build
