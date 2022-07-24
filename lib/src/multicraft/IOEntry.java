@@ -1,7 +1,11 @@
 package multicraft;
 
+import arc.func.Prov;
+import arc.graphics.Color;
+import arc.graphics.g2d.TextureRegion;
 import arc.struct.ObjectSet;
 import arc.struct.Seq;
+import arc.util.Nullable;
 import mindustry.type.Item;
 import mindustry.type.ItemStack;
 import mindustry.type.Liquid;
@@ -12,6 +16,10 @@ public class IOEntry {
     public Seq<LiquidStack> fluids = new Seq<>(LiquidStack.class);
     public float power = 0f;
     public float heat = 0f;
+    @Nullable
+    public Prov<TextureRegion> icon;
+    @Nullable
+    public Color iconColor;
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
 

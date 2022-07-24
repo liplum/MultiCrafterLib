@@ -1,3 +1,5 @@
+import io.github.liplum.mindustry.version
+
 plugins {
     distribution
     `maven-publish`
@@ -52,6 +54,7 @@ mindustry {
 tasks {
     named<Zip>("distZip") {
         dependsOn(":lib:classes")
+        archiveVersion.set(mindustry.meta.version)
         from(project("lib").buildDir.resolve("classes/java/main")) {
             include("**/**")
         }

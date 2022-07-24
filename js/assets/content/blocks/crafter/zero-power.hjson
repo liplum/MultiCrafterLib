@@ -15,7 +15,8 @@ recipes : [{
         graphite/2
       ]
   }
-  craftTime : 250.0
+  craftTime : 250.0,
+  icon: mono
 },{
   input:{
       items: lead/1

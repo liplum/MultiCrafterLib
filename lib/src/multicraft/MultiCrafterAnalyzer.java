@@ -1,6 +1,10 @@
 package multicraft;
 
+import arc.Core;
+import arc.func.Prov;
+import arc.graphics.Color;
 import arc.graphics.g2d.TextureRegion;
+import arc.scene.style.TextureRegionDrawable;
 import arc.struct.ObjectMap;
 import arc.struct.Seq;
 import arc.util.Log;
@@ -8,12 +12,12 @@ import arc.util.Nullable;
 import arc.util.serialization.JsonValue;
 import mindustry.Vars;
 import mindustry.content.Liquids;
-import mindustry.type.Item;
-import mindustry.type.ItemStack;
-import mindustry.type.Liquid;
-import mindustry.type.LiquidStack;
+import mindustry.ctype.UnlockableContent;
+import mindustry.gen.Icon;
+import mindustry.type.*;
 import mindustry.world.Block;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public class MultiCrafterAnalyzer {
@@ -104,6 +108,12 @@ public class MultiCrafterAnalyzer {
             recipe.output = analyzeIOEntry("output", outputsRaw);
             Object craftTimeObj = recipeMap.get("craftTime");
             recipe.craftTime = analyzeFloat(craftTimeObj);
+            Object iconObj = recipeMap.get("icon");
+            if (iconObj instanceof String)
+                recipe.icon = findIcon((String) iconObj);
+            Object iconColorObj = recipeMap.get("iconColor");
+            if (iconColorObj instanceof String)
+                recipe.iconColor = Color.valueOf((String) iconColorObj);
             if (!recipe.isAnyEmpty()) to.add(recipe);
             else Log.warn("Recipe is empty, so skip it", recipe);
         } catch (Exception e) {
@@ -131,7 +141,9 @@ public class MultiCrafterAnalyzer {
                   items:[],
                   fluids:[],
                   power:0,
-                  heat:0
+                  heat:0,
+                  icon: Icon.power,
+                  iconColor: "#FFFFFF"
                 }
              */
             Map ioRawMap = (Map) ioEntry;
@@ -160,8 +172,14 @@ public class MultiCrafterAnalyzer {
             // power
             Object powerObj = ioRawMap.get("power");
             res.power = analyzeFloat(powerObj);
-            Object heatObj  = ioRawMap.get("heat");
+            Object heatObj = ioRawMap.get("heat");
             res.heat = analyzeFloat(heatObj);
+            Object iconObj = ioRawMap.get("icon");
+            if (iconObj instanceof String)
+                res.icon = findIcon((String) iconObj);
+            Object iconColorObj = ioRawMap.get("iconColor");
+            if (iconColorObj instanceof String)
+                res.iconColor = Color.valueOf((String) iconColorObj);
         } else if (ioEntry instanceof List) {
             /*
               input/output: []
@@ -443,27 +461,92 @@ public class MultiCrafterAnalyzer {
 
     @Nullable
     public static Item findItem(String id) {
-        Seq<Item> items = Vars.content.items();
-        for (Item item : items) {
-            if (id.equals(item.name)) { // prevent null pointer
-                return item;
-            }
-        }
+        for (Item item : Vars.content.items())
+            if (id.equals(item.name)) return item;// prevent null pointer
         return null;
     }
 
     @Nullable
     public static Liquid findFluid(String id) {
-        Seq<Liquid> fluids = Vars.content.liquids();
-        for (Liquid fluid : fluids) {
-            if (id.equals(fluid.name)) { // prevent null pointer
-                return fluid;
-            }
-        }
+        for (Liquid fluid : Vars.content.liquids())
+            if (id.equals(fluid.name)) return fluid;// prevent null pointer
         return null;
     }
+
     @Nullable
-    public static TextureRegion findTexture(String name){
-        return new TextureRegion();
+    public static Block findBlock(String id) {
+        for (Block block : Vars.content.blocks())
+            if (id.equals(block.name)) return block; // prevent null pointer
+        return null;
+    }
+
+    @Nullable
+    public static UnitType findUnit(String id) {
+        for (UnitType unit : Vars.content.units())
+            if (id.equals(unit.name)) return unit; // prevent null pointer
+        return null;
+    }
+
+    @Nullable
+    public static UnlockableContent findPayload(String id) {
+        UnitType unit = findUnit(id);
+        if (unit != null) return unit;
+        return findBlock(id);
+    }
+
+    private static final Prov<TextureRegion> NotFound = () -> Icon.cancel.getRegion();
+
+    /**
+     * Supported name pattern:
+     * <ul>
+     *     <li> "Icon.xxx" from {@link Icon}
+     *     <li> "copper", "water", "router" or "mono"
+     * <ul/>
+     */
+    @Nullable
+    public static Prov<TextureRegion> findIcon(String name) {
+        if (name.startsWith("Icon.") && name.length() > 5) {
+            try {
+                String fieldName = name.substring(5);
+                Field field = Icon.class.getField(fieldName.contains("-") ? kebab2camel(fieldName) : fieldName);
+                Object icon = field.get(null);
+                TextureRegion tr = ((TextureRegionDrawable) icon).getRegion();
+                return () -> tr;
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                error("Icon <" + name + "> not found, so use a cross instead.", e);
+                return NotFound;
+            }
+        } else {
+            Item item = findItem(name);
+            if (item != null) return () -> item.uiIcon;
+            Liquid fluid = findFluid(name);
+            if (fluid != null) return () -> fluid.uiIcon;
+            UnlockableContent payload = findPayload(name);
+            if (payload != null) return () -> payload.uiIcon;
+            TextureRegion tr = Core.atlas.find(name);
+            if (tr.found()) return () -> tr;
+        }
+        error("Texture <" + name + "> not found, so use a cross instead.");
+        return NotFound;
+    }
+
+    public static String kebab2camel(String kebab) {
+        StringBuilder sb = new StringBuilder();
+        boolean hyphen = false;
+        for (int i = 0; i < kebab.length(); i++) {
+            char c = kebab.charAt(i);
+            if (c == '-') {
+                hyphen = true;
+            } else {
+                if (hyphen) {
+                    sb.append(Character.toUpperCase(c));
+                    hyphen = false;
+                } else {
+                    if (i == 0) sb.append(Character.toLowerCase(c));
+                    else sb.append(c);
+                }
+            }
+        }
+        return sb.toString();
     }
 }

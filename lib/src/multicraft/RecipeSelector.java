@@ -37,6 +37,12 @@ public abstract class RecipeSelector {
     public abstract void build(MultiCrafter b, MultiCrafterBuild c, Table table);
 
     public static Image getDefaultIcon(MultiCrafter b, MultiCrafterBuild c, IOEntry entry) {
+        if (entry.icon != null) {
+            Image img = new Image(entry.icon.get());
+            if (entry.iconColor != null)
+                img.setColor(entry.iconColor);
+            return img;
+        }
         Seq<ItemStack> items = entry.items;
         Seq<LiquidStack> fluids = entry.fluids;
         boolean outputPower = entry.power > 0f;
@@ -72,7 +78,14 @@ public abstract class RecipeSelector {
                 Recipe recipe = b.resolvedRecipes.get(i);
                 int finalI = i;
                 ImageButton button = new ImageButton(Styles.clearTogglei);
-                Image img = getDefaultIcon(b, c, recipe.output);
+                Image img;
+                if (recipe.icon != null) {
+                    img = new Image(recipe.icon.get());
+                    if (recipe.iconColor != null)
+                        img.setColor(recipe.iconColor);
+                } else {
+                    img = getDefaultIcon(b, c, recipe.output);
+                }
                 button.replaceImage(img);
                 button.getImageCell().scaling(Scaling.fit).size(Vars.iconLarge);
                 button.changed(() -> c.configure(finalI));
@@ -95,6 +108,8 @@ public abstract class RecipeSelector {
                 int finalI = i;
                 TextButton button = Elem.newButton("" + i, Styles.togglet,
                     () -> c.configure(finalI));
+                if (recipe.iconColor != null)
+                    button.setColor(recipe.iconColor);
                 button.update(() -> button.setChecked(c.curRecipeIndex == finalI));
                 t.add(button).size(50f);
                 if (i != 0 && i % 3 == 0) {

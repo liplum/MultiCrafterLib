@@ -1,10 +1,18 @@
 package multicraft;
 
+import arc.func.Prov;
+import arc.graphics.Color;
+import arc.graphics.g2d.TextureRegion;
+import arc.util.Nullable;
+
 public class Recipe {
     public IOEntry input;
     public IOEntry output;
     public float craftTime = 0f;
-
+    @Nullable
+    public Prov<TextureRegion> icon;
+    @Nullable
+    public Color iconColor;
     public Recipe(IOEntry input, IOEntry output, float craftTime) {
         this.input = input;
         this.output = output;
