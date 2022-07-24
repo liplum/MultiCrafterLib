@@ -1,0 +1,49 @@
+site_name: MultiCrafter Lib
+repo_url: https://github.com/liplum/MultiCrafterLib
+repo_name: MultiCrafter
+theme:
+  name: material
+  #logo: icon.png
+  #favicon: favicon.png
+  icon:
+    repo: fontawesome/brands/github
+  shortcuts:
+    help: 191    # ?
+    next: 78     # n
+    previous: 66 # p
+    search: 83   # s
+  features:
+    - navigation.tabs
+    - content.tabs.link
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+#page tree
+nav:
+  - Home:
+      - Overview: index.md
+      - Usage: usage.md
+
+markdown_extensions:
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
+  - pymdownx.tilde
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - meta
+  - toc:
+      permalink: "#"

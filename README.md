@@ -1,28 +1,22 @@
 <div align="center">
 
-# MultiCrafter Lib [![Discord](GFX/Discord.png)](https://discord.gg/AStwRgYr66)
+# MultiCrafter Lib [![Discord](GFX/Discord.png)](https://discord.gg/PDwyxM3waw)
 
 [![Discord](https://img.shields.io/discord/937228972041842718?color=%23529b69&label=Discord&logo=Discord&style=for-the-badge)](https://discord.gg/PDwyxM3waw)
 [![TotalDownloads](https://img.shields.io/github/downloads/liplum/MultiCrafterLib/total?color=674ea7&label=Download&logo=docusign&logoColor=white&style=for-the-badge)](https://github.com/liplum/MultiCrafterLib/releases)
 [![](https://jitpack.io/v/liplum/MultiCrafterLib.svg)](https://jitpack.io/#liplum/MultiCrafterLib)
 
-A Mindustry mod providing MultiCrafter library for JavaScript mods.
+A Mindustry MultiCrafter lib-mod for Json and JavaScript mods.
 ___
 </div>
 
 ## Showcase
-<img alt="Statistics" src="GFX/Statistics.gif" width="45%" height="45%"/>
+<img alt="Statistics" src="GFX/Statistics.gif" width="460pt" height="640pt"/>
 
 ## How to Use
 
-There are three ways to use this MultiCrafter library.
-Please check [this tutorial](Info/Tutorial.md) to learn about the syntax.
-
-| Mod Type   | Json | JavaScript | Java | Note                           |
-|------------|------|------------|------|--------------------------------|
-| Dependency | ✔️   | ✔️         |      | Players need download this mod |
-| Injection  |      | ✔️         |      | Keep your mod standalone       |
-| Jitpack    |      |            | ✔️   | Full sources code support      |
+~~There are three ways to use this MultiCrafter library.
+Please check [this tutorial](Info/Tutorial.md) to learn about the syntax.~~
 
 ### As a Mod Dependency
 

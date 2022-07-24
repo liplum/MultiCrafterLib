@@ -2,7 +2,7 @@ name: Deploy MkDocs to gh-pages
 on:
   push:
     branches:
-      - master 
+      - master
       - main
 jobs:
   deploy:
@@ -10,7 +10,7 @@ jobs:
     if: |
       (startsWith(github.event.head_commit.message,'[document]') ||
       endsWith(github.event.head_commit.message,'[document]')) &&
-      github.repository == 'PlumyGame/mgpp'
+      github.repository == 'liplum/MultiCrafterLib'
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
