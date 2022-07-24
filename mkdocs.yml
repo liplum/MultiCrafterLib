@@ -3,8 +3,9 @@ repo_url: https://github.com/liplum/MultiCrafterLib
 repo_name: MultiCrafter
 theme:
   name: material
-  #logo: icon.png
-  #favicon: favicon.png
+  logo: icon.png
+  custom_dir: overrides
+  favicon: favicon.png
   icon:
     repo: fontawesome/brands/github
   shortcuts:
