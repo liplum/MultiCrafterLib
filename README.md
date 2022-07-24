@@ -75,62 +75,6 @@ allprojects {
 
 </details>
 
-## Menu Styles
-
-You can select which menu style detailed-described blow you want with a case-insensitive name.
-The default menu style is `Transform`.
-
-Json:
-
-```hjson
-"menu": "Transform"
-```
-
-JavaScript:
-
-```javascript
-youCrafter.menu = "Transform"
-```
-
-### Transform
-
-<details open>
-<summary>Click to Expand</summary>
-
-![Transform 1](GFX/menu/transform-1.png)
-![Transform 2](GFX/menu/transform-2.png)
-
-</details>
-
-### Simple
-
-<details>
-<summary>Click to Expand</summary>
-
-![Simple](GFX/menu/simple.png)
-
-</details>
-
-### Number
-
-<details>
-<summary>Click to Expand</summary>
-
-![Number](GFX/menu/number.png)
-
-</details>
-
-### Detailed
-
-<details>
-<summary>Click to Expand</summary>
-
-![Detailed 1](GFX/menu/detailed-1.png)
-![Detailed 2](GFX/menu/detailed-2.png)
-
-</details>
-
-
 ## Awesome
 
 Some mods using *MultiCrafter Lib* are listed here, you may learn from them.

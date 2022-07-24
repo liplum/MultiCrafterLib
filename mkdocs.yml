@@ -34,7 +34,7 @@ theme:
 nav:
   - Home:
       - Overview: index.md
-      - Recipe: recipe.md
+      - Usage: usage.md
       - Customize: customize.md
 
 markdown_extensions:
