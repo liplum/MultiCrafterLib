@@ -77,14 +77,14 @@ public class MultiCrafter extends Block {
     public RecipeSelector selector = null;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
-    public int[] fluidsOutputDirections = {-1};
+    public int[] fluidOutputDirections = {-1};
     public float updateEffectChance = 0.04f;
     public float warmupSpeed = 0.019f;
     /**
      * Whether stop production when the fluid is full.
      * Turn off this to ignore fluid output, for instance, the fluid is only by-product.
      */
-    public boolean stopProductionWhenFullFluid = true;
+    public boolean ignoreLiquidFullness = false;
     /**
      * If true, the crafter with multiple fluid outputs will dump excess,
      * when there's still space for at least one fluid type.
@@ -98,6 +98,9 @@ public class MultiCrafter extends Block {
     protected boolean isConsumePower = false;
     protected boolean isOutputHeat = false;
     protected boolean isConsumeHeat = false;
+    /**
+     * What color of heat for recipe selector.
+     */
     public Color heatColor = new Color(1f, 0.22f, 0.22f, 0.8f);
     public float powerCapacity = 0f;
 
@@ -282,7 +285,7 @@ public class MultiCrafter extends Block {
             }
 
             if (hasLiquids) {
-                if (cur.isOutputFluid() && stopProductionWhenFullFluid) {
+                if (cur.isOutputFluid() && !ignoreLiquidFullness) {
                     boolean allFull = true;
                     for (LiquidStack output : cur.output.fluids) {
                         if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
@@ -331,7 +334,7 @@ public class MultiCrafter extends Block {
             if (cur.isOutputFluid()) {
                 Seq<LiquidStack> fluids = cur.output.fluids;
                 for (int i = 0; i < fluids.size; i++) {
-                    int dir = fluidsOutputDirections.length > i ? fluidsOutputDirections[i] : -1;
+                    int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
 
                     dumpLiquid(fluids.get(i).liquid, 2f, dir);
                 }
@@ -644,7 +647,7 @@ public class MultiCrafter extends Block {
         Recipe firstRecipe = resolvedRecipes.get(defaultRecipeIndex);
         Seq<LiquidStack> fluids = firstRecipe.output.fluids;
         for (int i = 0; i < fluids.size; i++) {
-            int dir = fluidsOutputDirections.length > i ? fluidsOutputDirections[i] : -1;
+            int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
 
             if (dir != -1) {
                 Draw.rect(
