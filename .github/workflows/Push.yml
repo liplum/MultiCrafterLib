@@ -65,7 +65,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HEADER: ${{ steps.retrieveMeta.outputs.header }}
           VERSION: ${{ steps.retrieveMeta.outputs.version }}
-        if: ${{ steps.checkTag.outputs.foundTag == 'false' }}
         run: |
           gh release create "$VERSION" --title "$HEADER" --notes-file "$GITHUB_WORKSPACE/.github/workflows/ReleaseMessage.md" out/*
           gh release upload "$VERSION" out/* --clobber
