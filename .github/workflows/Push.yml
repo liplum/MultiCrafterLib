@@ -33,7 +33,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: MultiCrafterLibDist
-          path: build/temp/distInjection/*.zip
+          path: build/tmp/distInjection/*.zip
 
   upload:
     needs: build

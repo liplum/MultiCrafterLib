@@ -16,7 +16,7 @@ ___
 Please check the [instruction](https://liplum.github.io/MultiCrafterLib/) to learn MultiCrafter.
 
 ## Showcase
-<img alt="Statistics" src="GFX/Statistics.gif" width="460pt" height="640pt"/>
+![Statistics](GFX/Statistics.gif)
 
 ## Awesome
 
