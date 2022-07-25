@@ -11,14 +11,12 @@ c.category = Category.crafting
 c.recipes = [{
     input:{
         items : [
-        "cyber-io-ic/1",
-        "titanium/1"
+          "titanium/1"
         ],
         power : 2
     },
     output:{
         items : "graphite/1",
-        fluids : "cyber-io-cyberion/1.2"
     },
     craftTime : 240.0
 },{

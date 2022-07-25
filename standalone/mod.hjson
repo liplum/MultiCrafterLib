@@ -1,7 +1,8 @@
-displayName: "Test Injection"
-name: "inject"
+displayName: "Test Standalone"
+name: "standalone"
 author: "[#42a5f5[]]Liplum[[]]"
-description: "Injected with MultiCrafter lib."
+description: "A standalone without MultiCrafter lib."
 version: 1.0
 minGameVersion: 136
 java: false
+main: MultiCrafterAdapter

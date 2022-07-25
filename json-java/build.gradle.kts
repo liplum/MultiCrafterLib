@@ -16,19 +16,19 @@ sourceSets {
         resources.srcDir("resources")
     }
 }
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
 mindustry {
-    mods {
-        worksWith {
-            add fromTask ":js:jar"
-        }
-    }
-    deploy {
-        baseName = "MultiCrafterLib"
-    }
+    meta = ModMeta(
+        name = "java-with-json",
+        main = "WithJsonMod",
+        minGameVersion = "136",
+        version = "0.1",
+        java = false,
+    )
 }
 mindustryAssets {
     root at "$projectDir/assets"

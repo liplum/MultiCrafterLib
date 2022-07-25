@@ -16,6 +16,7 @@ sourceSets {
         resources.srcDir("resources")
     }
 }
+
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -27,7 +28,7 @@ mindustry {
         }
     }
     deploy {
-        baseName = "MultiCrafterLib"
+        baseName = "JsInject"
     }
 }
 mindustryAssets {

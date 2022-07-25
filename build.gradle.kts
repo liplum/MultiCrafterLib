@@ -1,7 +1,4 @@
-import io.github.liplum.mindustry.version
-
 plugins {
-    distribution
     `maven-publish`
     id("io.github.liplum.mgpp") version "1.1.7"
 }
@@ -16,7 +13,7 @@ buildscript {
 }
 allprojects {
     group = "net.liplum"
-    version = "1.1"
+    version = "1.2"
     buildscript {
         repositories {
             maven { url = uri("https://www.jitpack.io") }
@@ -51,22 +48,20 @@ mindustry {
         mindustry official "v136.1"
     }
 }
-tasks {
-    named<Zip>("distZip") {
-        dependsOn(":lib:classes")
-        archiveVersion.set(mindustry.meta.version)
-        archiveClassifier.set("injection")
-        from(project("lib").buildDir.resolve("classes/java/main")) {
-            include("**/**")
-        }
-        from(project("lib").projectDir.resolve("assets")) {
-            include("**/**")
-        }
-    }
-    register("getReleaseHeader") {
-        doLast {
-            println("::set-output name=header::${rootProject.name} v$version on Mindustry v136")
-            println("::set-output name=version::v$version")
-        }
+
+tasks.register<net.liplum.DistributeInjection>("distInjection") {
+    group = "build"
+    dependsOn(":injection:deploy")
+    jar.from(tasks.getByPath(":injection:deploy"))
+    name.set("MultiCrafter-injection.zip")
+    excludeFiles.add(File("icon.png"))
+    excludeFiles.add(File("mod.hjson"))
+    excludeFolders.add(File("META-INF"))
+}
+
+tasks.register("getReleaseHeader") {
+    doLast {
+        println("::set-output name=header::${rootProject.name} v$version on Mindustry v136")
+        println("::set-output name=version::v$version")
     }
 }

@@ -8,6 +8,8 @@ pluginManagement {
 include(
     "main",
     "js",
+    "json-java",
+    "injection",
     "lib",
     "standalone"
 )

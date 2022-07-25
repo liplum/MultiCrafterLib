@@ -102,19 +102,19 @@
     You can add recipes like this:
     ```javascript
     mineCrafter.recipes= [
-    {
+    { 
       input: "ozone/1.5",
       output: {
-          items: ["copper/1","graphite/2"]
-          power: 2.5
+        items: ["copper/1","graphite/2"]
+        power: 2.5
       },
       craftTime: 250.0
     },{
       input: {
-          items: ["cyber-io-ic/1", "lead"]
+        items: ["cyber-io-ic/1", "lead"]
       },
       output: {
-          fluids: ["cyber-io-cyberion/1.2"]
+        fluids: ["cyber-io-cyberion/1.2"]
       },
       craftTime: 210.0
     }]
@@ -205,15 +205,15 @@ With this style, its power is unlimited.
 
     ```hjson
     input: {
-        items: copper/10
-        heat: 5
+      items: copper/10
+      heat: 5
     }
     output: {
-        items: moded-item/1
-        fluids: [
-            water/1.5, ozone/3
-        ]
-        power: 1.5
+      items: moded-item/1
+      fluids: [
+        water/1.5, ozone/3
+      ]
+      power: 1.5
     }
     ```
 
@@ -221,15 +221,15 @@ With this style, its power is unlimited.
 
     ```json
     "input": {
-        "items": "copper/10",
-        "heat": 5
+      "items": "copper/10",
+      "heat": 5
     }
     "output": {
-        "items": "moded-item/1",
-        "fluids": [
-            "water/1.5", "ozone/3"
-        ],
-        "power": 1.5
+      "items": "moded-item/1",
+      "fluids": [
+        "water/1.5", "ozone/3"
+      ],
+      "power": 1.5
     }
     ```
 
@@ -237,15 +237,15 @@ With this style, its power is unlimited.
 
     ```javascript
     input: {
-        items: "copper/10",
-        heat: 5
+      items: "copper/10",
+      heat: 5
     },
     output: {
-        items: "moded-item/1",
-        fluids: [
-            "water/1.5", "ozone/3"
-        ],
-        power: 1.5
+      items: "moded-item/1",
+      fluids: [
+        "water/1.5", "ozone/3"
+      ],
+      power: 1.5
     }
     ```
 

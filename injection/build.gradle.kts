@@ -1,6 +1,7 @@
 @file:Suppress("SpellCheckingInspection")
 
-import io.github.liplum.mindustry.*
+import io.github.liplum.mindustry.importMindustry
+import io.github.liplum.mindustry.mindustryAssets
 
 plugins {
     java
@@ -9,29 +10,22 @@ plugins {
 sourceSets {
     main {
         java.srcDirs("src")
-        resources.srcDir("resources")
     }
     test {
         java.srcDir("test")
-        resources.srcDir("resources")
     }
 }
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
-mindustry {
-    mods {
-        worksWith {
-            add fromTask ":js:jar"
-        }
-    }
-    deploy {
-        baseName = "MultiCrafterLib"
-    }
-}
 mindustryAssets {
     root at "$projectDir/assets"
+}
+tasks.jar{
+    from(projectDir.resolve("assets")){
+        include("scripts/lib.js")
+    }
 }
 dependencies {
     implementation(project(":lib"))

@@ -1,0 +1,58 @@
+type: multicraft.MultiCrafter
+size : 3
+requirements: [
+  graphite/100
+  surge-alloy/50
+  phase-fabric/70
+]
+category: crafting
+recipes :
+[
+{
+  input: ozone/1.5
+  output:{
+      items : [
+        coal/1
+        copper/1
+        lead/1
+        graphite/2
+      ]
+      power : 2,
+      icon: alphaaaa,
+      iconColor: "F30000"
+  }
+  craftTime : 250.0
+}
+{
+   input:{
+       items : [
+         coal/1
+         copper/1
+         lead/1
+         graphite/2
+       ]
+       fluids:[
+         ozone/1.5
+         water/10.0
+       ]
+       power : 2
+       heat: 3,
+       icon: Icon.lock-open
+   }
+   output:{
+       items : [
+         coal/1
+         copper/1
+         lead/1
+         graphite/2
+       ]
+       fluids:[
+         ozone/1.5
+         water/10.0
+       ]
+       power : 2
+       heat: 5
+   }
+   craftTime : 1260.0
+}
+]

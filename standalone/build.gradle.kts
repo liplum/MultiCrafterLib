@@ -29,11 +29,7 @@ mindustryAssets {
 }
 
 tasks.jar {
-    dependsOn(":lib:classes")
-    from(project(":lib").buildDir.resolve("classes/java/main")){
-        include("**/**")
-    }
-    from(project(":lib").projectDir.resolve("assets")) {
+    from(projectDir.resolve("injection")) {
         include("**/**")
     }
 }

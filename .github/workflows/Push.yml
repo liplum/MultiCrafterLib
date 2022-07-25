@@ -24,7 +24,7 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew :main:deploy
-          ./gradlew distZip
+          ./gradlew distInjection
 
       - uses: actions/upload-artifact@v2
         with:
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: MultiCrafterLibDist
-          path: build/distributions/*.zip
+          path: build/temp/distInjection/*.zip
 
   upload:
     needs: build
