@@ -26,7 +26,7 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 -[Json] [Z.P.G.M._Mod](https://github.com/r-omnom/Z.P.G.M._Mod) by `r-omnom`
 
-Make a pull request for us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
+Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
 

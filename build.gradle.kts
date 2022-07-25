@@ -53,7 +53,7 @@ tasks.register<net.liplum.DistributeInjection>("distInjection") {
     group = "build"
     dependsOn(":injection:deploy")
     jar.from(tasks.getByPath(":injection:deploy"))
-    name.set("MultiCrafter-injection.zip")
+    name.set("MultiCrafterLib-injection.zip")
     excludeFiles.add(File("icon.png"))
     excludeFiles.add(File("mod.hjson"))
     excludeFolders.add(File("META-INF"))

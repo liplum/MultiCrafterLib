@@ -39,6 +39,7 @@ jobs:
     needs: build
     if: ${{ contains(github.event.head_commit.message,'[release]') }}
     runs-on: ubuntu-latest
+    allow-failure: true
     env:
       GH_REPO: ${{ github.repository }}
     steps:
@@ -59,18 +60,6 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew getReleaseHeader
-
-      - name: Check if tag exists
-        id: checkTag
-        env:
-          VERSION: ${{ steps.retrieveMeta.outputs.version }}
-        run: |
-          if GIT_DIR="$GITHUB_WORKSPACE/.git" git show-ref --tags "refs/tags/$VERSION"
-          then
-              echo "::set-output name=foundTag:true"
-          else
-              echo "::set-output name=foundTag:false"
-          fi
 
       - name: Create release
         env:
