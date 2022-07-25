@@ -39,10 +39,35 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
     You should download a zip, named `MultiCrafter-injection.zip`, in [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
 
-    You need to unzip it and then ...
-    
-    If you don't want to publish your mod on GitHub or have yet to do that,
-    you need to unzip it and copy the its contents into the root directory of your mod.
+    Then unzip it and copy the its contents into the root directory of your mod.
+
+    <details>
+    <summary>Unzip will add essential files into the root directory.</summary>
+    Suppose your have this structure:
+
+    - Before unzip:
+    ```
+    your-mod/
+    ├─ content/
+    |  ├─ crafter.hjson
+    ├─ mod.hjson
+    ├─ icon.png
+    ```
+
+    - After unzip:
+    ```
+    your-mod/
+    ├─ multicrafter
+    ├─ scripts/
+    |  ├─ multi-crafter/
+    |  |  ├─ lib.js
+    ├─ content/
+    |  ├─ crafter.hjson
+    ├─ mod.hjson
+    ├─ icon.png
+    ├─ classes.dex
+    ```
+    </details>
     
     Then add this line in your `mod.[h]json`:
     
@@ -61,8 +86,10 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     
     Then you can create your own multicrafter after checking this instrution.    
     
+    - Root Directory: A folder which always has `icon.png` and `mod.[h]json`.
+
     <details open>
-    Root Directory: A folder which always has `icon.png` and `mod.[h]json`.
+    <summary>You may face a warning about overwriting.</summary>
 
     Your device may warn you that would overwrite something.
     It's always safe, but you'd better to back-up your mod workspace before copy.
