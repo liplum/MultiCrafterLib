@@ -17,31 +17,34 @@
     You can add recipes like this:
     
     ```hjson
-    recipes: [
+    recipes: 
+    [
     {
       input: ozone/1.5
       output: {
-          items: [
-            copper/1
-            graphite/2
-          ]
-          power: 2.5
+        items: [
+          copper/1
+          graphite/2
+        ]
+        power: 2.5
       }
       craftTime: 250.0
-    },{
+    }
+    {
       input: {
-          items: [
-            cyber-io-ic/1 // You can add moded items or fluids
-            lead          // the same as "lead/1"
-          ]
+        items: [
+          cyber-io-ic/1 // You can add moded items or fluids
+          lead          // the same as "lead/1"
+        ]
       }
       output: {
-          fluids: [
-            cyber-io-cyberion/1.2    
-          ]
+        fluids: [
+          cyber-io-cyberion/1.2    
+        ]
       }
       craftTime: 210.0
-    }]
+    }
+    ]
     ```
 
 === "Json"
@@ -61,22 +64,32 @@
     
     ```json
     "recipes": [
-    {
-      "input": "ozone/1.5",
-      "output": {
-          "items": ["copper/1","graphite/2"]
+      {
+        "input": "ozone/1.5",
+        "output": {
+          "items": [
+            "copper/1",
+            "graphite/2"
+          ],
           "power": 2.5
+        },
+        "craftTime": 250.0
       },
-      "craftTime": 250.0
-    },{
-      "input": {
-          "items": ["cyber-io-ic/1", "lead"]
-      },
-      "output": {
-          "fluids": ["cyber-io-cyberion/1.2"]
-      },
-      "craftTime": 210.0
-    }]
+      {
+        "input": {
+          "items": [
+            "cyber-io-ic/1",
+            "lead"
+          ]
+        },
+        "output": {
+          "fluids": [
+            "cyber-io-cyberion/1.2"
+          ]
+        },
+        "craftTime": 210.0
+      }
+    ]
     ```
 
 === "JavaScript"
@@ -249,7 +262,6 @@ For example:
 === "mono"
 
     ![Mono](../assets/customizedIcon-mono.png){ loading=lazy width="250" }
-
 
 You can set it to a `String`, it will find the proper icon automatically.
 

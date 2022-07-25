@@ -2,8 +2,6 @@
 
 ## Install
 
-Repo: [liplum/MultiCrafterLib](https://github.com/liplum/MultiCrafterLib).
-
 You can get the latest release on [here](https://github.com/liplum/MultiCrafterLib/releases/latest)
 or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
@@ -36,7 +34,7 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 === "Injection"
 
     You should download a zip filled with `.class` files [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
-    As a convention, it should be named as `MultiCrafter-<version>.zip`.
+    As a convention, it should be named as `MultiCrafter-<version>-injection.zip`.
     
     You need to unzip this and get its content ...
 

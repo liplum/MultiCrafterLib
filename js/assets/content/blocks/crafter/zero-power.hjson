@@ -5,7 +5,8 @@ requirements: [
   graphite/100
 ]
 menu: Simple
-recipes : [{
+recipes : [
+{
   input: ozone/1.5
   output: {
       items: [
@@ -17,10 +18,12 @@ recipes : [{
   }
   craftTime : 250.0,
   icon: mono
-},{
-  input:{
+}
+{
+  input: {
       items: lead/1
   }
   output: ozone/1.5
   craftTime : 210.0
-}]
+}
+]

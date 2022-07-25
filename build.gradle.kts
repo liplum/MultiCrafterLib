@@ -55,6 +55,7 @@ tasks {
     named<Zip>("distZip") {
         dependsOn(":lib:classes")
         archiveVersion.set(mindustry.meta.version)
+        archiveClassifier.set("injection")
         from(project("lib").buildDir.resolve("classes/java/main")) {
             include("**/**")
         }

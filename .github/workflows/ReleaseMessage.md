@@ -3,4 +3,4 @@ Please check [this introduction](https://github.com/liplum/MultiCrafterLib/blob/
 
 Also, you can learn about the syntax from [this tutorial](https://github.com/liplum/MultiCrafterLib/blob/master/Info/Tutorial.md).
 
-The mod file is `MultiCrafterLib-<version>.jar`.
+The mod file is `MultiCrafterLib-<version>-injection.jar`.

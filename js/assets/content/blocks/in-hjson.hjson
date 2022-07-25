@@ -5,55 +5,60 @@ hasLiquids: true
 category: crafting
 menu: transform
 
-recipes: [{
-input: water/0.05
-power: 0.3
-craftTime: 30
-output: {
-items: [
-ice-cube/1
-]
+recipes: [
+{
+    input: water/0.05
+    power: 0.3
+    craftTime: 30
+    output: {
+        items: [
+            ice-cube/1
+        ]
+    }
 }
-}, {
-input: cryofluid/0.05
-power: 0.5
-craftTime: 40
-output: {
-items: [
-cryocube/1
-]
+{
+    input: cryofluid/0.05
+    power: 0.5
+    craftTime: 40
+    output: {
+        items: [
+            cryocube/1
+        ]
+    }
 }
-}, {
-input: slag/0.05
-power: 0.7
-craftTime: 50
-output: {
-items: [
-stone/1
-]
+{
+    input: slag/0.05
+    power: 0.7
+    craftTime: 50
+    output: {
+        items: [
+            stone/1
+        ]
+    }
 }
-}, {
-input: oil/0.15
-power: 0.5
-craftTime: 60
-output: {
-items: [
-coal/2
-]
-power: 2.5
+{
+    input: oil/0.15
+    power: 0.5
+    craftTime: 60
+    output: {
+        items: [
+            coal/2
+        ]
+        power: 2.5
+    }
 }
-}, {
-input: surge-mass/0.05
-power: 1.5
-craftTime: 80
-output: {
-items: [
-surge-stone/1
-]
-power: 4
+{
+    input: surge-mass/0.05
+    power: 1.5
+    craftTime: 80
+    output: {
+        items: [
+            surge-stone/1
+        ]
+        power: 4
+    }
 }
-}]
-
+]
 size: 2
 liquidCapacity: 10
 itemCapacity: 10

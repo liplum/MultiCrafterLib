@@ -1,0 +1,37 @@
+{
+  "type": "multicraft.MultiCrafter",
+  "size": 5,
+  "requirements": [
+    "graphite/100",
+    "surge-alloy/50",
+    "phase-fabric/70"
+  ],
+  "category": "crafting",
+  "recipes": [
+    {
+      "input": "ozone/1.5",
+      "output": {
+        "items": [
+          "copper/1",
+          "graphite/2"
+        ],
+        "power": 2.5
+      },
+      "craftTime": 250.0
+    },
+    {
+      "input": {
+        "items": [
+          "cyber-io-ic/1",
+          "lead"
+        ]
+      },
+      "output": {
+        "fluids": [
+          "cyber-io-cyberion/1.2"
+        ]
+      },
+      "craftTime": 210.0
+    }
+  ]
+}
