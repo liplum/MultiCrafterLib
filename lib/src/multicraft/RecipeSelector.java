@@ -50,11 +50,11 @@ public abstract class RecipeSelector {
         if (items.size > 0) {
             return new Image((items.size == 1 ? items.get(0) : items.get(
                 Mathf.randomSeed(c.tile().pos() + items.size + fluids.size,
-                    0, items.size - 1))).item.fullIcon);
+                    0, items.size - 1))).item.uiIcon);
         } else if (fluids.size > 0) {
             return new Image((fluids.size == 1 ? fluids.get(0) : fluids.get(
                 Mathf.randomSeed(c.tile().pos() + items.size + fluids.size,
-                    0, fluids.size - 1))).liquid.fullIcon);
+                    0, fluids.size - 1))).liquid.uiIcon);
         } else if (outputPower) {
             Image img = new Image(Icon.power.getRegion());
             img.setColor(Pal.power);

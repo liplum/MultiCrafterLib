@@ -148,7 +148,7 @@ public class MultiCrafter extends Block {
             resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
         }
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
-            throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need.");
+            throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need. Check your `last_log.txt` to obtain more information.");
         if (selector == null) {
             selector = RecipeSelector.get(menu);
         }
