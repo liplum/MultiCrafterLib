@@ -1,0 +1,43 @@
+type: multicraft.MultiCrafter
+size : 2
+requirements: [
+  graphite/100
+]
+category: crafting
+recipes :
+[
+{
+  input: copper
+  output: copper
+  icon: alphaaaa,
+  iconColor: "F30000"
+}
+{
+   input: lead
+   output: lead
+   icon: Icon.lock,
+}
+{
+   input: phase-fabric
+   output: phase-fabric
+   icon: poly,
+}
+]
+
+drawer: {
+    type: multicraft.DrawRecipe
+    drawers: [
+        {
+            type: DrawRegion
+            suffix: -1
+        }
+        {
+            type: DrawRegion
+            suffix: -2
+        }
+        {
+            type: DrawRegion
+            suffix: -3
+        }
+    ]
+}
