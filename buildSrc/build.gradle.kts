@@ -25,4 +25,5 @@ sourceSets {
 dependencies {
     implementation(gradleApi())
     implementation("net.lingala.zip4j:zip4j:2.11.1")
+    implementation("com.google.code.gson:gson:2.9.0")
 }
