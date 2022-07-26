@@ -1,6 +1,5 @@
 package multicraft;
 
-import arc.math.Mathf;
 import arc.scene.ui.Image;
 import arc.scene.ui.ImageButton;
 import arc.scene.ui.TextButton;
@@ -48,13 +47,9 @@ public abstract class RecipeSelector {
         boolean outputPower = entry.power > 0f;
         boolean outputHeat = entry.heat > 0f;
         if (items.size > 0) {
-            return new Image((items.size == 1 ? items.get(0) : items.get(
-                Mathf.randomSeed(c.tile().pos() + items.size + fluids.size,
-                    0, items.size - 1))).item.uiIcon);
+            return new Image(items.get(0).item.uiIcon);
         } else if (fluids.size > 0) {
-            return new Image((fluids.size == 1 ? fluids.get(0) : fluids.get(
-                Mathf.randomSeed(c.tile().pos() + items.size + fluids.size,
-                    0, fluids.size - 1))).liquid.uiIcon);
+            return new Image(fluids.get(0).liquid.uiIcon);
         } else if (outputPower) {
             Image img = new Image(Icon.power.getRegion());
             img.setColor(Pal.power);

@@ -253,15 +253,70 @@ With this style, its power is unlimited.
 
 You can customize which icon is used for your recipe selector menu.
 
+If you don't set a dedicated icon, it will find the first one from the recipe.
+
 For example:
 
 === "alphaaaa"
 
     ![Alphaaaa](../assets/customizedIcon-alphaaaa.png){ loading=lazy }
 
+    <details>
+    <summary>
+    icon: alphaaaa
+    <br>
+    iconColor: F30000
+    </summary>
+    ```
+    recipes: [
+    {
+      input: ozone/1.5
+      output:{
+        items : copper
+        power : 2
+        icon: alphaaaa
+        iconColor: "F30000"
+      }
+      craftTime : 250.0
+    }
+    {
+      input: copper
+      output:{
+        items : coal
+        icon: lock-open
+      }
+      craftTime : 120
+    }
+    ]
+    ```
+    </details>
+
 === "mono"
 
     ![Mono](../assets/customizedIcon-mono.png){ loading=lazy width="250" }
+
+    <details>
+    <summary>
+    icon: mono
+    </summary>
+    ```
+    menu: Simple
+    recipes:
+    [
+    {
+      input: copper
+      output: coal
+      craftTime : 60
+      icon: mono
+    }
+    {
+      input: copper
+      output: ozone
+      craftTime : 60
+    }
+    ]
+    ```
+    </details>
 
 You can set it to a `String`, it will find the proper icon automatically.
 

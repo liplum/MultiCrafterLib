@@ -77,6 +77,7 @@ public class MultiCrafter extends Block {
     public RecipeSelector selector = null;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
+    public Effect changeRecipeEffect = Fx.none;
     public int[] fluidOutputDirections = {-1};
     public float updateEffectChance = 0.04f;
     public float warmupSpeed = 0.019f;
@@ -135,7 +136,7 @@ public class MultiCrafter extends Block {
         saveConfig = true;
         ambientSoundVolume = 0.03f;
         config(Integer.class, MultiCrafterBuild::setCurRecipeIndexFromRemote);
-        Log.info("MultiCrafter["+this.name + "] loaded.");
+        Log.info("MultiCrafter[" + this.name + "] loaded.");
     }
 
     @Override
@@ -188,9 +189,13 @@ public class MultiCrafter extends Block {
         public int curRecipeIndex = defaultRecipeIndex;
 
         public void setCurRecipeIndexFromRemote(int index) {
-            curRecipeIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
-            if (!Vars.headless) {
-                rebuildHoveredInfoIfNeed();
+            int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
+            if (newIndex != curRecipeIndex) {
+                curRecipeIndex = newIndex;
+                changeRecipeEffect.at(this);
+                if (!Vars.headless) {
+                    rebuildHoveredInfoIfNeed();
+                }
             }
         }
 

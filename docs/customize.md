@@ -81,6 +81,14 @@ The default menu style is `Transform`.
 
 It looks like a `DrawMulti`, but the drawer will be changed once another recipe is selected.
 
+
+|     Field     |    Type     | Default |                           Note                            |
+|:-------------:|:-----------:|:-------:|:---------------------------------------------------------:|
+|    drawers    | DrawBlock[] |   {}    |                        all drawers                        | 
+| defaultDrawer |     int     |    0    | the default drawer index in `drawers` for icon generation |
+
+![DrawRecipe example](../assets/draw-recipes.gif){ loading=lazy width="280" }
+
 === "Hjson"
 
     ```
@@ -88,8 +96,16 @@ It looks like a `DrawMulti`, but the drawer will be changed once another recipe 
       type: multicraft.DrawRecipe
       drawers: [
         {
-          type: DrawRegion
-          suffix: -recipe1
+        type: DrawMulti
+        drawers: [
+          {
+              type: DrawRegion
+              suffix: -1
+          }
+          {
+              type: DrawArcSmelt
+          }
+        ]
         }
         {
           type: DrawRegion
@@ -97,9 +113,10 @@ It looks like a `DrawMulti`, but the drawer will be changed once another recipe 
         }
         {
           type: DrawRegion
-          suffix: -top
+          suffix: -3
         }
-      ]}
+      ]
+    }
     ```
 
 === "Json"
@@ -109,23 +126,25 @@ It looks like a `DrawMulti`, but the drawer will be changed once another recipe 
       "type": "multicraft.DrawRecipe"
       "drawers": [
         {
-          "type": "DrawRegion"
-          "suffix": "-recipe1"
+        "type": "DrawMulti"
+        "drawers": [
+          {
+              "type": "DrawRegion"
+              "suffix": "-1"
+          }
+          {
+              "type": "DrawArcSmelt"
+          }
+        ]
         }
         {
           "type": "DrawRegion"
-          "suffix": "-2"
+          "suffix":"-2"
         }
         {
           "type": "DrawRegion"
-          "suffix": "-top"
+          "suffix": "-3"
         }
-      ]}
+      ]
+    }
     ```
-
-|     Field     |    Type     | Default |                           Note                            |
-|:-------------:|:-----------:|:-------:|:---------------------------------------------------------:|
-|    drawers    | DrawBlock[] |   {}    |                        all drawers                        | 
-| defaultDrawer |     int     |    0    | the default drawer index in `drawers` for icon generation |
-
-![DrawRecipe example](../assets/draw-recipe.png){ loading=lazy width="280" }

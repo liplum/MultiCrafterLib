@@ -3,41 +3,51 @@ size : 2
 requirements: [
   graphite/100
 ]
+menu: Simple
 category: crafting
+changeRecipeEffect: placeBlock
 recipes :
 [
 {
   input: copper
   output: copper
-  icon: alphaaaa,
-  iconColor: "F30000"
+  icon: alphaaaa
+  iconColor: F30000
 }
 {
    input: lead
    output: lead
-   icon: Icon.lock,
+   icon: Icon.lock
 }
 {
    input: phase-fabric
    output: phase-fabric
-   icon: poly,
+   icon: poly
 }
 ]
 
 drawer: {
-    type: multicraft.DrawRecipe
+  type: multicraft.DrawRecipe
+  drawers: [
+    {
+    type: DrawMulti
     drawers: [
-        {
-            type: DrawRegion
-            suffix: -1
-        }
-        {
-            type: DrawRegion
-            suffix: -2
-        }
-        {
-            type: DrawRegion
-            suffix: -3
-        }
+      {
+          type: DrawRegion
+          suffix: -1
+      }
+      {
+          type: DrawArcSmelt
+      }
     ]
+    }
+    {
+      type: DrawRegion
+      suffix: -2
+    }
+    {
+      type: DrawRegion
+      suffix: -3
+    }
+  ]
 }
