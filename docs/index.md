@@ -37,8 +37,10 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
     **For a Json or JavaScript mod.**
 
+    ##### Step 1
     You should download a zip, named `MultiCrafter-injection.zip`, in [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
 
+    ##### Step 2
     Then unzip it and copy the its contents into the root directory of your mod.
 
     <details>
@@ -69,8 +71,8 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     ```
     </details>
     
+    ##### Step 3
     Then add this line in your `mod.[h]json`:
-    
 
     === "mod.json"
     
