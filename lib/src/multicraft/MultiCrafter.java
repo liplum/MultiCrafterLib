@@ -37,6 +37,7 @@ import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
 import mindustry.world.meta.Stat;
+import mindustry.world.meta.StatUnit;
 
 import static mindustry.Vars.tilesize;
 
@@ -124,6 +125,10 @@ public class MultiCrafter extends Block {
      * For {@linkplain HeatBlock}
      */
     public float warmupRate = 0.15f;
+    /**
+     * Whether to show name tooltip in {@link MultiCrafterBuild#buildStats(Table)}
+     */
+    protected boolean showNameTooltip = false;
 
     public MultiCrafter(String name) {
         super(name);
@@ -518,7 +523,11 @@ public class MultiCrafter extends Block {
     @Override
     public void setStats() {
         super.setStats();
-        stats.add(Stat.output, this::buildStats);
+        stats.add(Stat.output, t -> {
+            showNameTooltip = true;
+            buildStats(t);
+            showNameTooltip = false;
+        });
     }
 
     public void buildStats(Table stat) {
@@ -539,11 +548,19 @@ public class MultiCrafter extends Block {
                     duration[0] = 0f;
                 }
             });
-            time.add(new Bar(() -> String.format("%.2f", recipe.craftTime / 60f),
+            String craftTime = recipe.craftTime == 0 ? "0" : String.format("%.2f", recipe.craftTime / 60f);
+            Cell<Bar> barCell = time.add(new Bar(() -> craftTime,
                     () -> Pal.accent,
                     () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
-                .width(250f).height(45f);
-            t.add(time).pad(12f);
+                .height(45f);
+            if (Vars.mobile)
+                barCell.width(220f);
+            else
+                barCell.width(250f);
+            Cell<Table> timeCell = t.add(time).pad(12f);
+            if (showNameTooltip) {
+                timeCell.tooltip(craftTime + " " + StatUnit.seconds.localized());
+            }
             // Output
             buildIOEntry(t, recipe, false);
             stat.add(t).pad(10f).grow();
@@ -563,6 +580,8 @@ public class MultiCrafter extends Block {
         for (ItemStack stack : entry.items) {
             Cell<ItemImage> iconCell = mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
                 .pad(2f);
+            if (showNameTooltip)
+                iconCell.tooltip(stack.item.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
             if (i != 0 && i % 2 == 0) {
@@ -574,6 +593,8 @@ public class MultiCrafter extends Block {
         for (LiquidStack stack : entry.fluids) {
             Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
                 .pad(2f);
+            if (showNameTooltip)
+                iconCell.tooltip(stack.liquid.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
             if (i != 0 && i % 2 == 0) {
@@ -593,7 +614,10 @@ public class MultiCrafter extends Block {
             power.image(Icon.power).color(Pal.power);
             if (isInput) power.left();
             else power.right();
-            t.add(power).grow().row();
+            Cell<Table> powerCell = t.add(power).grow();
+            if (showNameTooltip)
+                powerCell.tooltip("@bar.power");
+            t.row();
         }
         //Heat
         if (entry.heat > 0f) {
@@ -602,9 +626,16 @@ public class MultiCrafter extends Block {
             heat.image(Icon.terrain).color(entry.heat > 0f ? heatColor : Pal.gray);
             if (isInput) heat.left();
             else heat.right();
-            t.add(heat).grow().row();
+            Cell<Table> heatCell = t.add(heat).grow();
+            if (showNameTooltip)
+                heatCell.tooltip("@bar.heat");
+            t.row();
         }
-        Cell<Table> tCell = table.add(t).pad(12f).width(120f).fill();
+        Cell<Table> tCell = table.add(t).pad(12f).fill();
+        /*if(Vars.mobile)
+            tCell.width(100f);
+        else*/
+        tCell.width(120f);
     }
 
     @Override

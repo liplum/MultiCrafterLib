@@ -47,6 +47,9 @@ mindustry {
     server {
         mindustry official "v136.1"
     }
+    run {
+        clearOtherMods
+    }
 }
 
 tasks.register<net.liplum.DistributeInjection>("distInjection") {
@@ -66,14 +69,14 @@ tasks.register("retrieveMeta") {
         try {
             val releases = java.net.URL("https://api.github.com/repos/liplum/MultiCrafterLib/releases").readText()
             val gson = com.google.gson.Gson()
-            val info = gson.fromJson<List<Map<String,Any>>>(releases, List::class.java)
+            val info = gson.fromJson<List<Map<String, Any>>>(releases, List::class.java)
             val tagExisted = info.any {
                 it["tag_name"] == "v$version"
             }
             println("::set-output name=tag_exist::$tagExisted")
         } catch (e: Exception) {
             println("::set-output name=tag_exist::false")
-            logger.warn("Can't fetch the releases",e)
+            logger.warn("Can't fetch the releases", e)
         }
     }
 }

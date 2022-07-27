@@ -4,7 +4,7 @@ category: crafting
 requirements: [
   graphite/100
 ]
-menu: Simple
+menu: Detailed
 recipes : [
 {
   input: ozone/1.5
@@ -15,6 +15,7 @@ recipes : [
         lead/1
         graphite/2
       ]
+      icon: poly
   }
   craftTime : 250.0,
   icon: mono
