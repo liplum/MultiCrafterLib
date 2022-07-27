@@ -6,6 +6,7 @@ import arc.graphics.g2d.TextureRegion;
 import arc.math.Interp;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
+import arc.scene.ui.Label;
 import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.EnumSet;
@@ -198,6 +199,7 @@ public class MultiCrafter extends Block {
             if (newIndex != curRecipeIndex) {
                 curRecipeIndex = newIndex;
                 changeRecipeEffect.at(this);
+                craftingTime = 0f;
                 if (!Vars.headless) {
                     rebuildHoveredInfoIfNeed();
                 }
@@ -559,7 +561,7 @@ public class MultiCrafter extends Block {
                 barCell.width(250f);
             Cell<Table> timeCell = t.add(time).pad(12f);
             if (showNameTooltip) {
-                timeCell.tooltip(craftTime + " " + StatUnit.seconds.localized());
+                timeCell.tooltip(Stat.productionTime.localized() + ": " + craftTime + " " + StatUnit.seconds.localized());
             }
             // Output
             buildIOEntry(t, recipe, false);
@@ -610,25 +612,26 @@ public class MultiCrafter extends Block {
         // Power
         if (entry.power > 0f) {
             Table power = new Table();
-            power.add((isInput ? "-" : "+") + (int) (entry.power * 60f));
             power.image(Icon.power).color(Pal.power);
+            Cell<Label> textCell = power.add((isInput ? "-" : "+") + (int) (entry.power * 60f));
+            if (isInput) textCell.color(Pal.remove);
+            else textCell.color(Pal.powerLight);
             if (isInput) power.left();
             else power.right();
             Cell<Table> powerCell = t.add(power).grow();
             if (showNameTooltip)
-                powerCell.tooltip("@bar.power");
+                powerCell.tooltip(entry.power + " " + StatUnit.powerSecond.localized());
             t.row();
         }
         //Heat
         if (entry.heat > 0f) {
             Table heat = new Table();
-            heat.add(isInput ? "-" : "+").color(Pal.accent).pad(6f);
-            heat.image(Icon.terrain).color(entry.heat > 0f ? heatColor : Pal.gray);
+            heat.image(Icon.terrain).color(heatColor);
             if (isInput) heat.left();
             else heat.right();
             Cell<Table> heatCell = t.add(heat).grow();
             if (showNameTooltip)
-                heatCell.tooltip("@bar.heat");
+                heatCell.tooltip(entry.heat + " " + StatUnit.heatUnits.localized());
             t.row();
         }
         Cell<Table> tCell = table.add(t).pad(12f).fill();
