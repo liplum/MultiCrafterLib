@@ -10,12 +10,19 @@ import mindustry.type.LiquidStack;
 import mindustry.ui.Styles;
 
 public class FluidImage extends Stack {
+    /**
+     * No amount text
+     * @param region the fluid icon
+     */
+    public FluidImage(TextureRegion region) {
 
-    public FluidImage(TextureRegion region, float amount) {
-        this(region, amount, 1f);
+        add(new Table(o -> {
+            o.left();
+            o.add(new Image(region)).size(32f);
+        }));
     }
 
-    public FluidImage(TextureRegion region, float amount, float multiplier) {
+    public FluidImage(TextureRegion region, float amount) {
 
         add(new Table(o -> {
             o.left();
@@ -26,9 +33,9 @@ public class FluidImage extends Stack {
             add(new Table(t -> {
                 t.left().bottom();
                 t.add(amount >= 1000 ?
-                                UI.formatAmount((long) (amount * multiplier)) :
-                        Mathf.round(amount * multiplier) + "").fontScale(0.9f)
-                        .style(Styles.outlineLabel);
+                        UI.formatAmount((long) amount) :
+                        Mathf.round(amount) + "").fontScale(0.9f)
+                    .style(Styles.outlineLabel);
                 t.pack();
             }));
         }
@@ -36,9 +43,5 @@ public class FluidImage extends Stack {
 
     public FluidImage(LiquidStack stack) {
         this(stack.liquid.uiIcon, stack.amount);
-    }
-
-    public FluidImage(LiquidStack stack, float multiplier) {
-        this(stack.liquid.uiIcon, stack.amount, multiplier);
     }
 }

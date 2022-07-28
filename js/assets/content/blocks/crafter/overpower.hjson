@@ -33,4 +33,16 @@ recipes :
   icon: Icon.right
   iconColor: ABCDEF
 }
+{
+  input: {
+    fluids: ozone
+    power: 2.5
+  }
+  output:{
+    fluids: neoplasm
+    power: 5
+  }
+  icon: neoplasm
+  iconColor: FF00FF
+}
 ]

@@ -198,7 +198,7 @@ public class MultiCrafter extends Block {
             int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
             if (newIndex != curRecipeIndex) {
                 curRecipeIndex = newIndex;
-                changeRecipeEffect.at(this);
+                createChangeRecipeEffect();
                 craftingTime = 0f;
                 if (!Vars.headless) {
                     rebuildHoveredInfoIfNeed();
@@ -252,7 +252,9 @@ public class MultiCrafter extends Block {
             }
             if (efficiency > 0 && (!hasPower || getCurPowerStore() >= cur.input.power)) {
                 // if <= 0, instantly produced
-                craftingTime += craftTimeNeed > 0 ? edelta() : craftTimeNeed;
+                if (craftingTime > 0f) {
+                    craftingTime += edelta();
+                }
                 warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
                 if (hasPower) {
                     float powerChange = (cur.output.power - cur.input.power) * delta();
@@ -441,6 +443,7 @@ public class MultiCrafter extends Block {
         @Override
         public double sense(LAccess sensor) {
             if (sensor == LAccess.progress) return progress();
+            if (sensor == LAccess.heat) return warmup();
             //attempt to prevent wild total fluid fluctuation, at least for crafter
             //if(sensor == LAccess.totalLiquids && outputLiquid != null) return liquids.get(outputLiquid.liquid);
             return super.sense(sensor);
@@ -524,6 +527,28 @@ public class MultiCrafter extends Block {
                 // Maybe null pointer or cast exception
             }
         }
+
+        /**
+         * @return whether FX is consumed by any special effect
+         */
+        public boolean createChangeRecipeEffect() {
+            if (changeRecipeEffect == Fx.placeBlock) {
+                Fx.placeBlock.at(x, y, block.size);
+                return true;
+            } else if (changeRecipeEffect == Fx.coreBuildBlock) {
+                Fx.coreBuildBlock.at(x, y, 0f, block);
+                return true;
+            } else if (changeRecipeEffect == Fx.upgradeCore) {
+                Fx.coreBuildBlock.at(x, y, 0f, block);
+                return true;
+            } else if (changeRecipeEffect == Fx.upgradeCoreBloom) {
+                Fx.upgradeCoreBloom.at(x, y, block.size);
+                return true;
+            } else {
+                changeRecipeEffect.at(x, y, 0, this);
+                return false;
+            }
+        }
     }
 
     @Override
@@ -597,7 +622,7 @@ public class MultiCrafter extends Block {
         }
         i++;
         for (LiquidStack stack : entry.fluids) {
-            Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount, 60f))
+            Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount * 60f))
                 .pad(2f);
             if (showNameTooltip)
                 iconCell.tooltip(stack.liquid.localizedName);
@@ -742,20 +767,15 @@ public class MultiCrafter extends Block {
 
     protected void setupConsumers() {
         if (isConsumeItem) {
-            consume(new ConsumeItemDynamic( // items seq is already shrunk, it's safe to access
+            consume(new ConsumeItemDynamic(
+                // items seq is already shrunk, it's safe to access
                 (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items)
             );
         }
         if (isConsumeFluid) {
-            ConsumeFluidDynamic.Pair pair = new ConsumeFluidDynamic.Pair();
-            pair.displayMultiplier = 60f;
             consume(new ConsumeFluidDynamic(
-                (MultiCrafterBuild b) -> {
-                    Recipe cur = b.getCurRecipe();
-                    pair.fluids = cur.input.fluids.items;
-                    pair.displayMultiplier = cur.craftTime;
-                    return pair;
-                }
+                // fluids seq is already shrunk, it's safe to access
+                (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
             ));
         }
         if (hasPower) {
