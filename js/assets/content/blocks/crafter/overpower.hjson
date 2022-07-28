@@ -1,0 +1,36 @@
+type: multicraft.MultiCrafter
+size : 2
+requirements: [
+  graphite/100
+]
+menu: Simple
+category: crafting
+changeRecipeEffect: placeBlock
+recipes :
+[
+{
+  input: {
+    items: copper
+    power: 2.5
+  }
+  output: {
+    items: lead
+    power: 5
+  }
+  icon: alphaaaa
+  iconColor: ABCDEF
+}
+{
+  input: {
+    items: copper
+    power: 2.5
+  }
+  output: {
+    items: lead
+    power: 5
+  }
+  craftTime: 60
+  icon: Icon.right
+  iconColor: ABCDEF
+}
+]

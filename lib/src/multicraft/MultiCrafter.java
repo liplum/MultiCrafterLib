@@ -277,8 +277,12 @@ public class MultiCrafter extends Block {
                 warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
             }
 
-            if (craftingTime >= craftTimeNeed) {
-                craft();
+            if (craftTimeNeed <= 0f) {
+                if (efficiency > 0f)
+                    craft();
+            } else {
+                if (craftingTime >= craftTimeNeed)
+                    craft();
             }
 
             dumpOutputs();
