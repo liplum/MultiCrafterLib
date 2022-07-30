@@ -100,7 +100,8 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     ├─ icon.png
     ```
     
-    If you're using `ZArchiver` app, you could multi-select the each file and zip them into one.
+    If you're using `ZArchiver` app, you could multi-select the each file inside your mod folder 
+    and zip them all into one.
     </details>
 
     ##### Step 3
