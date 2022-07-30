@@ -44,7 +44,11 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     Then unzip it and copy the its contents into the root directory of your mod.
 
     <details>
-    <summary>Unzip will add essential files into the root directory.</summary>
+    <summary>
+    Unzip will add essential files into the root directory.
+    <br>
+    Please pay attention to your structure and avoid secondary directory in your mod zip.
+    </summary>
     Suppose your have this structure:
 
     - Before unzip:
@@ -59,7 +63,7 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     - After unzip:
     ```
     your-mod/
-    ├─ multicrafter
+    ├─ multicrafter/
     ├─ scripts/
     |  ├─ multi-crafter/
     |  |  ├─ lib.js
@@ -69,8 +73,36 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     ├─ icon.png
     ├─ classes.dex
     ```
-    </details>
+
+    MultiCrafter injection doesn't work when you zip your mod folder in a wrong way 
+    where have created a secondary directory.
+
+    Suppose you had a mod zip, named `your-mod.zip`.
     
+    - This will work.
+    In your-mod.zip, there are...
+    ```
+    multicrafter/
+    scripts/
+    content/
+    mod.hjson
+    icon.png
+    ```
+
+    - But this will not.
+    In your-mod.zip, there are...
+    ```
+    your-mod/
+    ├─ multicrafter/
+    ├─ scripts/
+    ├─ content/
+    ├─ mod.hjson
+    ├─ icon.png
+    ```
+    
+    If you're using `ZArchiver` app, you could multi-select the each file and zip them into one.
+    </details>
+
     ##### Step 3
     Then add this line in your `mod.[h]json`:
 
