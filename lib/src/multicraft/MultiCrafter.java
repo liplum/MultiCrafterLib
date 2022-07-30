@@ -168,7 +168,7 @@ public class MultiCrafter extends Block {
     }
 
     @Nullable
-    public static Table hoveredInfo;
+    protected static Table hoveredInfo;
 
     public class MultiCrafterBuild extends Building implements HeatBlock, HeatConsumer {
         /**
@@ -201,7 +201,7 @@ public class MultiCrafter extends Block {
                 createChangeRecipeEffect();
                 craftingTime = 0f;
                 if (!Vars.headless) {
-                    rebuildHoveredInfoIfNeed();
+                    rebuildHoveredInfo();
                 }
             }
         }
@@ -516,7 +516,7 @@ public class MultiCrafter extends Block {
             hoveredInfo = table;
         }
 
-        public void rebuildHoveredInfoIfNeed() {
+        public void rebuildHoveredInfo() {
             try {
                 Table info = hoveredInfo;
                 if (info != null) {
