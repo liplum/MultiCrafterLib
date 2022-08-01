@@ -130,6 +130,26 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     It's always safe, but you'd better to back-up your mod workspace before copy.
     </details>
 
+    ### For GitHub
+    If you've uploaded your mod onto GitHub, please be careful about your mod type.
+
+    Because, a non-Java mod is always downloaded as zip with a secondary directory ingame,
+    which doesn't work like what's mentioned above.
+
+    you have to add this line in your `mod.[h]json`:
+
+    === "mod.json"
+    
+        ```json
+        "java": "true"
+        ```
+    
+    === "mod.hjson"
+    
+        ```hjson
+        java: true
+        ```
+
     ### Upgrade MultiCrafter Lib
     With Injection, you have to upgrade `MultiCrafter Lib` manually.
 
