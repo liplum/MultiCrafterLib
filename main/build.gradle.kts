@@ -24,8 +24,8 @@ mindustry {
     mods {
         worksWith {
             add fromTask ":js:jar"
-            add local "$buildDir/sapphirium-erekir.zip"
-            add local "$buildDir/units-mod.zip"
+            // add local "$buildDir/sapphirium-erekir.zip"
+            // add local "$buildDir/units-mod.zip"
         }
     }
     deploy {

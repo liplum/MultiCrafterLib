@@ -192,14 +192,15 @@ If so, every element will be treated as an item or fluid.
 The `input` or `output` can be an `Object`.
 With this style, its power is unlimited.
 
-| Key       | Type                           | Note                                          |
-|-----------|--------------------------------|-----------------------------------------------|
-| items     | String or List                 |                                               |
-| fluids    | String or List                 |                                               |
-| power     | number &#124  unit: power/tick | how much power for input/output, 0 as default |
-| heat      | number                         | how much heat for input/output, 0 as default  |
-| icon      | String                         | such as `Icon.lock-open`. see [icon](#icon)   |
-| iconColor | String                         | a hex color for icon                          |
+| Key         | Type                           | Optional | Note                                          |
+|-------------|--------------------------------|:--------:|-----------------------------------------------|
+| items       | String or List                 |          |                                               |
+| fluids      | String or List                 |          |                                               |
+| power       | number &#124  unit: power/tick |    ✔️    | how much power for input/output, 0 as default |
+| heat        | number                         |    ✔️    | how much heat for input/output, 0 as default  |
+| icon        | String                         |    ✔️    | such as `Icon.lock-open`. see [icon](#icon)   |
+| iconColor   | String                         |    ✔️    | a hex color for icon                          |
+| craftEffect | String                         |    ✔️    | an independent craft effect for each recipe   |
 
 === "Hjson"
 

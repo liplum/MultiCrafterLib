@@ -15,7 +15,7 @@ so `MultiCrafter` has most of `GenericCrafter`'s API.
 |          menu           |  String   |             transform             |                                                        ️                                                        |   
 |       craftEffect       |  Effect   |               none                |                                                        ️                                                        |   
 |      updateEffect       |  Effect   |               none                |                                                        ️                                                        |   
-|   changeRecipeEffect    |  Effect   |               none                |                 when recipe is changed.                                                       ️                 |   
+|   changeRecipeEffect    |  Effect   |            upgradeCore            |                 when recipe is changed.                                                       ️                 |   
 |  fluidOutputDirections  |   int[]   |               {-1}                | substitute for vanilla `liquidOutputDirections`                                                               ️ |   
 |   updateEffectChance    |   float   |               0.04f               |                                                        ️                                                        |   
 |       warmupSpeed       |   float   |              0.019f               |                                                        ️                                                        |   

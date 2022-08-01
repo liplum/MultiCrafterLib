@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.1.7"
+    id("io.github.liplum.mgpp") version "1.1.9"
 }
 buildscript {
     repositories {
@@ -13,7 +13,7 @@ buildscript {
 }
 allprojects {
     group = "net.liplum"
-    version = "1.4"
+    version = "1.5"
     buildscript {
         repositories {
             maven { url = uri("https://www.jitpack.io") }

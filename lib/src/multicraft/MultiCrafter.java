@@ -79,7 +79,7 @@ public class MultiCrafter extends Block {
     public RecipeSelector selector = null;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
-    public Effect changeRecipeEffect = Fx.none;
+    public Effect changeRecipeEffect = Fx.upgradeCore;
     public int[] fluidOutputDirections = {-1};
     public float updateEffectChance = 0.04f;
     public float warmupSpeed = 0.019f;
@@ -333,12 +333,20 @@ public class MultiCrafter extends Block {
             }
 
             if (wasVisible) {
-                craftEffect.at(x, y);
+                createCraftEffect();
             }
             if (cur.craftTime > 0f)
                 craftingTime %= cur.craftTime;
             else
                 craftingTime = 0f;
+        }
+
+        public void createCraftEffect() {
+            Recipe cur = getCurRecipe();
+            Effect curFx = cur.craftEffect;
+            if (curFx != Fx.none)
+                curFx.at(x, y);
+            else craftEffect.at(x, y);
         }
 
         public void dumpOutputs() {

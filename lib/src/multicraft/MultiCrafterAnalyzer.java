@@ -11,8 +11,11 @@ import arc.util.Log;
 import arc.util.Nullable;
 import arc.util.serialization.JsonValue;
 import mindustry.Vars;
+import mindustry.content.Fx;
 import mindustry.content.Liquids;
 import mindustry.ctype.UnlockableContent;
+import mindustry.entities.Effect;
+import mindustry.entities.effect.MultiEffect;
 import mindustry.gen.Icon;
 import mindustry.type.*;
 import mindustry.world.Block;
@@ -63,7 +66,7 @@ public class MultiCrafterAnalyzer {
             }
             return map;
         } else if (o instanceof JsonValue) {
-            return JsonConverter.convert((JsonValue) o);
+            return convert((JsonValue) o);
         }
         return o;
     }
@@ -114,6 +117,11 @@ public class MultiCrafterAnalyzer {
             Object iconColorObj = recipeMap.get("iconColor");
             if (iconColorObj instanceof String)
                 recipe.iconColor = Color.valueOf((String) iconColorObj);
+            Object fxObj = recipeMap.get("craftEffect");
+            Effect fx = analyzeFx(fxObj);
+            if (fx != null)
+                recipe.craftEffect = fx;
+            // Check empty
             if (!recipe.isAnyEmpty()) to.add(recipe);
             else Log.warn("Recipe is empty, so skip it", recipe);
         } catch (Exception e) {
@@ -548,5 +556,83 @@ public class MultiCrafterAnalyzer {
             }
         }
         return sb.toString();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Nullable
+    public static Effect analyzeFx(Object obj) {
+        if (obj instanceof String)
+            return findFx((String) obj);
+        else if (obj instanceof List) {
+            return composeMultiFx((List<String>) obj);
+        } else return null;
+    }
+
+    @Nullable
+    public static Effect findFx(String name) {
+        Object effect = field(Fx.class, name);
+        if (effect instanceof Effect) return (Effect) effect;
+        else return null;
+    }
+
+    private static final Effect[] EffectType = new Effect[0];
+
+    public static Effect composeMultiFx(List<String> names) {
+        ArrayList<Effect> all = new ArrayList<>();
+        for (String name : names) {
+            Effect fx = findFx(name);
+            if (fx != null) all.add(fx);
+        }
+        return new MultiEffect(all.toArray(EffectType));
+    }
+
+    public static Object field(Class<?> type, JsonValue value) {
+        return field(type, value.asString());
+    }
+
+    /**
+     * Gets a field from a static class by name, throwing a descriptive exception if not found.
+     */
+    public static Object field(Class<?> type, String name) {
+        try {
+            Object b = type.getField(name).get(null);
+            if (b == null) throw new IllegalArgumentException(type.getSimpleName() + ": not found: '" + name + "'");
+            return b;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Nullable
+    private static Object convert(JsonValue j) {
+        JsonValue.ValueType type = j.type();
+        switch (type) {
+            case object: {
+                HashMap map = new HashMap();
+                for (JsonValue cur = j.child; cur != null; cur = cur.next) {
+                    map.put(cur.name, convert(cur));
+                }
+                return map;
+            }
+            case array: {
+                ArrayList list = new ArrayList();
+                for (JsonValue cur = j.child; cur != null; cur = cur.next) {
+                    list.add(convert(cur));
+                }
+                return list;
+            }
+            case stringValue:
+                return j.asString();
+            case doubleValue:
+                return j.asDouble();
+            case longValue:
+                return j.asLong();
+            case booleanValue:
+                return j.asBoolean();
+            case nullValue:
+                return null;
+        }
+        return Collections.emptyMap();
     }
 }

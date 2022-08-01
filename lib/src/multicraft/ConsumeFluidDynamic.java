@@ -7,6 +7,7 @@ import mindustry.type.LiquidStack;
 import mindustry.ui.ReqImage;
 import mindustry.world.Block;
 import mindustry.world.consumers.Consume;
+import mindustry.world.modules.LiquidModule;
 
 public class ConsumeFluidDynamic extends Consume {
     public final Func<Building, LiquidStack[]> fluids;
@@ -24,7 +25,7 @@ public class ConsumeFluidDynamic extends Consume {
     @Override
     public void update(Building build) {
         LiquidStack[] fluids = this.fluids.get(build);
-        InventoryH.remove(build.liquids, fluids, build.edelta());
+        remove(build.liquids, fluids, build.edelta());
     }
 
     @Override
@@ -59,6 +60,19 @@ public class ConsumeFluidDynamic extends Consume {
     @Override
     public float efficiency(Building build) {
         LiquidStack[] fluids = this.fluids.get(build);
-        return build.consumeTriggerValid() || InventoryH.has(build.liquids, fluids) ? 1f : 0f;
+        return build.consumeTriggerValid() || has(build.liquids, fluids) ? 1f : 0f;
+    }
+    public static boolean has(LiquidModule fluids, LiquidStack[] reqs) {
+        for (LiquidStack req : reqs) {
+            if (fluids.get(req.liquid) < req.amount)
+                return false;
+        }
+        return true;
+    }
+
+    public static void remove(LiquidModule fluids, LiquidStack[] reqs, float multiplier) {
+        for (LiquidStack req : reqs) {
+            fluids.remove(req.liquid, req.amount * multiplier);
+        }
     }
 }

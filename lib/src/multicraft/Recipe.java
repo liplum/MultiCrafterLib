@@ -4,6 +4,8 @@ import arc.func.Prov;
 import arc.graphics.Color;
 import arc.graphics.g2d.TextureRegion;
 import arc.util.Nullable;
+import mindustry.content.Fx;
+import mindustry.entities.Effect;
 
 public class Recipe {
     public IOEntry input;
@@ -13,6 +15,9 @@ public class Recipe {
     public Prov<TextureRegion> icon;
     @Nullable
     public Color iconColor;
+
+    public Effect craftEffect = Fx.none;
+
     public Recipe(IOEntry input, IOEntry output, float craftTime) {
         this.input = input;
         this.output = output;
@@ -56,10 +61,12 @@ public class Recipe {
     public boolean isConsumeHeat() {
         return input.heat > 0f;
     }
-    public boolean isOutputHeat(){
-        return output.heat> 0f;
+
+    public boolean isOutputHeat() {
+        return output.heat > 0f;
     }
-    public boolean hasHeat(){
+
+    public boolean hasHeat() {
         return isConsumeHeat() || isOutputHeat();
     }
 

@@ -13,16 +13,19 @@ recipes :
   output: copper
   icon: alphaaaa
   iconColor: F30000
+  craftEffect: unitCapKill
 }
 {
    input: lead
    output: lead
    icon: Icon.lock
+   craftEffect: explosion
 }
 {
    input: phase-fabric
    output: phase-fabric
    icon: poly
+   craftEffect: [smeltsmoke, lightningShoot]
 }
 ]
 
