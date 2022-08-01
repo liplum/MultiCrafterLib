@@ -149,6 +149,12 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
         ```hjson
         java: true
         ```
+    
+    Thus, you need create a `release` with your mod file on your GitHub page manually.
+
+    Remember to change its extension directly from `*.zip` to `*.jar`, for example:
+
+    If your mod file is `my-first-json-mod.zip`, it should be `my-first-json-mod.jar`.
 
     ### Upgrade MultiCrafter Lib
     With Injection, you have to upgrade `MultiCrafter Lib` manually.
