@@ -252,7 +252,7 @@ public class MultiCrafter extends Block {
             }
             if (efficiency > 0 && (!hasPower || getCurPowerStore() >= cur.input.power)) {
                 // if <= 0, instantly produced
-                if (craftingTime > 0f) {
+                if (craftTimeNeed > 0f) {
                     craftingTime += edelta();
                 }
                 warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
