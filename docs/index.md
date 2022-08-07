@@ -37,6 +37,8 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
     **For a Json or JavaScript mod.**
 
+    *Injection makes your mod an actual Java mod, so it must fit the structure of Java mod.*
+
     ##### Step 1
     You should download a zip, named `MultiCrafter-injection.zip`, in [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
 

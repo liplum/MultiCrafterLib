@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.1.9"
+    id("io.github.liplum.mgpp") version "1.1.10"
 }
 buildscript {
     repositories {
@@ -38,14 +38,14 @@ allprojects {
 }
 mindustry {
     dependency {
-        mindustry mirror "v136"
-        arc on "v136"
+        mindustry mirror "1a64344e5a"
+        arc on "v137"
     }
     client {
-        mindustry official "v136.1"
+        mindustry official "v137"
     }
     server {
-        mindustry official "v136.1"
+        mindustry official "v137"
     }
     run {
         clearOtherMods

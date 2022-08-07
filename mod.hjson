@@ -8,6 +8,7 @@ description:
 '''
 A Mindustry mod library provides a multiple-recipe crafter to produce items, fluids, power or even heat for Json and JavaScript mods.
 Please check the repository below to learn more.
+Work on both v136 and v137.
 '''
 version: "1.0"
 minGameVersion: "136"
