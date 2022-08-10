@@ -79,7 +79,7 @@ public class MultiCrafter extends Block {
     public RecipeSelector selector = null;
     public Effect craftEffect = Fx.none;
     public Effect updateEffect = Fx.none;
-    public Effect changeRecipeEffect = Fx.upgradeCore;
+    public Effect changeRecipeEffect = Fx.rotateBlock;
     public int[] fluidOutputDirections = {-1};
     public float updateEffectChance = 0.04f;
     public float warmupSpeed = 0.019f;
@@ -151,14 +151,11 @@ public class MultiCrafter extends Block {
         hasPower = false;
         hasLiquids = false;
         outputsPower = false;
-        if (resolvedRecipes == null && recipes != null) { // if the recipe is already set in another way, don't analyze it again.
-            resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
-        }
+        // if the recipe is already set in another way, don't analyze it again.
+        if (resolvedRecipes == null && recipes != null) resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
             throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need. Check your `last_log.txt` to obtain more information.");
-        if (selector == null) {
-            selector = RecipeSelector.get(menu);
-        }
+        if (selector == null) selector = RecipeSelector.get(menu);
         decorateRecipes();
         setupBlockByRecipes();
         defaultRecipeIndex = Mathf.clamp(defaultRecipeIndex, 0, resolvedRecipes.size - 1);
@@ -198,11 +195,9 @@ public class MultiCrafter extends Block {
             int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
             if (newIndex != curRecipeIndex) {
                 curRecipeIndex = newIndex;
-                createChangeRecipeEffect();
+                createEffect(changeRecipeEffect);
                 craftingTime = 0f;
-                if (!Vars.headless) {
-                    rebuildHoveredInfo();
-                }
+                if (!Vars.headless) rebuildHoveredInfo();
             }
         }
 
@@ -229,13 +224,10 @@ public class MultiCrafter extends Block {
         @Override
         public float edelta() {
             Recipe cur = getCurRecipe();
-            if (cur.input.power > 0f) {
-                return this.efficiency *
-                    Mathf.clamp(getCurPowerStore() / cur.input.power) *
-                    this.delta();
-            } else {
-                return this.efficiency * this.delta();
-            }
+            if (cur.input.power > 0f) return this.efficiency *
+                Mathf.clamp(getCurPowerStore() / cur.input.power) *
+                this.delta();
+            else return this.efficiency * this.delta();
         }
 
         @Override
@@ -243,18 +235,15 @@ public class MultiCrafter extends Block {
             Recipe cur = getCurRecipe();
             float craftTimeNeed = cur.craftTime;
             // As HeatConsumer
-            if (cur.isConsumeHeat()) {
-                heat = calculateHeat(sideHeat);
-            }
+            if (cur.isConsumeHeat()) heat = calculateHeat(sideHeat);
             if (cur.isOutputHeat()) {
                 float heatOutput = cur.output.heat;
                 heat = Mathf.approachDelta(heat, heatOutput * efficiency, warmupRate * edelta());
             }
+            // cool down
             if (efficiency > 0 && (!hasPower || getCurPowerStore() >= cur.input.power)) {
                 // if <= 0, instantly produced
-                if (craftTimeNeed > 0f) {
-                    craftingTime += edelta();
-                }
+                if (craftTimeNeed > 0f) craftingTime += edelta();
                 warmup = Mathf.approachDelta(warmup, warmupTarget(), warmupSpeed);
                 if (hasPower) {
                     float powerChange = (cur.output.power - cur.input.power) * delta();
@@ -271,21 +260,15 @@ public class MultiCrafter extends Block {
                     }
                 }
                 // particle fx
-                if (wasVisible && Mathf.chanceDelta(updateEffectChance)) {
+                if (wasVisible && Mathf.chanceDelta(updateEffectChance))
                     updateEffect.at(x + Mathf.range(size * 4f), y + Mathf.range(size * 4));
-                }
-            } else {
-                // cool down
-                warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
-            }
+            } else warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
 
             if (craftTimeNeed <= 0f) {
                 if (efficiency > 0f)
                     craft();
-            } else {
-                if (craftingTime >= craftTimeNeed)
-                    craft();
-            }
+            } else if (craftingTime >= craftTimeNeed)
+                craft();
 
             dumpOutputs();
         }
@@ -293,30 +276,18 @@ public class MultiCrafter extends Block {
         @Override
         public boolean shouldConsume() {
             Recipe cur = getCurRecipe();
-            if (hasItems) {
+            if (hasItems) for (ItemStack output : cur.output.items) if (items.get(output.item) + output.amount > itemCapacity) return false;
 
-                for (ItemStack output : cur.output.items) {
-                    if (items.get(output.item) + output.amount > itemCapacity) {
-                        return false;
-                    }
-                }
-            }
+            if (hasLiquids) if (cur.isOutputFluid() && !ignoreLiquidFullness) {
+                boolean allFull = true;
+                for (LiquidStack output : cur.output.fluids)
+                    if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
+                        if (!dumpExtraFluid) return false;
+                    } else
+                        allFull = false; //if there's still space left, it's not full for all fluids
 
-            if (hasLiquids) {
-                if (cur.isOutputFluid() && !ignoreLiquidFullness) {
-                    boolean allFull = true;
-                    for (LiquidStack output : cur.output.fluids) {
-                        if (liquids.get(output.liquid) >= liquidCapacity - 0.001f) {
-                            if (!dumpExtraFluid) {
-                                return false;
-                            }
-                        } else
-                            allFull = false; //if there's still space left, it's not full for all fluids
-                    }
-
-                    //if there is no space left for any fluid, it can't reproduce
-                    if (allFull) return false;
-                }
+                //if there is no space left for any fluid, it can't reproduce
+                if (allFull) return false;
             }
             return enabled;
         }
@@ -324,17 +295,9 @@ public class MultiCrafter extends Block {
         public void craft() {
             consume();
             Recipe cur = getCurRecipe();
-            if (cur.isOutputItem()) {
-                for (ItemStack output : cur.output.items) {
-                    for (int i = 0; i < output.amount; i++) {
-                        offload(output.item);
-                    }
-                }
-            }
+            if (cur.isOutputItem()) for (ItemStack output : cur.output.items) for (int i = 0; i < output.amount; i++) offload(output.item);
 
-            if (wasVisible) {
-                createCraftEffect();
-            }
+            if (wasVisible) createCraftEffect();
             if (cur.craftTime > 0f)
                 craftingTime %= cur.craftTime;
             else
@@ -344,24 +307,18 @@ public class MultiCrafter extends Block {
         public void createCraftEffect() {
             Recipe cur = getCurRecipe();
             Effect curFx = cur.craftEffect;
-            if (curFx != Fx.none)
-                curFx.at(x, y);
-            else craftEffect.at(x, y);
+            Effect fx = curFx != Fx.none ? curFx : craftEffect;
+            createEffect(fx);
         }
 
         public void dumpOutputs() {
             Recipe cur = getCurRecipe();
-            if (cur.isOutputItem() && timer(timerDump, dumpTime / timeScale)) {
-                for (ItemStack output : cur.output.items) {
-                    dump(output.item);
-                }
-            }
+            if (cur.isOutputItem() && timer(timerDump, dumpTime / timeScale)) for (ItemStack output : cur.output.items) dump(output.item);
 
             if (cur.isOutputFluid()) {
                 Seq<LiquidStack> fluids = cur.output.fluids;
                 for (int i = 0; i < fluids.size; i++) {
                     int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
-
                     dumpLiquid(fluids.get(i).liquid, 2f, dir);
                 }
             }
@@ -381,11 +338,8 @@ public class MultiCrafter extends Block {
         @Override
         public float heatFrac() {
             Recipe cur = getCurRecipe();
-            if (isOutputHeat && cur.isOutputHeat()) {
-                return heat / cur.output.heat;
-            } else if (isConsumeHeat && cur.isConsumeHeat()) {
-                return heat / cur.input.heat;
-            }
+            if (isOutputHeat && cur.isOutputHeat()) return heat / cur.output.heat;
+            else if (isConsumeHeat && cur.isConsumeHeat()) return heat / cur.input.heat;
             return 0f;
         }
 
@@ -406,9 +360,7 @@ public class MultiCrafter extends Block {
         public float heatRequirement() {
             Recipe cur = getCurRecipe();
             // When As HeatConsumer
-            if (isConsumeHeat && cur.isConsumeHeat()) {
-                return cur.input.heat;
-            }
+            if (isConsumeHeat && cur.isConsumeHeat()) return cur.input.heat;
             return 0f;
         }
 
@@ -478,11 +430,8 @@ public class MultiCrafter extends Block {
         public float warmupTarget() {
             Recipe cur = getCurRecipe();
             // When As HeatConsumer
-            if (isConsumeHeat && cur.isConsumeHeat()) {
-                return Mathf.clamp(heat / cur.input.heat);
-            } else {
-                return 1f;
-            }
+            if (isConsumeHeat && cur.isConsumeHeat()) return Mathf.clamp(heat / cur.input.heat);
+            else return 1f;
         }
 
         @Override
@@ -502,9 +451,7 @@ public class MultiCrafter extends Block {
                 float heatRequirement = cur.input.heat;
                 float over = Math.max(heat - heatRequirement, 0f);
                 return Math.min(Mathf.clamp(heat / heatRequirement) + over / heatRequirement * overheatScale, maxEfficiency);
-            } else {
-                return 1f;
-            }
+            } else return 1f;
         }
 
         @Override
@@ -536,26 +483,14 @@ public class MultiCrafter extends Block {
             }
         }
 
-        /**
-         * @return whether FX is consumed by any special effect
-         */
-        public boolean createChangeRecipeEffect() {
-            if (changeRecipeEffect == Fx.placeBlock) {
-                Fx.placeBlock.at(x, y, block.size);
-                return true;
-            } else if (changeRecipeEffect == Fx.coreBuildBlock) {
-                Fx.coreBuildBlock.at(x, y, 0f, block);
-                return true;
-            } else if (changeRecipeEffect == Fx.upgradeCore) {
-                Fx.coreBuildBlock.at(x, y, 0f, block);
-                return true;
-            } else if (changeRecipeEffect == Fx.upgradeCoreBloom) {
-                Fx.upgradeCoreBloom.at(x, y, block.size);
-                return true;
-            } else {
-                changeRecipeEffect.at(x, y, 0, this);
-                return false;
-            }
+        public void createEffect(Effect effect) {
+            if (effect == Fx.none) return;
+            if (effect == Fx.placeBlock) effect.at(x, y, block.size);
+            else if (effect == Fx.coreBuildBlock) effect.at(x, y, 0f, block);
+            else if (effect == Fx.upgradeCore) effect.at(x, y, 0f, block);
+            else if (effect == Fx.upgradeCoreBloom) effect.at(x, y, block.size);
+            else if (effect == Fx.rotateBlock) effect.at(x, y, block.size);
+            else effect.at(x, y, 0, this);
         }
     }
 
@@ -583,9 +518,7 @@ public class MultiCrafter extends Block {
             float visualCraftTime = recipe.craftTime;
             time.update(() -> {
                 duration[0] += Time.delta;
-                if (duration[0] > visualCraftTime) {
-                    duration[0] = 0f;
-                }
+                if (duration[0] > visualCraftTime) duration[0] = 0f;
             });
             String craftTime = recipe.craftTime == 0 ? "0" : String.format("%.2f", recipe.craftTime / 60f);
             Cell<Bar> barCell = time.add(new Bar(() -> craftTime,
@@ -597,9 +530,7 @@ public class MultiCrafter extends Block {
             else
                 barCell.width(250f);
             Cell<Table> timeCell = t.add(time).pad(12f);
-            if (showNameTooltip) {
-                timeCell.tooltip(Stat.productionTime.localized() + ": " + craftTime + " " + StatUnit.seconds.localized());
-            }
+            if (showNameTooltip) timeCell.tooltip(Stat.productionTime.localized() + ": " + craftTime + " " + StatUnit.seconds.localized());
             // Output
             buildIOEntry(t, recipe, false);
             stat.add(t).pad(10f).grow();
@@ -623,9 +554,7 @@ public class MultiCrafter extends Block {
                 iconCell.tooltip(stack.item.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
-            if (i != 0 && i % 2 == 0) {
-                mat.row();
-            }
+            if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
         i++;
@@ -636,9 +565,7 @@ public class MultiCrafter extends Block {
                 iconCell.tooltip(stack.liquid.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
-            if (i != 0 && i % 2 == 0) {
-                mat.row();
-            }
+            if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
         Cell<Table> matCell = t.add(mat);
@@ -682,9 +609,7 @@ public class MultiCrafter extends Block {
     public void setBars() {
         super.setBars();
         addBar("progress", (b) -> new Bar("bar.loadprogress", Pal.accent, b::progress));
-        if (isConsumeHeat || isOutputHeat) {
-            addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
-        }
+        if (isConsumeHeat || isOutputHeat) addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
     }
 
     @Override
@@ -725,14 +650,12 @@ public class MultiCrafter extends Block {
         for (int i = 0; i < fluids.size; i++) {
             int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
 
-            if (dir != -1) {
-                Draw.rect(
-                    fluids.get(i).liquid.fullIcon,
-                    x + Geometry.d4x(dir + rotation) * (size * tilesize / 2f + 4),
-                    y + Geometry.d4y(dir + rotation) * (size * tilesize / 2f + 4),
-                    8f, 8f
-                );
-            }
+            if (dir != -1) Draw.rect(
+                fluids.get(i).liquid.fullIcon,
+                x + Geometry.d4x(dir + rotation) * (size * tilesize / 2f + 4),
+                y + Geometry.d4y(dir + rotation) * (size * tilesize / 2f + 4),
+                8f, 8f
+            );
         }
     }
 
@@ -774,20 +697,14 @@ public class MultiCrafter extends Block {
     }
 
     protected void setupConsumers() {
-        if (isConsumeItem) {
-            consume(new ConsumeItemDynamic(
-                // items seq is already shrunk, it's safe to access
-                (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items)
-            );
-        }
-        if (isConsumeFluid) {
-            consume(new ConsumeFluidDynamic(
-                // fluids seq is already shrunk, it's safe to access
-                (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
-            ));
-        }
-        if (hasPower) {
-            consumePowerBuffered(powerCapacity);
-        }
+        if (isConsumeItem) consume(new ConsumeItemDynamic(
+            // items seq is already shrunk, it's safe to access
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items)
+        );
+        if (isConsumeFluid) consume(new ConsumeFluidDynamic(
+            // fluids seq is already shrunk, it's safe to access
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
+        ));
+        if (hasPower) consumePowerBuffered(powerCapacity);
     }
 }

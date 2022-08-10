@@ -119,6 +119,9 @@ public abstract class RecipeSelector {
         public void build(MultiCrafter b, MultiCrafterBuild c, Table table) {
             Table t = new Table();
             for (int i = 0; i < b.resolvedRecipes.size; i++) {
+                if (i != 0 && i % 2 == 0) {
+                    t.row();
+                }
                 Recipe recipe = b.resolvedRecipes.get(i);
                 int finalI = i;
                 ImageButton button = new ImageButton(Styles.clearTogglei);
@@ -132,9 +135,6 @@ public abstract class RecipeSelector {
                 button.changed(() -> c.configure(finalI));
                 button.update(() -> button.setChecked(c.curRecipeIndex == finalI));
                 t.add(button).grow().pad(8f).margin(10f);
-                if (i != 0 && i % 2 == 0) {
-                    t.row();
-                }
             }
             table.add(t).grow();
         }
