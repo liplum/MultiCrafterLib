@@ -1,3 +1,4 @@
+import io.github.liplum.mindustry.genModHjson
 import io.github.liplum.mindustry.importMindustry
 
 plugins {
@@ -30,6 +31,14 @@ dependencies {
 java {
     withSourcesJar()
     withJavadocJar()
+}
+mindustryAssets{
+    // no icon
+    icon at "$projectDir/icon.png"
+}
+tasks.genModHjson {
+    // no mod.hjson
+    enabled = false
 }
 publishing {
     publications {
