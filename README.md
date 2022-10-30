@@ -30,6 +30,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Json] [Windstorm](https://github.com/driftheque/Windstorm) by `Drifted Notes & 1237`
 
+- [Java] [Fictional Octo System](https://github.com/TeamOct/fictional-octo-system) by `Team Oct`
+
 <!-- Drifted Notes // August 22, 2022
   windstorm was made by me when my alias was 1237.
   and on July 19th, 2022 i started a new alias (drifted notes),
