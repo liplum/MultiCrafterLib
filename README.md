@@ -30,6 +30,10 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Fictional Octo System](https://github.com/TeamOct/fictional-octo-system) by `Team Oct`
 
+- [Java] [Stuasut](https://github.com/Nezerit6/Stuasut) by Nezerit6
+
+- [Hjson] [Raodon and Axthrix](https://github.com/Otamamori917/Raodon-and-Axthrix-mod) by Otamamori
+
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
