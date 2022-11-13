@@ -28,27 +28,11 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Json] [Sapphirium](https://github.com/3Snake3/Sapphirium) by `3Snake3`
 
-- [Json] [Windstorm](https://github.com/driftheque/Windstorm) by `Drifted Notes & 1237`
-
 - [Java] [Fictional Octo System](https://github.com/TeamOct/fictional-octo-system) by `Team Oct`
 
 - [Java] [Stuasut](https://github.com/Nezerit6/Stuasut) by Nezerit6
 
 - [Hjson] [Raodon and Axthrix](https://github.com/Otamamori917/Raodon-and-Axthrix-mod) by Otamamori
-
-<!-- Drifted Notes // August 22, 2022
-  windstorm was made by me when my alias was 1237.
-  and on July 19th, 2022 i started a new alias (drifted notes),
-  and a few days ago i ported this mod to hjson.
-
-  i hope this won't confuse everyone.
-  (liplum please don't delete this)
-  
-  update September 11th, 2022.
-  i changed my mind, it's a js mod now. 
-  (but i will still use .hjson to add my custom block 
-  to the techtree).
--->
 
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
