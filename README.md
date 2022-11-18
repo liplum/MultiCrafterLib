@@ -32,7 +32,7 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Stuasut](https://github.com/Nezerit6/Stuasut) by Nezerit6
 
-- [Hjson] [Raodon and Axthrix](https://github.com/Otamamori917/Raodon-and-Axthrix-mod) by Otamamori
+- [Hjson] [Axthrix Modded](https://github.com/Otamamori917/Axthrix-Modded2) by Otamamori
 
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
