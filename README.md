@@ -34,6 +34,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Hjson] [Axthrix Modded](https://github.com/Otamamori917/Axthrix-Modded2) by Otamamori
 
+- [Json] [Nucleardustry](https://github.com/Chrono-Heritage/Nucleardustry) by `Chrono Heritage`
+
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
