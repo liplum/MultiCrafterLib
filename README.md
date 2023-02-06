@@ -36,6 +36,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Json] [Nucleardustry](https://github.com/Chrono-Heritage/Nucleardustry) by `Chrono Heritage`
 
+- [Hjson/JS] [Aeyama](https://www.github.com/fredyjabe/aeyama) by [`FredyJabe`](https://www.github.com/fredyjabe)
+
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
