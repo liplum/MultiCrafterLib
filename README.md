@@ -32,7 +32,7 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Stuasut](https://github.com/Nezerit6/Stuasut) by Nezerit6
 
-- [Hjson] [Axthrix Modded](https://github.com/Otamamori917/Axthrix-Modded2) by Otamamori
+- [Java] [Axthrix Java](https://github.com/Otamamori917/Axthrix-Modded-Java) by `Otamamori`
 
 - [Json] [Nucleardustry](https://github.com/Chrono-Heritage/Nucleardustry) by `Chrono Heritage`
 
