@@ -24,6 +24,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Omaloon](https://github.com/xStaBUx/Omaloon-mod-public) by `xStaBUx`
 
+- [Hjson/Json] [Polgranium Works](https://github.com/Stieno3000/Polgranium-Works) by [`Stieno3000`]
+
 - [Json] [Z.P.G.M._Mod](https://github.com/r-omnom/Z.P.G.M._Mod) by `r-omnom`
 
 - [Json] [Sapphirium](https://github.com/3Snake3/Sapphirium) by `3Snake3`
