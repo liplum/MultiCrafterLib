@@ -27,9 +27,7 @@ allprojects {
     }
 
     tasks.withType<Test>().configureEach {
-        useJUnitPlatform {
-            excludeTags("slow")
-        }
+        useJUnitPlatform()
         testLogging {
             exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
             showStandardStreams = true
@@ -38,14 +36,14 @@ allprojects {
 }
 mindustry {
     dependency {
-        mindustry mirror "1a64344e5a"
-        arc on "v137"
+        mindustry mirror "v145"
+        arc on "v145"
     }
     client {
-        mindustry official "v137"
+        mindustry official "v145"
     }
     server {
-        mindustry official "v137"
+        mindustry official "v145"
     }
     run {
         clearOtherMods

@@ -55,7 +55,7 @@ public abstract class RecipeSelector {
             img.setColor(Pal.power);
             return img;
         } else if (outputHeat) {
-            Image img = new Image(Icon.terrain.getRegion());
+            Image img = new Image(Icon.waves.getRegion());
             img.setColor(b.heatColor);
             return img;
         }
