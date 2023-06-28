@@ -121,7 +121,7 @@ public class MultiCrafter extends Block {
      * For {@linkplain HeatConsumer},
      * maximum possible efficiency after overheat.
      */
-    public float maxEfficiency = 0.5f;
+    public float maxEfficiency = 1f;
     /**
      * For {@linkplain HeatBlock}
      */
