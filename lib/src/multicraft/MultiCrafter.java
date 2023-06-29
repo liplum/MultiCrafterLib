@@ -6,7 +6,6 @@ import arc.graphics.g2d.TextureRegion;
 import arc.math.Interp;
 import arc.math.Mathf;
 import arc.math.geom.Geometry;
-import arc.scene.ui.Label;
 import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.EnumSet;
@@ -576,10 +575,8 @@ public class MultiCrafter extends Block {
         // Power
         if (entry.power > 0f) {
             Table power = new Table();
-            power.image(Icon.power).color(Pal.power);
-            Cell<Label> textCell = power.add((isInput ? "-" : "+") + (int) (entry.power * 60f));
-            if (isInput) textCell.color(Pal.remove);
-            else textCell.color(Pal.powerLight);
+            power.add((int) (entry.power * 60f) + " ");
+            power.image(Icon.powerSmall).color(Pal.power);
             if (isInput) power.left();
             else power.right();
             Cell<Table> powerCell = t.add(power).grow();
@@ -590,7 +587,8 @@ public class MultiCrafter extends Block {
         //Heat
         if (entry.heat > 0f) {
             Table heat = new Table();
-            heat.image(Icon.waves).color(heatColor);
+            heat.add((int) (entry.heat) + " ");
+            heat.image(Icon.wavesSmall).color(heatColor);
             if (isInput) heat.left();
             else heat.right();
             Cell<Table> heatCell = t.add(heat).grow();
