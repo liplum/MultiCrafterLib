@@ -575,7 +575,7 @@ public class MultiCrafter extends Block {
         // Power
         if (entry.power > 0f) {
             Table power = new Table();
-            power.add((int) (entry.power * 60f) + " ");
+            power.add(Integer.toString((int) (entry.power * 60f)));
             power.image(Icon.powerSmall).color(Pal.power);
             if (isInput) power.left();
             else power.right();
