@@ -24,13 +24,18 @@ public class IOEntry {
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
 
     public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids) {
-        this(items, fluids, 0f);
+        this(items, fluids, 0f, 0f);
     }
 
     public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power) {
+        this(items, fluids, power, 0f);
+    }
+
+    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power, float heat) {
         this.items = items;
         this.fluids = fluids;
         this.power = power;
+        this.heat = heat;
     }
 
     public IOEntry() {
@@ -76,6 +81,7 @@ public class IOEntry {
             "items=" + items +
             "fluids=" + fluids +
             "power=" + power +
+            "heat=" + heat +
             "}";
     }
 }

@@ -121,7 +121,7 @@ public class MultiCrafter extends Block {
      * For {@linkplain HeatConsumer},
      * maximum possible efficiency after overheat.
      */
-    public float maxEfficiency = 4f;
+    public float maxEfficiency = 1f;
     /**
      * For {@linkplain HeatBlock}
      */
@@ -590,7 +590,7 @@ public class MultiCrafter extends Block {
         //Heat
         if (entry.heat > 0f) {
             Table heat = new Table();
-            heat.image(Icon.terrain).color(heatColor);
+            heat.image(Icon.waves).color(heatColor);
             if (isInput) heat.left();
             else heat.right();
             Cell<Table> heatCell = t.add(heat).grow();
