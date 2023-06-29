@@ -40,6 +40,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Unlimited Armament Works](https://github.com/Eschatologue/Unlimited-Armament-Works) by `Eschatologue`
 
+- [Java] [Aeyama: The New World](https://github.com/Aeyama-Mod/aeyama) by `FredyJabe` & `Jojo`
+
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
