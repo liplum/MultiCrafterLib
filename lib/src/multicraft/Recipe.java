@@ -58,6 +58,14 @@ public class Recipe {
         return !input.items.isEmpty();
     }
 
+    public boolean isConsumePower() {
+        return input.power > 0f;
+    }
+
+    public boolean isOutputPower() {
+        return output.power > 0f;
+    }
+
     public boolean isConsumeHeat() {
         return input.heat > 0f;
     }
@@ -66,16 +74,20 @@ public class Recipe {
         return output.heat > 0f;
     }
 
-    public boolean hasHeat() {
-        return isConsumeHeat() || isOutputHeat();
-    }
-
     public boolean hasItem() {
         return isConsumeItem() || isOutputItem();
     }
-
+    
     public boolean hasFluid() {
-        return isOutputFluid() || isOutputFluid();
+        return isConsumeFluid() || isOutputFluid();
+    }
+    
+    public boolean hasPower() {
+        return isConsumePower() || isOutputPower();
+    }
+
+    public boolean hasHeat() {
+        return isConsumeHeat() || isOutputHeat();
     }
 
     public int maxItemAmount() {

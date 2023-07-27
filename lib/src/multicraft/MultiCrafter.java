@@ -1,5 +1,6 @@
 package multicraft;
 
+import arc.*;
 import arc.graphics.Color;
 import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
@@ -32,7 +33,7 @@ import mindustry.ui.ItemImage;
 import mindustry.world.Block;
 import mindustry.world.blocks.heat.HeatBlock;
 import mindustry.world.blocks.heat.HeatConsumer;
-import mindustry.world.consumers.ConsumeItemDynamic;
+import mindustry.world.consumers.*;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.BlockFlag;
@@ -96,7 +97,9 @@ public class MultiCrafter extends Block {
 
     protected boolean isOutputItem = false;
     protected boolean isConsumeItem = false;
+    protected boolean isOutputFluid = false;
     protected boolean isConsumeFluid = false;
+    protected boolean isOutputPower = false;
     protected boolean isConsumePower = false;
     protected boolean isOutputHeat = false;
     protected boolean isConsumeHeat = false;
@@ -219,7 +222,7 @@ public class MultiCrafter extends Block {
                 getCurRecipe().input.fluidsUnique.contains(liquid) &&
                 liquids.get(liquid) < liquidCapacity;
         }
-
+        
         @Override
         public float edelta() {
             Recipe cur = getCurRecipe();
@@ -361,6 +364,14 @@ public class MultiCrafter extends Block {
             // When As HeatConsumer
             if (isConsumeHeat && cur.isConsumeHeat()) return cur.input.heat;
             return 0f;
+        }
+
+        @Override
+        public float getPowerProduction() {
+            Recipe cur = getCurRecipe();
+
+            if (isOutputPower && cur.isOutputPower()) return cur.output.power * efficiency;
+            else return 0f;
         }
 
         @Override
@@ -597,16 +608,20 @@ public class MultiCrafter extends Block {
             t.row();
         }
         Cell<Table> tCell = table.add(t).pad(12f).fill();
-        /*if(Vars.mobile)
-            tCell.width(100f);
-        else*/
-        tCell.width(120f);
+        tCell.width(Vars.mobile ? 100f : 120f);
     }
 
     @Override
     public void setBars() {
         super.setBars();
+
         addBar("progress", (b) -> new Bar("bar.loadprogress", Pal.accent, b::progress));
+        if (hasPower && outputsPower) 
+            addBar("power", (MultiCrafterBuild b) -> new Bar(
+                Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)),
+                Pal.powerBar,
+                () -> b.efficiency
+            ));
         if (isConsumeHeat || isOutputHeat) addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
     }
 
@@ -669,20 +684,26 @@ public class MultiCrafter extends Block {
         int maxItemAmount = 0;
         float maxFluidAmount = 0f;
         float maxPower = 0f;
+        float maxHeat = 0f;
         for (Recipe recipe : resolvedRecipes) {
             maxItemAmount = Math.max(recipe.maxItemAmount(), maxItemAmount);
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
+            maxPower = Math.max(recipe.maxPower(), maxPower);
+            maxHeat = Math.max(recipe.maxHeat(), maxHeat);
             hasItems |= recipe.hasItem();
             hasLiquids |= recipe.hasFluid();
-            maxPower = Math.max(recipe.maxPower(), maxPower);
+            hasPower |= recipe.hasPower();
             isOutputItem |= recipe.isOutputItem();
             isConsumeItem |= recipe.isConsumeItem();
+            isOutputFluid |= recipe.isOutputFluid();
             isConsumeFluid |= recipe.isConsumeFluid();
-            isConsumeHeat |= recipe.isConsumeHeat();
+            isOutputPower |= recipe.isOutputPower();
+            isConsumePower |= recipe.isConsumePower();
             isOutputHeat |= recipe.isOutputHeat();
+            isConsumeHeat |= recipe.isConsumeHeat();
         }
-        hasPower = maxPower > 0f;
-        outputsPower = hasPower;
+        outputsPower = isOutputPower;
+        consumesPower = isConsumePower;
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
         powerCapacity = Math.max(maxPower * 60f * powerCapacityMultiplier, powerCapacity);
@@ -697,12 +718,14 @@ public class MultiCrafter extends Block {
     protected void setupConsumers() {
         if (isConsumeItem) consume(new ConsumeItemDynamic(
             // items seq is already shrunk, it's safe to access
-            (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items)
-        );
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items
+        ));
         if (isConsumeFluid) consume(new ConsumeFluidDynamic(
             // fluids seq is already shrunk, it's safe to access
             (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
         ));
-        if (hasPower) consumePowerBuffered(powerCapacity);
+        if (isConsumePower) consume(new ConsumePowerDynamic(b ->
+            ((MultiCrafterBuild)b).getCurRecipe().input.power
+        ));
     }
 }
