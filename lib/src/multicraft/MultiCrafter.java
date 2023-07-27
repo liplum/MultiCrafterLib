@@ -272,7 +272,13 @@ public class MultiCrafter extends Block {
             } else if (craftingTime >= craftTimeNeed)
                 craft();
 
+            updateBars();
             dumpOutputs();
+        }
+
+        public void updateBars() {
+            barMap.clear();
+            setBars();
         }
 
         @Override
@@ -535,10 +541,7 @@ public class MultiCrafter extends Block {
                     () -> Pal.accent,
                     () -> Interp.smooth.apply(duration[0] / visualCraftTime)))
                 .height(45f);
-            if (Vars.mobile)
-                barCell.width(220f);
-            else
-                barCell.width(250f);
+            barCell.width(Vars.mobile ? 220f : 250f);
             Cell<Table> timeCell = t.add(time).pad(12f);
             if (showNameTooltip) timeCell.tooltip(Stat.productionTime.localized() + ": " + craftTime + " " + StatUnit.seconds.localized());
             // Output
@@ -608,7 +611,7 @@ public class MultiCrafter extends Block {
             t.row();
         }
         Cell<Table> tCell = table.add(t).pad(12f).fill();
-        tCell.width(Vars.mobile ? 100f : 120f);
+        tCell.width(Vars.mobile ? 90f : 120f);
     }
 
     @Override
@@ -616,9 +619,9 @@ public class MultiCrafter extends Block {
         super.setBars();
 
         addBar("progress", (b) -> new Bar("bar.loadprogress", Pal.accent, b::progress));
-        if (hasPower && outputsPower) 
+        if (hasPower) 
             addBar("power", (MultiCrafterBuild b) -> new Bar(
-                Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)),
+                b.getCurRecipe().isOutputPower() ? Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)) : "bar.power",
                 Pal.powerBar,
                 () -> b.efficiency
             ));
