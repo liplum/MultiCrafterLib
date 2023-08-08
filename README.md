@@ -36,6 +36,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Axthrix Java](https://github.com/Otamamori917/Axthrix-Modded-Java) by `Otamamori`
 
+- [Json] [Pyra Erekir](https://github.com/valigaming15/pyra-erekir) By `Valigaming15` & `Otamamori`
+
 - [Json] [Nucleardustry](https://github.com/Chrono-Heritage/Nucleardustry) by `Chrono Heritage`
 
 - [Java] [Unlimited Armament Works](https://github.com/Eschatologue/Unlimited-Armament-Works) by `Eschatologue`
