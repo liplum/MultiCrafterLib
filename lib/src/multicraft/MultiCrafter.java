@@ -19,7 +19,6 @@ import mindustry.content.Fx;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
-import mindustry.gen.Icon;
 import mindustry.gen.Sounds;
 import mindustry.gen.Tex;
 import mindustry.graphics.Pal;
@@ -36,9 +35,9 @@ import mindustry.world.blocks.heat.HeatConsumer;
 import mindustry.world.consumers.*;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
-import mindustry.world.meta.BlockFlag;
-import mindustry.world.meta.Stat;
-import mindustry.world.meta.StatUnit;
+import mindustry.world.meta.*;
+
+import multicraft.ui.*;
 
 import static mindustry.Vars.tilesize;
 
@@ -570,7 +569,6 @@ public class MultiCrafter extends Block {
             if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
-        i++;
         for (LiquidStack stack : entry.fluids) {
             Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount * 60f))
                 .pad(2f);
@@ -581,35 +579,32 @@ public class MultiCrafter extends Block {
             if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
-        Cell<Table> matCell = t.add(mat);
-        if (isInput) matCell.left();
-        else matCell.right();
-        t.row();
         // No redundant ui
         // Power
         if (entry.power > 0f) {
-            Table power = new Table();
-            power.add(Integer.toString((int) (entry.power * 60f)));
-            power.image(Icon.powerSmall).color(Pal.power);
-            if (isInput) power.left();
-            else power.right();
-            Cell<Table> powerCell = t.add(power).grow();
+            Cell<PowerImage> iconCell = mat.add(new PowerImage(entry.power * 60f))
+                .pad(2f);
+            if (isInput) iconCell.left();
+            else iconCell.right();
             if (showNameTooltip)
-                powerCell.tooltip(entry.power + " " + StatUnit.powerSecond.localized());
-            t.row();
+                iconCell.tooltip(entry.power + " " + StatUnit.powerSecond.localized());
+            i++;
+            if (i != 0 && i % 2 == 0) mat.row();
         }
         //Heat
         if (entry.heat > 0f) {
-            Table heat = new Table();
-            heat.add((int) (entry.heat) + " ");
-            heat.image(Icon.wavesSmall).color(heatColor);
-            if (isInput) heat.left();
-            else heat.right();
-            Cell<Table> heatCell = t.add(heat).grow();
+            Cell<HeatImage> iconCell = mat.add(new HeatImage(entry.heat))
+                .pad(2f);
+            if (isInput) iconCell.left();
+            else iconCell.right();
             if (showNameTooltip)
-                heatCell.tooltip(entry.heat + " " + StatUnit.heatUnits.localized());
-            t.row();
+                iconCell.tooltip(entry.heat + " " + StatUnit.heatUnits.localized());
+            i++;
+            if (i != 0 && i % 2 == 0) mat.row();
         }
+        Cell<Table> matCell = t.add(mat);
+        if (isInput) matCell.left();
+        else matCell.right();
         Cell<Table> tCell = table.add(t).pad(12f).fill();
         tCell.width(Vars.mobile ? 90f : 120f);
     }
@@ -618,14 +613,23 @@ public class MultiCrafter extends Block {
     public void setBars() {
         super.setBars();
 
-        addBar("progress", (b) -> new Bar("bar.loadprogress", Pal.accent, b::progress));
         if (hasPower) 
             addBar("power", (MultiCrafterBuild b) -> new Bar(
                 b.getCurRecipe().isOutputPower() ? Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)) : "bar.power",
                 Pal.powerBar,
                 () -> b.efficiency
             ));
-        if (isConsumeHeat || isOutputHeat) addBar("heat", (MultiCrafterBuild b) -> new Bar("bar.heat", Pal.lightOrange, b::heatFrac));
+        if (isConsumeHeat || isOutputHeat) 
+            addBar("heat", (MultiCrafterBuild b) -> new Bar(
+                b.getCurRecipe().isConsumeHeat() ? Core.bundle.format("bar.heatpercent", (int) (b.heat + 0.01f), (int) (b.efficiencyScale() * 100 + 0.01f)) : "bar.heat",
+                Pal.lightOrange,
+                b::heatFrac
+            ));
+        addBar("progress", (MultiCrafterBuild b) -> new Bar(
+            "bar.loadprogress",
+            Pal.accent,
+            b::progress
+        ));
     }
 
     @Override

@@ -9,6 +9,8 @@ import mindustry.world.Block;
 import mindustry.world.consumers.Consume;
 import mindustry.world.modules.LiquidModule;
 
+import multicraft.ui.*;
+
 public class ConsumeFluidDynamic extends Consume {
     public final Func<Building, LiquidStack[]> fluids;
 

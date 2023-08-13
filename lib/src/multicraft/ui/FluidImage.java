@@ -1,4 +1,4 @@
-package multicraft;
+package multicraft.ui;
 
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Mathf;
