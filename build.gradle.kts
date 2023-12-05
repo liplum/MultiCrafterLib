@@ -50,14 +50,14 @@ allprojects {
 }
 mindustry {
     dependency {
-        mindustry mirror "v145"
-        arc on "v145"
+        mindustry on "v146"
+        arc on "v146"
     }
     client {
-        mindustry official "v145"
+        mindustry official "v146"
     }
     server {
-        mindustry official "v145"
+        mindustry official "v146"
     }
     run {
         clearOtherMods
