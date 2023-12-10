@@ -27,6 +27,7 @@ jobs:
 
       - name: Move building
         run: |
+          mkdir out
           cp main/build/tmp/deploy/*.jar out
           cp build/tmp/distInjection/*.zip out
 
