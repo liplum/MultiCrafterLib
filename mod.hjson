@@ -1,7 +1,7 @@
 displayName: "MultiCrafter Lib"
 name: "multi-crafter"
 author: "[#42a5f5[]]Liplum[[]] & Jojo"
-subtitle: "[v1.0] Please often update this."
+subtitle: "For JSON and Javascript mods."
 repo: "liplum/MultiCrafterLib"
 main: "net.liplum.MultiCrafterMod"
 description:
@@ -9,7 +9,6 @@ description:
 A Mindustry mod library for JSON and Javascript mods,
 including A crafter that supporting multiple recipes for items, fluids, power, and heat production.
 Please check the repository below to learn more.
-User guide: https://liplum.github.io/MultiCrafterLib
 Work on both v136 and v137.
 '''
 version: "1.8"

@@ -1,3 +1,5 @@
+import io.github.liplum.mindustry.minGameVersion
+
 plugins {
     `maven-publish`
     id("io.github.liplum.mgpp") version "1.2.0"
@@ -76,7 +78,7 @@ tasks.register<net.liplum.DistributeInjection>("distInjection") {
 
 tasks.register("retrieveMeta") {
     doLast {
-        println("::set-output name=header::${rootProject.name} v$version on Mindustry v136")
+        println("::set-output name=header::${rootProject.name} v$version on Mindustry v${mindustry.meta.minGameVersion}")
         println("::set-output name=version::v$version")
         try {
             val releases = java.net.URL("https://api.github.com/repos/liplum/MultiCrafterLib/releases").readText()
