@@ -1,19 +1,15 @@
 name: Deploy MkDocs to gh-pages
-on:
-  push:
-    branches:
-      - master
-      - main
+on: workflow_dispatch
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: |
-      contains(github.event.head_commit.message,'[document]') &&
-      github.repository == 'liplum/MultiCrafterLib'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v2
         with:
           python-version: 3.x
+
       - run: pip install mkdocs-material
       - run: mkdocs gh-deploy --force
