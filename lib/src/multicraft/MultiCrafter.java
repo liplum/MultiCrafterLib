@@ -6,11 +6,11 @@ import arc.graphics.g2d.Draw;
 import arc.graphics.g2d.TextureRegion;
 import arc.math.Interp;
 import arc.math.Mathf;
-import arc.math.geom.Geometry;
+import arc.math.geom.*;
 import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
+import arc.struct.*;
 import arc.struct.EnumSet;
-import arc.struct.Seq;
 import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
@@ -30,14 +30,17 @@ import mindustry.type.LiquidStack;
 import mindustry.ui.Bar;
 import mindustry.ui.ItemImage;
 import mindustry.world.Block;
-import mindustry.world.blocks.heat.HeatBlock;
-import mindustry.world.blocks.heat.HeatConsumer;
+import mindustry.world.blocks.heat.*;
+import mindustry.world.blocks.heat.HeatConductor.*;
+import mindustry.world.blocks.power.*;
 import mindustry.world.consumers.*;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.*;
 
 import multicraft.ui.*;
+
+import java.util.*;
 
 import static mindustry.Vars.tilesize;
 
@@ -369,6 +372,27 @@ public class MultiCrafter extends Block {
             // When As HeatConsumer
             if (isConsumeHeat && cur.isConsumeHeat()) return cur.input.heat;
             return 0f;
+        }
+
+        @Override
+        public float calculateHeat(float[] sideHeat) {
+            Point2[] edges = this.block.getEdges();
+            int length = edges.length;
+            for (int i=0; i < length; ++i) {
+                Point2 edge = edges[i];
+                Building build = this.nearby(edge.x, edge.y);
+                if (build != null && build.team == this.team && build instanceof HeatBlock) {
+                    HeatBlock heater = (HeatBlock)build;
+                    // Only calculate heat if the block is a heater or a multicrafter heat output
+                    if (heater instanceof MultiCrafterBuild) {
+                        MultiCrafterBuild multi = (MultiCrafterBuild)heater;
+                        if (multi.getCurRecipe().isOutputHeat())
+                            return this.calculateHeat(sideHeat, (IntSet)null);
+                    } else return this.calculateHeat(sideHeat, (IntSet)null);
+                }
+            }
+
+            return 0.0f;
         }
 
         @Override
