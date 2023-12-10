@@ -1,6 +1,6 @@
 plugins {
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.1.10"
+    id("io.github.liplum.mgpp") version "1.2.0"
 }
 buildscript {
     repositories {
