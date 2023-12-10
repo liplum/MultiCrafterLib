@@ -1,0 +1,61 @@
+name: Release
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set Android SDK tools
+        run: echo "$ANDROID_HOME/build-tools/30.0.3" >> $GITHUB_PATH
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Build MultiCrafter
+        run: |
+          chmod +x gradlew
+          ./gradlew :main:deploy
+          ./gradlew distInjection
+
+      - name: Move building
+        run: |
+          cp main/build/tmp/deploy/*.jar out
+          cp build/tmp/distInjection/*.zip out
+
+      - name: Upload building
+        uses: actions/upload-artifact@v3
+        with:
+          name: MultiCrafter
+          path: out/*
+
+      - name: Retrieve meta
+        id: retrieveMeta
+        run: |
+          chmod +x gradlew
+          ./gradlew retrieveMeta
+
+      - name: Create release
+        if: ${{ steps.retrieveMeta.outputs.tag_exist == 'false' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEADER: ${{ steps.retrieveMeta.outputs.header }}
+          VERSION: ${{ steps.retrieveMeta.outputs.version }}
+          TAG_EXIST: ${{ steps.retrieveMeta.outputs.tag_exist }}
+        run: |
+          gh release create "$VERSION" --title "$HEADER" --notes-file "$GITHUB_WORKSPACE/.github/workflows/ReleaseMessage.md" out/*
+
+      - name: Update release file if possible
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.retrieveMeta.outputs.version }}
+        run: |
+          gh release upload "$VERSION" out/* --clobber
