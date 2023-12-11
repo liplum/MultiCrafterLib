@@ -5,7 +5,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Set Android SDK tools
         run: echo "$ANDROID_HOME/build-tools/30.0.3" >> $GITHUB_PATH
@@ -26,11 +26,11 @@ jobs:
           ./gradlew :main:deploy
           ./gradlew distInjection
 
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: MultiCrafterMod
           path: main/build/tmp/deploy/*.jar
-      - uses: actions/upload-artifact@v2
+      - uses: actions/upload-artifact@v3
         with:
           name: MultiCrafterLibDist
           path: build/tmp/distInjection/*.zip
