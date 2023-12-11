@@ -2,7 +2,7 @@ import io.github.liplum.mindustry.minGameVersion
 
 plugins {
     `maven-publish`
-    id("io.github.liplum.mgpp") version "1.2.0"
+    id("io.github.liplum.mgpp") version "1.3.0"
 }
 buildscript {
     repositories {
