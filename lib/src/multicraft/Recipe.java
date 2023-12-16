@@ -42,8 +42,8 @@ public class Recipe {
         output.shrinkSize();
     }
 
-    public boolean isOutputFluid() {
-        return !output.fluids.isEmpty();
+    public boolean isConsumeItem() {
+        return !input.items.isEmpty();
     }
 
     public boolean isOutputItem() {
@@ -54,8 +54,8 @@ public class Recipe {
         return !input.fluids.isEmpty();
     }
 
-    public boolean isConsumeItem() {
-        return !input.items.isEmpty();
+    public boolean isOutputFluid() {
+        return !output.fluids.isEmpty();
     }
 
     public boolean isConsumePower() {
@@ -74,6 +74,14 @@ public class Recipe {
         return output.heat > 0f;
     }
 
+    public boolean isConsumePayload() {
+        return !input.payloads.isEmpty();
+    }
+
+    public boolean isOutputPayload() {
+        return !output.payloads.isEmpty();
+    }
+
     public boolean hasItem() {
         return isConsumeItem() || isOutputItem();
     }
@@ -90,6 +98,10 @@ public class Recipe {
         return isConsumeHeat() || isOutputHeat();
     }
 
+    public boolean hasPayload() {
+        return isConsumePayload() || isOutputPayload();
+    }
+
     public int maxItemAmount() {
         return Math.max(input.maxItemAmount(), output.maxItemAmount());
     }
@@ -104,6 +116,10 @@ public class Recipe {
 
     public float maxHeat() {
         return Math.max(input.heat, output.heat);
+    }
+
+    public float maxPayloadAmount() {
+        return Math.max(input.maxPayloadAmount(), output.maxPayloadAmount());
     }
 
     @Override

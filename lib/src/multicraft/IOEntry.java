@@ -1,41 +1,51 @@
 package multicraft;
 
-import arc.func.Prov;
-import arc.graphics.Color;
-import arc.graphics.g2d.TextureRegion;
-import arc.struct.ObjectSet;
-import arc.struct.Seq;
-import arc.util.Nullable;
-import mindustry.type.Item;
-import mindustry.type.ItemStack;
-import mindustry.type.Liquid;
-import mindustry.type.LiquidStack;
+import arc.func.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.struct.*;
+import arc.util.*;
+
+import mindustry.ctype.*;
+import mindustry.type.*;
 
 public class IOEntry {
     public Seq<ItemStack> items = new Seq<>(ItemStack.class);
     public Seq<LiquidStack> fluids = new Seq<>(LiquidStack.class);
     public float power = 0f;
     public float heat = 0f;
+    public Seq<PayloadStack> payloads = new Seq<>(PayloadStack.class);
+
+    public ObjectSet<Item> itemsUnique = new ObjectSet<>();
+    public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
+    public ObjectSet<UnlockableContent> payloadUnique = new ObjectSet<>();
     @Nullable
     public Prov<TextureRegion> icon;
     @Nullable
     public Color iconColor;
-    public ObjectSet<Item> itemsUnique = new ObjectSet<>();
-    public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
+
+    public IOEntry(Seq<ItemStack> items) {
+        this(items, new Seq<>(), 0f, 0f, new Seq<>());
+    }
 
     public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids) {
-        this(items, fluids, 0f, 0f);
+        this(items, fluids, 0f, 0f, new Seq<>());
     }
 
     public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power) {
-        this(items, fluids, power, 0f);
+        this(items, fluids, power, 0f, new Seq<>());
     }
 
     public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power, float heat) {
+        this(items, fluids, power, heat, new Seq<>());
+    }
+
+    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power, float heat, Seq<PayloadStack> payloads) {
         this.items = items;
         this.fluids = fluids;
         this.power = power;
         this.heat = heat;
+        this.payloads = payloads;
     }
 
     public IOEntry() {
@@ -48,15 +58,20 @@ public class IOEntry {
         for (LiquidStack fluid : fluids) {
             fluidsUnique.add(fluid.liquid);
         }
+        for (PayloadStack payload : payloads) {
+            // "item" can be any UnlockableContent (items, liquids, blocks, units)
+            payloadUnique.add(payload.item);
+        }
     }
 
     public void shrinkSize() {
         items.shrink();
         fluids.shrink();
+        payloads.shrink();
     }
 
     public boolean isEmpty() {
-        return items.isEmpty() && fluids.isEmpty() && power <= 0f && heat <= 0f;
+        return items.isEmpty() && fluids.isEmpty() && power <= 0f && heat <= 0f && payloads.isEmpty();
     }
 
     public int maxItemAmount() {
@@ -75,6 +90,14 @@ public class IOEntry {
         return max;
     }
 
+    public float maxPayloadAmount() {
+        float max = 0;
+        for (PayloadStack payload : payloads) {
+            max = Math.max(payload.amount, max);
+        }
+        return max;
+    }
+
     @Override
     public String toString() {
         return "IOEntry{" +
@@ -82,6 +105,7 @@ public class IOEntry {
             "fluids=" + fluids +
             "power=" + power +
             "heat=" + heat +
+            "payloads=" + payloads +
             "}";
     }
 }
