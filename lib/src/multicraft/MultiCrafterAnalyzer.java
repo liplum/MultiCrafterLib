@@ -1,26 +1,22 @@
 package multicraft;
 
-import arc.Core;
-import arc.func.Prov;
-import arc.graphics.Color;
-import arc.graphics.g2d.TextureRegion;
-import arc.scene.style.TextureRegionDrawable;
-import arc.struct.ObjectMap;
-import arc.struct.Seq;
-import arc.util.Log;
-import arc.util.Nullable;
-import arc.util.serialization.JsonValue;
-import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.content.Liquids;
-import mindustry.ctype.UnlockableContent;
-import mindustry.entities.Effect;
-import mindustry.entities.effect.MultiEffect;
-import mindustry.gen.Icon;
+import arc.*;
+import arc.func.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.scene.style.*;
+import arc.struct.*;
+import arc.util.*;
+import arc.util.serialization.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.ctype.*;
+import mindustry.entities.*;
+import mindustry.entities.effect.*;
+import mindustry.gen.*;
 import mindustry.type.*;
-import mindustry.world.Block;
-
-import java.lang.reflect.Field;
+import mindustry.world.*;
+import java.lang.reflect.*;
 import java.util.*;
 
 public class MultiCrafterAnalyzer {

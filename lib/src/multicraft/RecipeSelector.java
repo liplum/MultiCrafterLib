@@ -1,23 +1,18 @@
 package multicraft;
 
-import arc.scene.ui.Image;
-import arc.scene.ui.ImageButton;
-import arc.scene.ui.TextButton;
-import arc.scene.ui.layout.Table;
-import arc.scene.utils.Elem;
-import arc.struct.Seq;
-import arc.util.Nullable;
-import arc.util.Scaling;
-import mindustry.Vars;
-import mindustry.gen.Icon;
-import mindustry.gen.Tex;
-import mindustry.graphics.Pal;
-import mindustry.type.ItemStack;
-import mindustry.type.LiquidStack;
-import mindustry.ui.Styles;
-import multicraft.MultiCrafter.MultiCrafterBuild;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+import arc.scene.utils.*;
+import arc.struct.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import multicraft.MultiCrafter.*;
 
-import java.util.HashMap;
+import java.util.*;
 
 public abstract class RecipeSelector {
     public static HashMap<String, RecipeSelector> all = new HashMap<>();
@@ -46,6 +41,7 @@ public abstract class RecipeSelector {
         Seq<LiquidStack> fluids = entry.fluids;
         boolean outputPower = entry.power > 0f;
         boolean outputHeat = entry.heat > 0f;
+        Seq<PayloadStack> paylods = entry.payloads;
         if (items.size > 0) {
             return new Image(items.get(0).item.uiIcon);
         } else if (fluids.size > 0) {
@@ -58,6 +54,8 @@ public abstract class RecipeSelector {
             Image img = new Image(Icon.waves.getRegion());
             img.setColor(b.heatColor);
             return img;
+        } else if (paylods.size > 0) {
+            return new Image(paylods.get(0).item.uiIcon);
         }
         return new Image(Icon.cancel.getRegion());
     }

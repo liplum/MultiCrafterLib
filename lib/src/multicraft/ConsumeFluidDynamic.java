@@ -1,14 +1,13 @@
 package multicraft;
 
-import arc.func.Func;
-import arc.scene.ui.layout.Table;
-import mindustry.gen.Building;
-import mindustry.type.LiquidStack;
-import mindustry.ui.ReqImage;
-import mindustry.world.Block;
-import mindustry.world.consumers.Consume;
-import mindustry.world.modules.LiquidModule;
-
+import arc.func.*;
+import arc.scene.ui.layout.*;
+import mindustry.gen.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.*;
+import mindustry.world.consumers.*;
+import mindustry.world.modules.*;
 import multicraft.ui.*;
 
 public class ConsumeFluidDynamic extends Consume {

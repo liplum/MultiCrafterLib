@@ -1,13 +1,13 @@
 package multicraft.ui;
 
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Mathf;
-import arc.scene.ui.Image;
-import arc.scene.ui.layout.Stack;
-import arc.scene.ui.layout.Table;
-import mindustry.core.UI;
-import mindustry.type.LiquidStack;
-import mindustry.ui.Styles;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import arc.scene.ui.*;
+import arc.scene.ui.layout.*;
+
+import mindustry.core.*;
+import mindustry.type.*;
+import mindustry.ui.*;
 
 public class FluidImage extends Stack {
     /**

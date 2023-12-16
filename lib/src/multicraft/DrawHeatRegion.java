@@ -1,17 +1,14 @@
 package multicraft;
 
-import arc.Core;
-import arc.graphics.Blending;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Mathf;
-import mindustry.gen.Building;
-import mindustry.graphics.Layer;
-import mindustry.world.Block;
-import mindustry.world.blocks.heat.HeatBlock;
-import mindustry.world.blocks.heat.HeatConsumer;
-import mindustry.world.draw.DrawBlock;
+import arc.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.world.*;
+import mindustry.world.blocks.heat.*;
+import mindustry.world.draw.*;
 
 /**
  * {@link mindustry.world.draw.DrawHeatRegion}
