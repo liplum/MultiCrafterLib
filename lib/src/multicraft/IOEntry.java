@@ -18,7 +18,7 @@ public class IOEntry {
 
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
-    public ObjectSet<UnlockableContent> payloadUnique = new ObjectSet<>();
+    public ObjectSet<UnlockableContent> payloadsUnique = new ObjectSet<>();
     @Nullable
     public Prov<TextureRegion> icon;
     @Nullable
@@ -60,7 +60,7 @@ public class IOEntry {
         }
         for (PayloadStack payload : payloads) {
             // "item" can be any UnlockableContent (items, liquids, blocks, units)
-            payloadUnique.add(payload.item);
+            payloadsUnique.add(payload.item);
         }
     }
 

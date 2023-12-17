@@ -18,7 +18,6 @@ import mindustry.graphics.*;
 import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.ui.*;
-import mindustry.world.*;
 import mindustry.world.blocks.heat.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.consumers.*;
@@ -89,6 +88,8 @@ public class MultiCrafter extends PayloadBlock {
     protected boolean isConsumePower = false;
     protected boolean isOutputHeat = false;
     protected boolean isConsumeHeat = false;
+    protected boolean isOutputPayload = false;
+    protected boolean isConsumePayload = false;
     /**
      * What color of heat for recipe selector.
      */
@@ -139,6 +140,7 @@ public class MultiCrafter extends PayloadBlock {
         hasPower = false;
         hasLiquids = false;
         outputsPower = false;
+        outputsPayload = false;
         // if the recipe is already set in another way, don't analyze it again.
         if (resolvedRecipes == null && recipes != null) resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
@@ -208,6 +210,12 @@ public class MultiCrafter extends PayloadBlock {
                 getCurRecipe().input.fluidsUnique.contains(liquid) &&
                 liquids.get(liquid) < liquidCapacity;
         }
+
+        // It's a Payload but the Seq is UnlockableContent
+        // @Override
+        // public boolean acceptPayload(Building source, Payload payload) {
+        //     return getCurRecipe().input.payloadsUnique.contains(payload);
+        // }
         
         @Override
         public float edelta() {
@@ -610,6 +618,16 @@ public class MultiCrafter extends PayloadBlock {
             i++;
             if (i != 0 && i % 2 == 0) mat.row();
         }
+        for (PayloadStack stack : entry.payloads) {
+            Cell<PayloadImage> iconCell = mat.add(new PayloadImage(stack.item.uiIcon, stack.amount * 60f))
+                .pad(2f);
+            if (showNameTooltip)
+                iconCell.tooltip(stack.item.localizedName);
+            if (isInput) iconCell.left();
+            else iconCell.right();
+            if (i != 0 && i % 2 == 0) mat.row();
+            i++;
+        }
         Cell<Table> matCell = t.add(mat);
         if (isInput) matCell.left();
         else matCell.right();
@@ -716,9 +734,15 @@ public class MultiCrafter extends PayloadBlock {
             isConsumePower |= recipe.isConsumePower();
             isOutputHeat |= recipe.isOutputHeat();
             isConsumeHeat |= recipe.isConsumeHeat();
+            isOutputPayload |= recipe.isOutputPayload();
+            isConsumePayload |= recipe.isConsumePayload();
         }
+        acceptsItems = isConsumeItem;
         outputsPower = isOutputPower;
         consumesPower = isConsumePower;
+        outputsPayload = isOutputPayload;
+        acceptsPayload = isConsumePayload;
+
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
         powerCapacity = Math.max(maxPower * 60f * powerCapacityMultiplier, powerCapacity);
@@ -741,6 +765,10 @@ public class MultiCrafter extends PayloadBlock {
         ));
         if (isConsumePower) consume(new ConsumePowerDynamic(b ->
             ((MultiCrafterBuild)b).getCurRecipe().input.power
+        ));
+        if (isConsumePayload) consume(new ConsumePayloadDynamic(
+            // payloads seq is already shrunk, it's safe to access
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.payloads
         ));
     }
 }
