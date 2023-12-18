@@ -33,6 +33,7 @@ public class WithJsonMod extends Mod {
           }};
           output = new IOEntry() {{
             items = Seq.with(new ItemStack(Items.copper, 1));
+            power = 0.5f;
           }};
           craftTime = 160f;
           icon = () -> Items.copper.uiIcon;
