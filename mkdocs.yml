@@ -35,10 +35,17 @@ theme:
 nav:
   - Home:
       - Overview: index.md
-      - Usage: usage.md
-      - Customize: customize.md
-      - API: api.md
       - Troubleshooting: troubleshooting.md
+  - Usage:
+      - JSON & Javascript: usage/json.md
+      - Java: usage/java.md
+  - Customize:
+      - Menu Style: customize/menu.md
+      - Built-in: customize/builtin.md
+      - Drawer: customize/drawer.md
+  - API:
+      - Multicrafter: api/multicrafter.md
+      - Drawer: api/drawer.md
 
 markdown_extensions:
   - pymdownx.tabbed:

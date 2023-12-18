@@ -1,4 +1,4 @@
-# Usage
+# Json & Javascript
 
 === "Hjson"
 
@@ -118,12 +118,6 @@
       },
       craftTime: 210.0
     }]
-    ``` 
-
-=== "Java"
-    JavaJavaJavaJava
-    ```java
-    
     ```
         
     
