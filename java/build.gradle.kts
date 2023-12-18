@@ -23,11 +23,12 @@ java {
 }
 mindustry {
     meta = ModMeta(
-        name = "java-with-json",
+        name = "java",
+        displayName = "Java",
         main = "WithJsonMod",
         minGameVersion = "136",
         version = "0.1",
-        java = false,
+        java = true,
     )
 }
 mindustryAssets {
