@@ -19,11 +19,14 @@ java {
     sourceCompatibility = JavaVersion.VERSION_1_8
     targetCompatibility = JavaVersion.VERSION_1_8
 }
+mindustry {
+    isLib = true
+}
 mindustryAssets {
     root at "$projectDir/assets"
 }
-tasks.jar{
-    from(projectDir.resolve("assets")){
+tasks.jar {
+    from(projectDir.resolve("assets")) {
         include("scripts/lib.js")
     }
 }
