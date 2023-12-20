@@ -82,11 +82,11 @@ public class Recipe {
         return !output.payloads.isEmpty();
     }
 
-    public boolean hasItem() {
+    public boolean hasItems() {
         return isConsumeItem() || isOutputItem();
     }
     
-    public boolean hasFluid() {
+    public boolean hasFluids() {
         return isConsumeFluid() || isOutputFluid();
     }
     
@@ -98,7 +98,7 @@ public class Recipe {
         return isConsumeHeat() || isOutputHeat();
     }
 
-    public boolean hasPayload() {
+    public boolean hasPayloads() {
         return isConsumePayload() || isOutputPayload();
     }
 

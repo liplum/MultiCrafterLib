@@ -11,6 +11,7 @@ import arc.util.*;
 import arc.util.io.*;
 import mindustry.*;
 import mindustry.content.*;
+import mindustry.ctype.*;
 import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
@@ -28,6 +29,9 @@ import multicraft.ui.*;
 import static mindustry.Vars.*;
 
 public class MultiCrafter extends PayloadBlock {
+    public boolean hasHeat = false;
+    public boolean hasPayloads = false;
+
     public float itemCapacityMultiplier = 1f;
     public float fluidCapacityMultiplier = 1f;
     public float powerCapacityMultiplier = 1f;
@@ -137,8 +141,10 @@ public class MultiCrafter extends PayloadBlock {
     @Override
     public void init() {
         hasItems = false;
-        hasPower = false;
         hasLiquids = false;
+        hasPower = false;
+        hasHeat = false;
+        hasPayloads = false;
         outputsPower = false;
         outputsPayload = false;
         // if the recipe is already set in another way, don't analyze it again.
@@ -180,6 +186,7 @@ public class MultiCrafter extends PayloadBlock {
          * Serialized
          */
         public int curRecipeIndex = defaultRecipeIndex;
+        
 
         public void setCurRecipeIndexFromRemote(int index) {
             int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
@@ -212,10 +219,10 @@ public class MultiCrafter extends PayloadBlock {
         }
 
         // It's a Payload but the Seq is UnlockableContent
-        // @Override
-        // public boolean acceptPayload(Building source, Payload payload) {
-        //     return getCurRecipe().input.payloadsUnique.contains(payload);
-        // }
+        @Override
+        public boolean acceptPayload(Building source, Payload payload) {
+            return getCurRecipe().input.payloadsUnique.contains((UnlockableContent) payload);
+        }
         
         @Override
         public float edelta() {
@@ -278,7 +285,9 @@ public class MultiCrafter extends PayloadBlock {
         @Override
         public boolean shouldConsume() {
             Recipe cur = getCurRecipe();
-            if (hasItems) for (ItemStack output : cur.output.items) if (items.get(output.item) + output.amount > itemCapacity) return false;
+            if (hasItems) for (ItemStack output : cur.output.items)
+                if (items.get(output.item) + output.amount > itemCapacity)
+                    return false;
 
             if (hasLiquids) if (cur.isOutputFluid() && !ignoreLiquidFullness) {
                 boolean allFull = true;
@@ -619,7 +628,7 @@ public class MultiCrafter extends PayloadBlock {
             if (i != 0 && i % 2 == 0) mat.row();
         }
         for (PayloadStack stack : entry.payloads) {
-            Cell<PayloadImage> iconCell = mat.add(new PayloadImage(stack.item.uiIcon, stack.amount * 60f))
+            Cell<PayloadImage> iconCell = mat.add(new PayloadImage(stack.item.uiIcon, stack.amount))
                 .pad(2f);
             if (showNameTooltip)
                 iconCell.tooltip(stack.item.localizedName);
@@ -719,29 +728,27 @@ public class MultiCrafter extends PayloadBlock {
         float maxPower = 0f;
         float maxHeat = 0f;
         for (Recipe recipe : resolvedRecipes) {
+            hasItems |= recipe.hasItems();
+            hasLiquids |= recipe.hasFluids();
+            hasPower |= recipe.hasPower();
+            hasHeat |= recipe.hasHeat();
+            hasPayloads |= recipe.hasPayloads();
+            
             maxItemAmount = Math.max(recipe.maxItemAmount(), maxItemAmount);
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
             maxPower = Math.max(recipe.maxPower(), maxPower);
             maxHeat = Math.max(recipe.maxHeat(), maxHeat);
-            hasItems |= recipe.hasItem();
-            hasLiquids |= recipe.hasFluid();
-            hasPower |= recipe.hasPower();
-            isOutputItem |= recipe.isOutputItem();
-            isConsumeItem |= recipe.isConsumeItem();
-            isOutputFluid |= recipe.isOutputFluid();
-            isConsumeFluid |= recipe.isConsumeFluid();
-            isOutputPower |= recipe.isOutputPower();
-            isConsumePower |= recipe.isConsumePower();
-            isOutputHeat |= recipe.isOutputHeat();
-            isConsumeHeat |= recipe.isConsumeHeat();
-            isOutputPayload |= recipe.isOutputPayload();
-            isConsumePayload |= recipe.isConsumePayload();
-        }
-        acceptsItems = isConsumeItem;
-        outputsPower = isOutputPower;
-        consumesPower = isConsumePower;
-        outputsPayload = isOutputPayload;
-        acceptsPayload = isConsumePayload;
+                             isOutputItem |= recipe.isOutputItem();
+            acceptsItems =   isConsumeItem |= recipe.isConsumeItem();
+                             isOutputFluid |= recipe.isOutputFluid();
+                             isConsumeFluid |= recipe.isConsumeFluid();
+            outputsPower =   isOutputPower |= recipe.isOutputPower();
+            consumesPower =  isConsumePower |= recipe.isConsumePower();
+                             isOutputHeat |= recipe.isOutputHeat();
+                             isConsumeHeat |= recipe.isConsumeHeat();
+            outputsPayload = isOutputPayload |= recipe.isOutputPayload();
+            acceptsPayload = isConsumePayload |= recipe.isConsumePayload();
+        };
 
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
