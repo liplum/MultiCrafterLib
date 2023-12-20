@@ -11,7 +11,6 @@ import arc.util.*;
 import arc.util.io.*;
 import mindustry.*;
 import mindustry.content.*;
-import mindustry.ctype.*;
 import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
@@ -187,6 +186,8 @@ public class MultiCrafter extends PayloadBlock {
          */
         public int curRecipeIndex = defaultRecipeIndex;
         
+        //TODO has to be cleared after it's consumed
+        public PayloadSeq payloads = new PayloadSeq();        
 
         public void setCurRecipeIndexFromRemote(int index) {
             int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
@@ -218,10 +219,19 @@ public class MultiCrafter extends PayloadBlock {
                 liquids.get(liquid) < liquidCapacity;
         }
 
-        // It's a Payload but the Seq is UnlockableContent
         @Override
         public boolean acceptPayload(Building source, Payload payload) {
-            return getCurRecipe().input.payloadsUnique.contains((UnlockableContent) payload);
+            return hasPayloads && this.payload == null &&
+                getCurRecipe().input.payloadsUnique.contains(payload.content());
+        }
+
+        @Override
+        public PayloadSeq getPayloads() {
+            return this.payloads;
+        }
+
+        public void yeetPayload(Payload payload) {
+            payloads.add(payload.content(), 1);
         }
         
         @Override
@@ -272,6 +282,10 @@ public class MultiCrafter extends PayloadBlock {
                     craft();
             } else if (craftingTime >= craftTimeNeed)
                 craft();
+
+            if (moveInPayload()) {
+                yeetPayload(payload);
+            }
 
             updateBars();
             dumpOutputs();
@@ -331,7 +345,7 @@ public class MultiCrafter extends PayloadBlock {
                 for (int i = 0; i < fluids.size; i++) {
                     int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
                     dumpLiquid(fluids.get(i).liquid, 2f, dir);
-                }
+                }   
             }
         }
 
@@ -456,6 +470,7 @@ public class MultiCrafter extends PayloadBlock {
             write.f(warmup);
             write.i(curRecipeIndex);
             write.f(heat);
+            payloads.write(write);
         }
 
         @Override
@@ -465,6 +480,7 @@ public class MultiCrafter extends PayloadBlock {
             warmup = read.f();
             curRecipeIndex = Mathf.clamp(read.i(), 0, resolvedRecipes.size - 1);
             heat = read.f();
+            payloads.read(read);
         }
 
         public float warmupTarget() {

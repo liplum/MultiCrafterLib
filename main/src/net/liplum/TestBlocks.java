@@ -1,11 +1,9 @@
 package net.liplum;
 
 import arc.struct.Seq;
-import mindustry.content.Items;
-import mindustry.content.Liquids;
-import mindustry.type.Category;
-import mindustry.type.ItemStack;
-import mindustry.type.LiquidStack;
+
+import mindustry.content.*;
+import mindustry.type.*;
 import mindustry.world.meta.BuildVisibility;
 import multicraft.IOEntry;
 import multicraft.MultiCrafter;
@@ -13,6 +11,7 @@ import multicraft.Recipe;
 
 public class TestBlocks {
     public static void load() {
+        @SuppressWarnings("unused")
         MultiCrafter test = new MultiCrafter("multi-crafter") {{
             buildVisibility = BuildVisibility.shown;
             category = Category.crafting;
@@ -24,18 +23,19 @@ public class TestBlocks {
                             Items.copper, 1,
                             Items.lead, 1
                         )),
-                        Seq.with(LiquidStack.with(
-                            Liquids.water, 0.5f
-                        )),
-                        5f),
+                        Seq.with(),
+                        0f,
+                        0f,
+                        Seq.with(PayloadStack.with(
+                            Blocks.thoriumWall, 2
+                        ))
+                    ),
                     new IOEntry(
                         Seq.with(ItemStack.with(
                             Items.surgeAlloy, 1,
                             Items.thorium, 1
-                        )),
-                        Seq.with(LiquidStack.with(
-                            Liquids.neoplasm, 0.2f
-                        ))),
+                        ))
+                    ),
                     120f
                 ),
                 new Recipe(
