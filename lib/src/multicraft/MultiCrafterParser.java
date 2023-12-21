@@ -1,24 +1,25 @@
 package multicraft;
 
-import arc.*;
-import arc.func.*;
-import arc.graphics.*;
-import arc.graphics.g2d.*;
-import arc.scene.style.*;
-import arc.struct.*;
-import arc.util.*;
-import arc.util.serialization.*;
-import mindustry.*;
-import mindustry.content.*;
-import mindustry.ctype.*;
-import mindustry.entities.*;
-import mindustry.entities.effect.*;
-import mindustry.gen.*;
-import mindustry.type.*;
-import mindustry.world.*;
+import arc.func.Prov;
+import arc.graphics.Color;
+import arc.graphics.g2d.TextureRegion;
+import arc.struct.Seq;
+import arc.util.Log;
+import arc.util.Nullable;
+import mindustry.content.Liquids;
+import mindustry.entities.Effect;
+import mindustry.entities.effect.MultiEffect;
+import mindustry.gen.Icon;
+import mindustry.type.Item;
+import mindustry.type.ItemStack;
+import mindustry.type.Liquid;
+import mindustry.type.LiquidStack;
+import mindustry.world.Block;
 
-import java.lang.reflect.*;
 import java.util.*;
+
+import static multicraft.ContentResolver.*;
+import static multicraft.ParserUtils.*;
 
 public class MultiCrafterParser {
     private static final String[] inputAlias = {
@@ -29,51 +30,25 @@ public class MultiCrafterParser {
     };
 
     private String curBlock = "";
-    private int index = 0;
-
-    private Object preProcessArc(Object seq) {
-        try {
-            return processFunc(seq);
-        } catch (Exception e) {
-            error("Can't convert Seq in preprocess " + seq, e);
-            return Collections.emptyList();
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private static Object processFunc(Object o) {
-        if (o instanceof Seq) {
-            Seq seq = (Seq) o;
-            ArrayList list = new ArrayList(seq.size);
-            for (Object e : new Seq.SeqIterable<>(seq)) {
-                list.add(processFunc(e));
-            }
-            return list;
-        } else if (o instanceof ObjectMap) {
-            ObjectMap objMap = (ObjectMap) o;
-            HashMap map = new HashMap();
-            for (ObjectMap.Entry<Object, Object> entry : new ObjectMap.Entries<Object, Object>(objMap)) {
-                map.put(entry.key, processFunc(entry.value));
-            }
-            return map;
-        } else if (o instanceof JsonValue) {
-            return convert((JsonValue) o);
-        }
-        return o;
-    }
+    private int recipeIndex = 0;
 
     @SuppressWarnings({"rawtypes"})
     public Seq<Recipe> parse(Block meta, Object o) {
         curBlock = genName(meta);
-        o = preProcessArc(o);
+        try {
+            o = parseJsonToObject(o);
+        } catch (Exception e) {
+            error("Can't convert Seq in preprocess " + o, e);
+            o = Collections.emptyList();
+        }
         Seq<Recipe> recipes = new Seq<>(Recipe.class);
-        index = 0;
+        recipeIndex = 0;
         if (o instanceof List) { // A list of recipe
             List all = (List) o;
             for (Object recipeMapObj : all) {
                 Map recipeMap = (Map) recipeMapObj;
                 parseRecipe(recipeMap, recipes);
-                index++;
+                recipeIndex++;
             }
         } else if (o instanceof Map) { // Only one recipe
             Map recipeMap = (Map) o;
@@ -83,6 +58,8 @@ public class MultiCrafterParser {
         }
         return recipes;
     }
+
+    private static final Prov<TextureRegion> NotFound = () -> Icon.cancel.getRegion();
 
     @SuppressWarnings("rawtypes")
     private void parseRecipe(Map recipeMap, Seq<Recipe> to) {
@@ -103,31 +80,25 @@ public class MultiCrafterParser {
             Object craftTimeObj = recipeMap.get("craftTime");
             recipe.craftTime = parseFloat(craftTimeObj);
             Object iconObj = recipeMap.get("icon");
-            if (iconObj instanceof String)
+            if (iconObj instanceof String) {
                 recipe.icon = findIcon((String) iconObj);
+            }
             Object iconColorObj = recipeMap.get("iconColor");
-            if (iconColorObj instanceof String)
+            if (iconColorObj instanceof String) {
                 recipe.iconColor = Color.valueOf((String) iconColorObj);
+            }
             Object fxObj = recipeMap.get("craftEffect");
             Effect fx = parseFx(fxObj);
-            if (fx != null)
+            if (fx != null) {
                 recipe.craftEffect = fx;
+            }
             // Check empty
-            if (!recipe.isAnyEmpty()) to.add(recipe);
-            else Log.warn("Recipe is empty, so skip it", recipe);
+            if (!recipe.isAnyEmpty()) {
+                to.add(recipe);
+            } else Log.warn("Recipe is empty, so skip it", recipe);
         } catch (Exception e) {
             error("Can't load a recipe", e);
         }
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Nullable
-    private static Object findValueByAlias(Map map, String... aliases) {
-        for (String alias : aliases) {
-            Object tried = map.get(alias);
-            if (tried != null) return tried;
-        }
-        return null;
     }
 
     @SuppressWarnings({"rawtypes"})
@@ -176,11 +147,13 @@ public class MultiCrafterParser {
             Object heatObj = ioRawMap.get("heat");
             res.heat = parseFloat(heatObj);
             Object iconObj = ioRawMap.get("icon");
-            if (iconObj instanceof String)
+            if (iconObj instanceof String) {
                 res.icon = findIcon((String) iconObj);
+            }
             Object iconColorObj = ioRawMap.get("iconColor");
-            if (iconColorObj instanceof String)
+            if (iconColorObj instanceof String) {
                 res.iconColor = Color.valueOf((String) iconColorObj);
+            }
         } else if (ioEntry instanceof List) {
             /*
               input/output: []
@@ -190,15 +163,18 @@ public class MultiCrafterParser {
                     parseAnyPair((String) content, res.items, res.fluids);
                 } else if (content instanceof Map) {
                     parseAnyMap((Map) content, res.items, res.fluids);
-                } else
+                } else {
                     throw new RecipeParserException("Unsupported type of content at " + meta + " from <" + content + ">");
+                }
             }
         } else if (ioEntry instanceof String) {
             /*
                 input/output : "item/1"
              */
             parseAnyPair((String) ioEntry, res.items, res.fluids);
-        } else throw new RecipeParserException("Unsupported type of " + meta + " <" + ioEntry + ">");
+        } else {
+            throw new RecipeParserException("Unsupported type of " + meta + " <" + ioEntry + ">");
+        }
         return res;
     }
 
@@ -331,7 +307,6 @@ public class MultiCrafterParser {
     @SuppressWarnings("rawtypes")
     private void parseAnyMap(Map map, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
         try {
-
             Object itemRaw = map.get("item");
             if (itemRaw instanceof String) {
                 Item item = findItem((String) itemRaw);
@@ -418,155 +393,36 @@ public class MultiCrafterParser {
         }
     }
 
-    private static float parseFloat(@Nullable Object floatObj) {
-        if (floatObj == null) return 0f;
-        if (floatObj instanceof Number) {
-            return ((Number) floatObj).floatValue();
-        }
-        try {
-            return Float.parseFloat((String) floatObj);
-        } catch (Exception e) {
-            return 0f;
-        }
-    }
-
-    private static int parseInt(@Nullable Object intObj) {
-        if (intObj == null) return 0;
-        if (intObj instanceof Number) {
-            return ((Number) intObj).intValue();
-        }
-        try {
-            return Integer.parseInt((String) intObj);
-        } catch (Exception e) {
-            return 0;
-        }
-    }
 
     /**
      * Only work on single threading.
      */
     private void error(String content) {
-        Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content);
+        Log.err("[" + curBlock + "](at recipe " + recipeIndex + ")\n" + content);
     }
 
     /**
      * Only work on single threading.
      */
     private void error(String content, Throwable e) {
-        Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content, e);
+        Log.err("[" + curBlock + "](at recipe " + recipeIndex + ")\n" + content, e);
     }
 
     public static String genName(Block meta) {
-        if (meta.localizedName.equals(meta.name)) return meta.name;
-        else return meta.localizedName + "(" + meta.name + ")";
-    }
-
-    @Nullable
-    private static Item findItem(String id) {
-        for (Item item : Vars.content.items())
-            if (id.equals(item.name)) return item;// prevent null pointer
-        return null;
-    }
-
-    @Nullable
-    private static Liquid findFluid(String id) {
-        for (Liquid fluid : Vars.content.liquids())
-            if (id.equals(fluid.name)) return fluid;// prevent null pointer
-        return null;
-    }
-
-    @Nullable
-    private static Block findBlock(String id) {
-        for (Block block : Vars.content.blocks())
-            if (id.equals(block.name)) return block; // prevent null pointer
-        return null;
-    }
-
-    @Nullable
-    private static UnitType findUnit(String id) {
-        for (UnitType unit : Vars.content.units())
-            if (id.equals(unit.name)) return unit; // prevent null pointer
-        return null;
-    }
-
-    @Nullable
-    private static UnlockableContent findPayload(String id) {
-        UnitType unit = findUnit(id);
-        if (unit != null) return unit;
-        return findBlock(id);
-    }
-
-    private static final Prov<TextureRegion> NotFound = () -> Icon.cancel.getRegion();
-
-    /**
-     * Supported name pattern:
-     * <ul>
-     *     <li> "Icon.xxx" from {@link Icon}
-     *     <li> "copper", "water", "router" or "mono"
-     * </ul>
-     */
-    @Nullable
-    private Prov<TextureRegion> findIcon(String name) {
-        if (name.startsWith("Icon.") && name.length() > 5) {
-            try {
-                String fieldName = name.substring(5);
-                Field field = Icon.class.getField(fieldName.contains("-") ? kebab2camel(fieldName) : fieldName);
-                Object icon = field.get(null);
-                TextureRegion tr = ((TextureRegionDrawable) icon).getRegion();
-                return () -> tr;
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                error("Icon <" + name + "> not found, so use a cross instead.", e);
-                return NotFound;
-            }
+        if (meta.localizedName.equals(meta.name)) {
+            return meta.name;
         } else {
-            Item item = findItem(name);
-            if (item != null) return () -> item.uiIcon;
-            Liquid fluid = findFluid(name);
-            if (fluid != null) return () -> fluid.uiIcon;
-            UnlockableContent payload = findPayload(name);
-            if (payload != null) return () -> payload.uiIcon;
-            TextureRegion tr = Core.atlas.find(name);
-            if (tr.found()) return () -> tr;
+            return meta.localizedName + "(" + meta.name + ")";
         }
-        error("Texture <" + name + "> not found, so use a cross instead.");
-        return NotFound;
     }
 
-    private static String kebab2camel(String kebab) {
-        StringBuilder sb = new StringBuilder();
-        boolean hyphen = false;
-        for (int i = 0; i < kebab.length(); i++) {
-            char c = kebab.charAt(i);
-            if (c == '-') {
-                hyphen = true;
-            } else {
-                if (hyphen) {
-                    sb.append(Character.toUpperCase(c));
-                    hyphen = false;
-                } else {
-                    if (i == 0) sb.append(Character.toLowerCase(c));
-                    else sb.append(c);
-                }
-            }
+    private Prov<TextureRegion> findIcon(String name) {
+        Prov<TextureRegion> icon = ContentResolver.findIcon(name);
+        if (icon == null) {
+            error("Icon <" + name + "> not found, so use a cross instead.");
+            icon = NotFound;
         }
-        return sb.toString();
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nullable
-    private static Effect parseFx(Object obj) {
-        if (obj instanceof String)
-            return findFx((String) obj);
-        else if (obj instanceof List) {
-            return composeMultiFx((List<String>) obj);
-        } else return null;
-    }
-
-    @Nullable
-    private static Effect findFx(String name) {
-        Object effect = field(Fx.class, name);
-        if (effect instanceof Effect) return (Effect) effect;
-        else return null;
+        return icon;
     }
 
     private static final Effect[] EffectType = new Effect[0];
@@ -580,53 +436,27 @@ public class MultiCrafterParser {
         return new MultiEffect(all.toArray(EffectType));
     }
 
-    private static Object field(Class<?> type, JsonValue value) {
-        return field(type, value.asString());
-    }
-
-    /**
-     * Gets a field from a static class by name, throwing a descriptive exception if not found.
-     */
-    private static Object field(Class<?> type, String name) {
-        try {
-            Object b = type.getField(name).get(null);
-            if (b == null) throw new IllegalArgumentException(type.getSimpleName() + ": not found: '" + name + "'");
-            return b;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings("unchecked")
     @Nullable
-    private static Object convert(JsonValue j) {
-        JsonValue.ValueType type = j.type();
-        switch (type) {
-            case object: {
-                HashMap map = new HashMap();
-                for (JsonValue cur = j.child; cur != null; cur = cur.next) {
-                    map.put(cur.name, convert(cur));
-                }
-                return map;
-            }
-            case array: {
-                ArrayList list = new ArrayList();
-                for (JsonValue cur = j.child; cur != null; cur = cur.next) {
-                    list.add(convert(cur));
-                }
-                return list;
-            }
-            case stringValue:
-                return j.asString();
-            case doubleValue:
-                return j.asDouble();
-            case longValue:
-                return j.asLong();
-            case booleanValue:
-                return j.asBoolean();
-            case nullValue:
-                return null;
+    private static Effect parseFx(Object obj) {
+        if (obj instanceof String)
+            return findFx((String) obj);
+        else if (obj instanceof List) {
+            return composeMultiFx((List<String>) obj);
+        } else {
+            return null;
         }
-        return Collections.emptyMap();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Nullable
+    private static Object findValueByAlias(Map map, String... aliases) {
+        for (String alias : aliases) {
+            Object tried = map.get(alias);
+            if (tried != null) {
+                return tried;
+            }
+        }
+        return null;
     }
 }
