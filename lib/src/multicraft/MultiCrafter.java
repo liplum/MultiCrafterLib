@@ -147,9 +147,9 @@ public class MultiCrafter extends PayloadBlock {
         outputsPower = false;
         outputsPayload = false;
         // if the recipe is already set in another way, don't analyze it again.
-        if (resolvedRecipes == null && recipes != null) resolvedRecipes = MultiCrafterAnalyzer.analyze(this, recipes);
+        if (resolvedRecipes == null && recipes != null) resolvedRecipes = MultiCrafterParser.analyze(this, recipes);
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
-            throw new ArcRuntimeException(MultiCrafterAnalyzer.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need. Check your `last_log.txt` to obtain more information.");
+            throw new ArcRuntimeException(MultiCrafterParser.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need. Check your `last_log.txt` to obtain more information.");
         if (selector == null) selector = RecipeSelector.get(menu);
         decorateRecipes();
         setupBlockByRecipes();

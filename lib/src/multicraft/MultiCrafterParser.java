@@ -19,7 +19,7 @@ import mindustry.world.*;
 import java.lang.reflect.*;
 import java.util.*;
 
-public class MultiCrafterAnalyzer {
+public class MultiCrafterParser {
     private static final String[] inputAlias = {
         "input", "in", "i"
     };
