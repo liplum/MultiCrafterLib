@@ -17,10 +17,26 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: 'gradle'
-      - name: Build mod jar
-        run: chmod +x gradlew && ./gradlew deploy
-      - name: Upload built jar file
-        uses: actions/upload-artifact@v3
+
+      - name: Setup gradle
+        run: |
+          chmod +x gradlew
+
+      - name: MultiCrafter unit test
+        run: |
+          ./gradlew :lib:test
+
+      - name: Build MultiCrafter
+        run: |
+          ./gradlew :main:deploy
+          ./gradlew distInjection
+
+      - uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.event.repository.name }} Pull Request
-          path: build/tmp/deploy/${{ github.event.repository.name }}.jar
+          name: MultiCrafterMod
+          path: main/build/tmp/deploy/*.jar
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: MultiCrafterLibDist
+          path: build/tmp/distInjection/*.zip

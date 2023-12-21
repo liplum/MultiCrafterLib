@@ -17,12 +17,16 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
-      - name: Get short commit hash
-        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      - name: Setup gradle
+        run: |
+          chmod +x gradlew
+
+      - name: MultiCrafter unit test
+        run: |
+          ./gradlew test
 
       - name: Build MultiCrafter
         run: |
-          chmod +x gradlew
           ./gradlew :main:deploy
           ./gradlew distInjection
 
