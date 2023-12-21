@@ -28,16 +28,10 @@ public class MultiCrafterParser {
             "output", "out", "o"
     };
 
-    /**
-     * Only work on single threading.
-     */
-    private static String curBlock = "";
-    /**
-     * Only work on single threading.
-     */
-    private static int index = 0;
+    private String curBlock = "";
+    private int index = 0;
 
-    private static Object preProcessArc(Object seq) {
+    private Object preProcessArc(Object seq) {
         try {
             return processFunc(seq);
         } catch (Exception e) {
@@ -69,7 +63,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings({"rawtypes"})
-    public static Seq<Recipe> parse(Block meta, Object o) {
+    public Seq<Recipe> parse(Block meta, Object o) {
         curBlock = genName(meta);
         o = preProcessArc(o);
         Seq<Recipe> recipes = new Seq<>(Recipe.class);
@@ -91,7 +85,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseRecipe(Map recipeMap, Seq<Recipe> to) {
+    private void parseRecipe(Map recipeMap, Seq<Recipe> to) {
         try {
             Recipe recipe = new Recipe();
             Object inputsRaw = findValueByAlias(recipeMap, inputAlias);
@@ -137,7 +131,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings({"rawtypes"})
-    private static IOEntry parseIOEntry(String meta, Object ioEntry) {
+    private IOEntry parseIOEntry(String meta, Object ioEntry) {
         IOEntry res = new IOEntry();
         // Inputs
         if (ioEntry instanceof Map) {
@@ -209,7 +203,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseItems(List items, Seq<ItemStack> to) {
+    private void parseItems(List items, Seq<ItemStack> to) {
         for (Object entryRaw : items) {
             if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
                 parseItemPair((String) entryRaw, to);
@@ -222,7 +216,7 @@ public class MultiCrafterParser {
         }
     }
 
-    private static void parseItemPair(String pair, Seq<ItemStack> to) {
+    private void parseItemPair(String pair, Seq<ItemStack> to) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -250,7 +244,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseFluids(List fluids, Seq<LiquidStack> to) {
+    private void parseFluids(List fluids, Seq<LiquidStack> to) {
         for (Object entryRaw : fluids) {
             if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
                 parseFluidPair((String) entryRaw, to);
@@ -263,7 +257,7 @@ public class MultiCrafterParser {
         }
     }
 
-    private static void parseFluidPair(String pair, Seq<LiquidStack> to) {
+    private void parseFluidPair(String pair, Seq<LiquidStack> to) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -293,7 +287,7 @@ public class MultiCrafterParser {
     /**
      * @param pair "mod-id-item/1" or "mod-id-gas"
      */
-    private static void parseAnyPair(String pair, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
+    private void parseAnyPair(String pair, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -335,7 +329,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseAnyMap(Map map, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
+    private void parseAnyMap(Map map, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
         try {
 
             Object itemRaw = map.get("item");
@@ -369,7 +363,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseItemMap(Map map, Seq<ItemStack> to) {
+    private void parseItemMap(Map map, Seq<ItemStack> to) {
         try {
             ItemStack entry = new ItemStack();
             Object itemID = map.get("item");
@@ -397,7 +391,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private static void parseFluidMap(Map map, Seq<LiquidStack> to) {
+    private void parseFluidMap(Map map, Seq<LiquidStack> to) {
         try {
             LiquidStack entry = new LiquidStack(Liquids.water, 0f);
             Object itemID = map.get("fluid");
@@ -451,14 +445,14 @@ public class MultiCrafterParser {
     /**
      * Only work on single threading.
      */
-    private static void error(String content) {
+    private void error(String content) {
         Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content);
     }
 
     /**
      * Only work on single threading.
      */
-    private static void error(String content, Throwable e) {
+    private void error(String content, Throwable e) {
         Log.err("[" + curBlock + "](at recipe " + index + ")\n" + content, e);
     }
 
@@ -512,7 +506,7 @@ public class MultiCrafterParser {
      * </ul>
      */
     @Nullable
-    private static Prov<TextureRegion> findIcon(String name) {
+    private Prov<TextureRegion> findIcon(String name) {
         if (name.startsWith("Icon.") && name.length() > 5) {
             try {
                 String fieldName = name.substring(5);
