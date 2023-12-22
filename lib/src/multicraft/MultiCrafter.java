@@ -202,7 +202,9 @@ public class MultiCrafter extends PayloadBlock {
                 curRecipeIndex = newIndex;
                 createEffect(changeRecipeEffect);
                 craftingTime = 0f;
-                if (!Vars.headless) rebuildHoveredInfo();
+                if (!Vars.headless) {
+                    rebuildHoveredInfo();
+                }
             }
         }
 
@@ -300,7 +302,8 @@ public class MultiCrafter extends PayloadBlock {
 
         public void updateBars() {
             barMap.clear();
-            setBars();
+            // TODO: Maybe passed hovered building?
+            setBars(this);
         }
 
         @Override
@@ -673,24 +676,29 @@ public class MultiCrafter extends PayloadBlock {
     @Override
     public void setBars() {
         super.setBars();
-
-        if (hasPower)
-            addBar("power", (MultiCrafterBuild b) -> new Bar(
-                    b.getCurRecipe().isOutputPower() ? Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)) : "bar.power",
-                    Pal.powerBar,
-                    () -> b.efficiency
-            ));
-        if (isConsumeHeat || isOutputHeat)
+        if (isConsumeHeat || isOutputHeat) {
             addBar("heat", (MultiCrafterBuild b) -> new Bar(
                     b.getCurRecipe().isConsumeHeat() ? Core.bundle.format("bar.heatpercent", (int) (b.heat + 0.01f), (int) (b.efficiencyScale() * 100 + 0.01f)) : "bar.heat",
                     Pal.lightOrange,
                     b::heatFrac
             ));
+        }
         addBar("progress", (MultiCrafterBuild b) -> new Bar(
                 "bar.loadprogress",
                 Pal.accent,
                 b::progress
         ));
+    }
+
+    public void setBars(MultiCrafterBuild build){
+        setBars();
+        if (hasPower && build.getCurRecipe().isConsumePower()) {
+            addBar("power", (MultiCrafterBuild b) -> new Bar(
+                    b.getCurRecipe().isOutputPower() ? Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)) : "bar.power",
+                    Pal.powerBar,
+                    () -> b.efficiency
+            ));
+        }
     }
 
     @Override
