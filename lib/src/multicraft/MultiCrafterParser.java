@@ -22,15 +22,14 @@ import static multicraft.ContentResolver.*;
 import static multicraft.ParserUtils.*;
 
 public class MultiCrafterParser {
-    private static final String[] inputAlias = {
-            "input", "in", "i"
-    };
-    private static final String[] outputAlias = {
-            "output", "out", "o"
-    };
+    private static final String[] inputAlias = {"input", "in", "i"};
+    private static final String[] outputAlias = {"output", "out", "o"};
 
     private String curBlock = "";
     private int recipeIndex = 0;
+
+    private final Seq<String> errors = new Seq<>();
+    private final Seq<String> warnings = new Seq<>();
 
     @SuppressWarnings({"rawtypes"})
     public Seq<Recipe> parse(Block meta, Object o) {
@@ -394,18 +393,28 @@ public class MultiCrafterParser {
     }
 
 
-    /**
-     * Only work on single threading.
-     */
     private void error(String content) {
-        Log.err("[" + curBlock + "](at recipe " + recipeIndex + ")\n" + content);
+        error(content, null);
     }
 
-    /**
-     * Only work on single threading.
-     */
-    private void error(String content, Throwable e) {
-        Log.err("[" + curBlock + "](at recipe " + recipeIndex + ")\n" + content, e);
+
+    private void error(String content, @Nullable Throwable e) {
+        String message = buildRecipeIndexInfo() + content;
+        errors.add(message);
+        if (e == null) {
+            Log.err(message);
+        } else {
+            Log.err(message, e);
+        }
+    }
+
+    private void warn(String content) {
+        String message = buildRecipeIndexInfo() + content;
+        Log.warn(message);
+    }
+
+    private String buildRecipeIndexInfo() {
+        return "[" + curBlock + "](at recipe " + recipeIndex + ")\n";
     }
 
     public static String genName(Block meta) {
@@ -439,8 +448,7 @@ public class MultiCrafterParser {
     @SuppressWarnings("unchecked")
     @Nullable
     private static Effect parseFx(Object obj) {
-        if (obj instanceof String)
-            return findFx((String) obj);
+        if (obj instanceof String) return findFx((String) obj);
         else if (obj instanceof List) {
             return composeMultiFx((List<String>) obj);
         } else {
