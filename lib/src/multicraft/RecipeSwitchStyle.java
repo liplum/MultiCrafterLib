@@ -14,17 +14,17 @@ import multicraft.MultiCrafter.*;
 
 import java.util.*;
 
-public abstract class RecipeSelector {
-    public static HashMap<String, RecipeSelector> all = new HashMap<>();
+public abstract class RecipeSwitchStyle {
+    public static HashMap<String, RecipeSwitchStyle> all = new HashMap<>();
 
-    public static RecipeSelector get(@Nullable String name) {
-        if (name == null) return Transform;
-        RecipeSelector inMap = all.get(name.toLowerCase());
-        if (inMap == null) return Transform;
+    public static RecipeSwitchStyle get(@Nullable String name) {
+        if (name == null) return transform;
+        RecipeSwitchStyle inMap = all.get(name.toLowerCase());
+        if (inMap == null) return transform;
         else return inMap;
     }
 
-    public RecipeSelector(String name) {
+    public RecipeSwitchStyle(String name) {
         all.put(name.toLowerCase(), this);
     }
 
@@ -60,7 +60,7 @@ public abstract class RecipeSelector {
         return new Image(Icon.cancel.getRegion());
     }
 
-    public static RecipeSelector Simple = new RecipeSelector("simple") {
+    public static RecipeSwitchStyle simple = new RecipeSwitchStyle("simple") {
 
         @Override
         public void build(MultiCrafter b, MultiCrafterBuild c, Table table) {
@@ -92,7 +92,7 @@ public abstract class RecipeSelector {
         }
     };
 
-    public static RecipeSelector Number = new RecipeSelector("number") {
+    public static RecipeSwitchStyle number = new RecipeSwitchStyle("number") {
         @Override
         public void build(MultiCrafter b, MultiCrafterBuild c, Table table) {
             Table t = new Table();
@@ -112,7 +112,7 @@ public abstract class RecipeSelector {
             table.add(t).grow();
         }
     };
-    public static RecipeSelector Transform = new RecipeSelector("transform") {
+    public static RecipeSwitchStyle transform = new RecipeSwitchStyle("transform") {
         @Override
         public void build(MultiCrafter b, MultiCrafterBuild c, Table table) {
             Table t = new Table();
@@ -138,7 +138,7 @@ public abstract class RecipeSelector {
         }
     };
 
-    public static RecipeSelector Detailed = new RecipeSelector("detailed") {
+    public static RecipeSwitchStyle detailed = new RecipeSwitchStyle("detailed") {
 
         @Override
         public void build(MultiCrafter b, MultiCrafterBuild c, Table table) {

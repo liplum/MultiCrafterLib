@@ -25,7 +25,7 @@ public class WithJsonMod extends Mod {
       requirements(Category.crafting, ItemStack.with(
         Items.copper, 10
       ));
-      selector = RecipeSelector.Detailed;
+      switchStyle = RecipeSwitchStyle.detailed;
       resolvedRecipes = Seq.with(
         new Recipe() {{
           input = new IOEntry() {{
