@@ -42,8 +42,7 @@ public class MultiCrafterParser {
         }
         Seq<Recipe> recipes = new Seq<>(Recipe.class);
         recipeIndex = 0;
-        if (o instanceof List) { // A list of recipe
-            List all = (List) o;
+        if (o instanceof List all) { // A list of recipe
             for (Object recipeMapObj : all) {
                 Map recipeMap = (Map) recipeMapObj;
                 parseRecipe(recipeMap, recipes);
@@ -63,7 +62,7 @@ public class MultiCrafterParser {
     @SuppressWarnings("rawtypes")
     private void parseRecipe(Map recipeMap, Seq<Recipe> to) {
         try {
-            Recipe recipe = new Recipe();
+            final var recipe = new Recipe();
             // parse input
             Object inputsRaw = findValueByAlias(recipeMap, inputAlias);
             if (inputsRaw == null) {
@@ -81,12 +80,12 @@ public class MultiCrafterParser {
             recipe.craftTime = parseFloat(craftTimeObj);
             // parse icon
             Object iconObj = recipeMap.get("icon");
-            if (iconObj instanceof String) {
-                recipe.icon = findIcon((String) iconObj);
+            if (iconObj instanceof String iconName) {
+                recipe.icon = findIcon(iconName);
             }
             Object iconColorObj = recipeMap.get("iconColor");
-            if (iconColorObj instanceof String) {
-                recipe.iconColor = Color.valueOf((String) iconColorObj);
+            if (iconColorObj instanceof String colorHex) {
+                recipe.iconColor = Color.valueOf(colorHex);
             }
             // parse fx
             Object fxObj = recipeMap.get("craftEffect");
@@ -109,7 +108,7 @@ public class MultiCrafterParser {
         IOEntry res = new IOEntry();
         if (ioEntry == null) {
             return res;
-        } else if (ioEntry instanceof Map) {
+        } else if (ioEntry instanceof Map ioRawMap) {
             /*
                 input/output:{
                   items:[],
@@ -120,7 +119,6 @@ public class MultiCrafterParser {
                   iconColor: "#FFFFFF"
                 }
              */
-            Map ioRawMap = (Map) ioEntry;
             // Items
             Object items = ioRawMap.get("items");
             if (items != null) {
@@ -151,31 +149,31 @@ public class MultiCrafterParser {
             Object heatObj = ioRawMap.get("heat");
             res.heat = parseFloat(heatObj);
             Object iconObj = ioRawMap.get("icon");
-            if (iconObj instanceof String) {
-                res.icon = findIcon((String) iconObj);
+            if (iconObj instanceof String iconName) {
+                res.icon = findIcon(iconName);
             }
             Object iconColorObj = ioRawMap.get("iconColor");
-            if (iconColorObj instanceof String) {
-                res.iconColor = Color.valueOf((String) iconColorObj);
+            if (iconColorObj instanceof String colorHex) {
+                res.iconColor = Color.valueOf(colorHex);
             }
         } else if (ioEntry instanceof List) {
             /*
               input/output: []
              */
             for (Object content : (List) ioEntry) {
-                if (content instanceof String) {
-                    parseAnyPair((String) content, res.items, res.fluids);
-                } else if (content instanceof Map) {
-                    parseAnyMap((Map) content, res.items, res.fluids);
+                if (content instanceof String literal) {
+                    parseAnyPair(literal, res.items, res.fluids);
+                } else if (content instanceof Map map) {
+                    parseAnyMap(map, res.items, res.fluids);
                 } else {
                     throw new RecipeParserException("Unsupported type of content at " + meta + " from <" + content + ">");
                 }
             }
-        } else if (ioEntry instanceof String) {
+        } else if (ioEntry instanceof String literal) {
             /*
                 input/output : "item/1"
              */
-            parseAnyPair((String) ioEntry, res.items, res.fluids);
+            parseAnyPair(literal, res.items, res.fluids);
         } else {
             throw new RecipeParserException("Unsupported type of " + meta + " <" + ioEntry + ">");
         }
