@@ -32,11 +32,9 @@ public class Recipe {
         output.cacheUnique();
     }
 
-    public boolean isAnyEmpty() {
-        if (input == null || output == null) return true;
-        return input.isEmpty() || output.isEmpty();
-    }
-
+    /**
+     * Shrink size for safe access of {@link arc.struct.Seq#items}.
+     */
     public void shrinkSize() {
         input.shrinkSize();
         output.shrinkSize();
@@ -85,11 +83,11 @@ public class Recipe {
     public boolean hasItems() {
         return isConsumeItem() || isOutputItem();
     }
-    
+
     public boolean hasFluids() {
         return isConsumeFluid() || isOutputFluid();
     }
-    
+
     public boolean hasPower() {
         return isConsumePower() || isOutputPower();
     }
@@ -125,9 +123,9 @@ public class Recipe {
     @Override
     public String toString() {
         return "Recipe{" +
-            "input=" + input +
-            "output=" + output +
-            "craftTime" + craftTime +
-            "}";
+                "input=" + input +
+                "output=" + output +
+                "craftTime" + craftTime +
+                "}";
     }
 }

@@ -64,20 +64,22 @@ public class MultiCrafterParser {
     private void parseRecipe(Map recipeMap, Seq<Recipe> to) {
         try {
             Recipe recipe = new Recipe();
+            // parse input
             Object inputsRaw = findValueByAlias(recipeMap, inputAlias);
             if (inputsRaw == null) {
-                Log.warn("Recipe doesn't have any input, so skip it");
-                return;
-            }
-            Object outputsRaw = findValueByAlias(recipeMap, outputAlias);
-            if (outputsRaw == null) {
-                Log.warn("Recipe doesn't have any output, so skip it");
-                return;
+                warn("Recipe has no input, please ensure it's expected.");
             }
             recipe.input = parseIOEntry("input", inputsRaw);
+            // parse output
+            Object outputsRaw = findValueByAlias(recipeMap, outputAlias);
+            if (outputsRaw == null) {
+                warn("Recipe has no output, please ensure it's expected");
+            }
             recipe.output = parseIOEntry("output", outputsRaw);
+            // parse craft time
             Object craftTimeObj = recipeMap.get("craftTime");
             recipe.craftTime = parseFloat(craftTimeObj);
+            // parse icon
             Object iconObj = recipeMap.get("icon");
             if (iconObj instanceof String) {
                 recipe.icon = findIcon((String) iconObj);
@@ -86,25 +88,28 @@ public class MultiCrafterParser {
             if (iconColorObj instanceof String) {
                 recipe.iconColor = Color.valueOf((String) iconColorObj);
             }
+            // parse fx
             Object fxObj = recipeMap.get("craftEffect");
             Effect fx = parseFx(fxObj);
             if (fx != null) {
                 recipe.craftEffect = fx;
             }
             // Check empty
-            if (!recipe.isAnyEmpty()) {
-                to.add(recipe);
-            } else Log.warn("Recipe is empty, so skip it", recipe);
+            if (recipe.input.isEmpty() && recipe.output.isEmpty()) {
+                warn("Recipe is completely empty.");
+            }
+            to.add(recipe);
         } catch (Exception e) {
             error("Can't load a recipe", e);
         }
     }
 
     @SuppressWarnings({"rawtypes"})
-    private IOEntry parseIOEntry(String meta, Object ioEntry) {
+    private IOEntry parseIOEntry(String meta, @Nullable Object ioEntry) {
         IOEntry res = new IOEntry();
-        // Inputs
-        if (ioEntry instanceof Map) {
+        if (ioEntry == null) {
+            return res;
+        } else if (ioEntry instanceof Map) {
             /*
                 input/output:{
                   items:[],
@@ -410,6 +415,7 @@ public class MultiCrafterParser {
 
     private void warn(String content) {
         String message = buildRecipeIndexInfo() + content;
+        warnings.add(message);
         Log.warn(message);
     }
 

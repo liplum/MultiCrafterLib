@@ -26,7 +26,7 @@ mindustry {
     mods {
         worksWith {
             add fromTask ":js:jar"
-            add java "3Snake3/Sapphirium"
+            // add java "3Snake3/Sapphirium"
             // add local "$buildDir/sapphirium-erekir.zip"
             // add local "$buildDir/units-mod.zip"
         }

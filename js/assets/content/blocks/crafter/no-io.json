@@ -1,0 +1,27 @@
+{
+  "type": "multicraft.MultiCrafter",
+  "size": 2,
+  "requirements": [
+    "graphite/10"
+  ],
+  "category": "crafting",
+  "recipes": [
+    {
+      "input": "ozone/1.5",
+      "craftTime": 60.0
+    },
+    {
+      "output": {
+        "items": [
+          "copper/1",
+          "graphite/2"
+        ],
+        "power": 2.5
+      },
+      "craftTime": 120.0
+    },
+    {
+      "craftTime": 250.0
+    }
+  ]
+}
