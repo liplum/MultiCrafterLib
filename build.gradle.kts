@@ -21,7 +21,7 @@ buildscript {
 }
 allprojects {
     group = "net.liplum"
-    version = "1.8"
+    version = "2.0.0"
     buildscript {
         repositories {
             maven { url = uri("https://www.jitpack.io") }
