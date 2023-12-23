@@ -17,47 +17,46 @@ public class TestBlocks {
             category = Category.crafting;
             size = 5;
             resolvedRecipes = Seq.with(
-                new Recipe(
-                    new IOEntry(
-                        Seq.with(ItemStack.with(
+                new Recipe() {{
+                    input = new IOEntry() {{
+                        items = Seq.with(ItemStack.with(
                             Items.copper, 1,
                             Items.lead, 1
-                        )),
-                        Seq.with(),
-                        0f,
-                        0f,
-                        Seq.with(PayloadStack.with(
+                        ));
+                        payloads = Seq.with(PayloadStack.with(
                             Blocks.thoriumWall, 2
-                        ))
-                    ),
-                    new IOEntry(
-                        Seq.with(ItemStack.with(
+                        ));
+                    }};
+                    output = new IOEntry() {{
+                        items = Seq.with(ItemStack.with(
                             Items.surgeAlloy, 1,
                             Items.thorium, 1
-                        ))
-                    ),
-                    120f
-                ),
-                new Recipe(
-                    new IOEntry(
-                        Seq.with(ItemStack.with(
+                        ));
+                    }};
+                    craftTime = 120f;
+                }},
+                new Recipe() {{
+                    input = new IOEntry() {{
+                        items = Seq.with(ItemStack.with(
                             Items.plastanium, 1,
                             Items.pyratite, 1
-                        )),
-                        Seq.with(LiquidStack.with(
+                        ));
+                        fluids = Seq.with(LiquidStack.with(
                             Liquids.slag, 0.5f
-                        ))),
-                    new IOEntry(
-                        Seq.with(ItemStack.with(
+                        ));
+                    }};
+                    output = new IOEntry() {{
+                        items = Seq.with(ItemStack.with(
                             Items.coal, 1,
                             Items.sand, 1
-                        )),
-                        Seq.with(LiquidStack.with(
+                        ));
+                        fluids = Seq.with(LiquidStack.with(
                             Liquids.oil, 0.2f
-                        )),
-                        5f),
-                    150f
-                )
+                        ));
+                        power = 5f;
+                    }};
+                    craftTime = 150f;
+                }}
             );
         }};
     }
