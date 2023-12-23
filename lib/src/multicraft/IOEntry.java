@@ -24,32 +24,7 @@ public class IOEntry {
     @Nullable
     public Color iconColor;
 
-    public IOEntry(Seq<ItemStack> items) {
-        this(items, new Seq<>(), 0f, 0f, new Seq<>());
-    }
-
-    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids) {
-        this(items, fluids, 0f, 0f, new Seq<>());
-    }
-
-    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power) {
-        this(items, fluids, power, 0f, new Seq<>());
-    }
-
-    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power, float heat) {
-        this(items, fluids, power, heat, new Seq<>());
-    }
-
-    public IOEntry(Seq<ItemStack> items, Seq<LiquidStack> fluids, float power, float heat, Seq<PayloadStack> payloads) {
-        this.items = items;
-        this.fluids = fluids;
-        this.power = power;
-        this.heat = heat;
-        this.payloads = payloads;
-    }
-
-    public IOEntry() {
-    }
+    public IOEntry() {}
 
     public void cacheUnique() {
         for (ItemStack item : items) {
@@ -71,7 +46,8 @@ public class IOEntry {
     }
 
     public boolean isEmpty() {
-        return items.isEmpty() && fluids.isEmpty() && power <= 0f && heat <= 0f && payloads.isEmpty();
+        return items.isEmpty() && fluids.isEmpty()
+            && power <= 0f && heat <= 0f && payloads.isEmpty();
     }
 
     public int maxItemAmount() {

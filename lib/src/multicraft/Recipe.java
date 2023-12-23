@@ -18,13 +18,8 @@ public class Recipe {
 
     public Effect craftEffect = Fx.none;
 
-    public Recipe(IOEntry input, IOEntry output, float craftTime) {
-        this.input = input;
-        this.output = output;
-        this.craftTime = craftTime;
-    }
-
     public Recipe() {
+        
     }
 
     public void cacheUnique() {

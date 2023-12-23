@@ -82,6 +82,7 @@ public class MultiCrafter extends PayloadBlock {
      * Turn off this to ignore fluid output, for instance, the fluid is only by-product.
      */
     public boolean ignoreLiquidFullness = false;
+    
     /**
      * If true, the crafter with multiple fluid outputs will dump excess,
      * when there's still space for at least one fluid type.
@@ -283,16 +284,16 @@ public class MultiCrafter extends PayloadBlock {
                 if (wasVisible && Mathf.chanceDelta(updateEffectChance))
                     updateEffect.at(x + Mathf.range(size * 4f), y + Mathf.range(size * 4));
             } else warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
+            
+            if (moveInPayload()) {
+                yeetPayload(payload);
+            }
 
             if (craftTimeNeed <= 0f) {
                 if (efficiency > 0f)
                     craft();
             } else if (craftingTime >= craftTimeNeed)
                 craft();
-
-            if (moveInPayload()) {
-                yeetPayload(payload);
-            }
 
             updateBars();
             dumpOutputs();
