@@ -36,6 +36,7 @@ nav:
   - Home:
       - Overview: index.md
       - Troubleshooting: troubleshooting.md
+      - Migration Guide: migration.md
   - Usage:
       - JSON & Javascript: usage/json.md
       - Java: usage/java.md
@@ -53,6 +54,7 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tilde
   - pymdownx.snippets
+  - pymdownx.details
   - attr_list
   - md_in_html
   - meta
