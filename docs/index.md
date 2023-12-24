@@ -40,10 +40,10 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
     *Injection makes your mod an actual Java mod, so it must fit the structure of Java mod.*
 
     ##### Step 1
-    You should download a zip, named `MultiCrafter-injection.zip`, in [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
+    You will have to download a zip, named `MultiCrafter-injection.zip`, in [here](https://github.com/liplum/MultiCrafterLib/releases/latest).
 
     ##### Step 2
-    Then unzip it and copy the its contents into the root directory of your mod.
+    Unzip the downloaded zip and copy its contents into the root directory of your mod.
 
     <details>
     <summary>
