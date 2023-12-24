@@ -1,13 +1,10 @@
 package net.liplum;
 
-import arc.struct.Seq;
-
+import arc.struct.*;
 import mindustry.content.*;
 import mindustry.type.*;
-import mindustry.world.meta.BuildVisibility;
-import multicraft.IOEntry;
-import multicraft.MultiCrafter;
-import multicraft.Recipe;
+import mindustry.world.meta.*;
+import multicraft.*;
 
 public class TestBlocks {
     public static void load() {

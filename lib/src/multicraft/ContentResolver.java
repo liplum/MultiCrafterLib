@@ -1,24 +1,21 @@
 package multicraft;
 
-import arc.Core;
-import arc.func.Prov;
-import arc.graphics.g2d.TextureRegion;
-import arc.scene.style.TextureRegionDrawable;
-import arc.util.Nullable;
-import mindustry.Vars;
-import mindustry.content.Fx;
-import mindustry.ctype.UnlockableContent;
-import mindustry.entities.Effect;
-import mindustry.gen.Icon;
-import mindustry.type.Item;
-import mindustry.type.Liquid;
-import mindustry.type.UnitType;
-import mindustry.world.Block;
+import arc.*;
+import arc.func.*;
+import arc.graphics.g2d.*;
+import arc.scene.style.*;
+import arc.util.*;
+import mindustry.*;
+import mindustry.content.*;
+import mindustry.ctype.*;
+import mindustry.entities.*;
+import mindustry.gen.*;
+import mindustry.type.*;
+import mindustry.world.*;
 
-import java.lang.reflect.Field;
+import java.lang.reflect.*;
 
-import static multicraft.ParserUtils.field;
-import static multicraft.ParserUtils.kebab2camel;
+import static multicraft.ParserUtils.*;
 
 public class ContentResolver {
 
