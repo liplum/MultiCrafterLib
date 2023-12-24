@@ -29,10 +29,10 @@ public class WithJsonMod extends Mod {
       resolvedRecipes = Seq.with(
         new Recipe() {{
           input = new IOEntry() {{
-            items = Seq.with(new ItemStack(Items.copper, 1));
+            items = ItemStack.with(Items.copper, 1);
           }};
           output = new IOEntry() {{
-            items = Seq.with(new ItemStack(Items.copper, 1));
+            items = ItemStack.with(Items.copper, 1);
             power = 0.5f;
           }};
           craftTime = 160f;
@@ -42,10 +42,10 @@ public class WithJsonMod extends Mod {
         }},
         new Recipe() {{
           input = new IOEntry() {{
-            fluids = Seq.with(new LiquidStack(Liquids.oil, 0.15f));
+            fluids = LiquidStack.with(Liquids.oil, 0.15f);
           }};
           output = new IOEntry() {{
-            items = Seq.with(new ItemStack(Items.coal, 2));
+            items = ItemStack.with(Items.coal, 2);
             power = 2.5f;
           }};
           craftTime = 60f;

@@ -10,11 +10,11 @@ import mindustry.ctype.*;
 import mindustry.type.*;
 
 public class IOEntry {
-    public Seq<ItemStack> items = new Seq<>(ItemStack.class);
-    public Seq<LiquidStack> fluids = new Seq<>(LiquidStack.class);
+    public ItemStack[] items = ItemStack.empty;
+    public LiquidStack[] fluids = LiquidStack.empty;
     public float power = 0f;
     public float heat = 0f;
-    public Seq<PayloadStack> payloads = new Seq<>(PayloadStack.class);
+    public PayloadStack[] payloads = PayloadStack.with();
 
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
@@ -39,15 +39,9 @@ public class IOEntry {
         }
     }
 
-    public void shrinkSize() {
-        items.shrink();
-        fluids.shrink();
-        payloads.shrink();
-    }
-
     public boolean isEmpty() {
-        return items.isEmpty() && fluids.isEmpty()
-            && power <= 0f && heat <= 0f && payloads.isEmpty();
+        return items.length == 0 && fluids.length == 0
+            && power <= 0f && heat <= 0f && payloads.length == 0;
     }
 
     public int maxItemAmount() {

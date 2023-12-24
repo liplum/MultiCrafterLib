@@ -3,7 +3,6 @@ package multicraft;
 import arc.scene.ui.*;
 import arc.scene.ui.layout.*;
 import arc.scene.utils.*;
-import arc.struct.*;
 import arc.util.*;
 import mindustry.*;
 import mindustry.gen.*;
@@ -37,15 +36,15 @@ public abstract class RecipeSwitchStyle {
                 img.setColor(entry.iconColor);
             return img;
         }
-        Seq<ItemStack> items = entry.items;
-        Seq<LiquidStack> fluids = entry.fluids;
+        ItemStack[] items = entry.items;
+        LiquidStack[] fluids = entry.fluids;
         boolean outputPower = entry.power > 0f;
         boolean outputHeat = entry.heat > 0f;
-        Seq<PayloadStack> paylods = entry.payloads;
-        if (items.size > 0) {
-            return new Image(items.get(0).item.uiIcon);
-        } else if (fluids.size > 0) {
-            return new Image(fluids.get(0).liquid.uiIcon);
+        PayloadStack[] paylods = entry.payloads;
+        if (items.length > 0) {
+            return new Image(items[0].item.uiIcon);
+        } else if (fluids.length > 0) {
+            return new Image(fluids[0].liquid.uiIcon);
         } else if (outputPower) {
             Image img = new Image(Icon.power.getRegion());
             img.setColor(Pal.power);
@@ -54,8 +53,8 @@ public abstract class RecipeSwitchStyle {
             Image img = new Image(Icon.waves.getRegion());
             img.setColor(b.heatColor);
             return img;
-        } else if (paylods.size > 0) {
-            return new Image(paylods.get(0).item.uiIcon);
+        } else if (paylods.length > 0) {
+            return new Image(paylods[0].item.uiIcon);
         }
         return new Image(Icon.cancel.getRegion());
     }

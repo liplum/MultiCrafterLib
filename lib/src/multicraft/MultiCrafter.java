@@ -351,10 +351,10 @@ public class MultiCrafter extends PayloadBlock {
                 for (ItemStack output : cur.output.items) dump(output.item);
 
             if (cur.isOutputFluid()) {
-                Seq<LiquidStack> fluids = cur.output.fluids;
-                for (int i = 0; i < fluids.size; i++) {
+                LiquidStack[] fluids = cur.output.fluids;
+                for (int i = 0; i < fluids.length; i++) {
                     int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
-                    dumpLiquid(fluids.get(i).liquid, 2f, dir);
+                    dumpLiquid(fluids[i].liquid, 2f, dir);
                 }
             }
         }
@@ -728,12 +728,12 @@ public class MultiCrafter extends PayloadBlock {
     @Override
     public void drawOverlay(float x, float y, int rotation) {
         Recipe firstRecipe = resolvedRecipes.get(defaultRecipeIndex);
-        Seq<LiquidStack> fluids = firstRecipe.output.fluids;
-        for (int i = 0; i < fluids.size; i++) {
+        LiquidStack[] fluids = firstRecipe.output.fluids;
+        for (int i = 0; i < fluids.length; i++) {
             int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
 
             if (dir != -1) Draw.rect(
-                    fluids.get(i).liquid.fullIcon,
+                    fluids[i].liquid.fullIcon,
                     x + Geometry.d4x(dir + rotation) * (size * tilesize / 2f + 4),
                     y + Geometry.d4y(dir + rotation) * (size * tilesize / 2f + 4),
                     8f, 8f
@@ -743,10 +743,8 @@ public class MultiCrafter extends PayloadBlock {
 
     protected void decorateRecipes() {
         resolvedRecipes.shrink();
-        for (Recipe recipe : resolvedRecipes) {
-            recipe.shrinkSize();
+        for (Recipe recipe : resolvedRecipes)
             recipe.cacheUnique();
-        }
     }
 
     protected void setupBlockByRecipes() {
@@ -791,19 +789,16 @@ public class MultiCrafter extends PayloadBlock {
 
     protected void setupConsumers() {
         if (isConsumeItem) consume(new ConsumeItemDynamic(
-                // items seq is already shrunk, it's safe to access
-                (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.items
         ));
         if (isConsumeFluid) consume(new ConsumeFluidDynamic(
-                // fluids seq is already shrunk, it's safe to access
-                (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids
         ));
         if (isConsumePower) consume(new ConsumePowerDynamic(b ->
-                ((MultiCrafterBuild) b).getCurRecipe().input.power
+            ((MultiCrafterBuild) b).getCurRecipe().input.power
         ));
-        if (isConsumePayload) consume(new ConsumePayloadDynamic(
-                // payloads seq is already shrunk, it's safe to access
-                (MultiCrafterBuild b) -> b.getCurRecipe().input.payloads
+        if (isConsumePayload) consume(new CustomConsumePayloadDynamic(
+            (MultiCrafterBuild b) -> b.getCurRecipe().input.payloads
         ));
     }
 }

@@ -19,40 +19,40 @@ public class TestBlocks {
             resolvedRecipes = Seq.with(
                 new Recipe() {{
                     input = new IOEntry() {{
-                        items = Seq.with(ItemStack.with(
+                        items = ItemStack.with(
                             Items.copper, 1,
                             Items.lead, 1
-                        ));
-                        payloads = Seq.with(PayloadStack.with(
+                        );
+                        payloads = PayloadStack.with(
                             Blocks.thoriumWall, 2
-                        ));
+                        );
                     }};
                     output = new IOEntry() {{
-                        items = Seq.with(ItemStack.with(
+                        items = ItemStack.with(
                             Items.surgeAlloy, 1,
                             Items.thorium, 1
-                        ));
+                        );
                     }};
                     craftTime = 120f;
                 }},
                 new Recipe() {{
                     input = new IOEntry() {{
-                        items = Seq.with(ItemStack.with(
+                        items = ItemStack.with(
                             Items.plastanium, 1,
                             Items.pyratite, 1
-                        ));
-                        fluids = Seq.with(LiquidStack.with(
+                        );
+                        fluids = LiquidStack.with(
                             Liquids.slag, 0.5f
-                        ));
+                        );
                     }};
                     output = new IOEntry() {{
-                        items = Seq.with(ItemStack.with(
+                        items = ItemStack.with(
                             Items.coal, 1,
                             Items.sand, 1
-                        ));
-                        fluids = Seq.with(LiquidStack.with(
+                        );
+                        fluids = LiquidStack.with(
                             Liquids.oil, 0.2f
-                        ));
+                        );
                         power = 5f;
                     }};
                     craftTime = 150f;

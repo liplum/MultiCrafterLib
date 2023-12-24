@@ -183,7 +183,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseItems(List items, Seq<ItemStack> to) {
+    private void parseItems(List items, ItemStack[] to) {
         for (Object entryRaw : items) {
             if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
                 parseItemPair((String) entryRaw, to);
@@ -196,7 +196,7 @@ public class MultiCrafterParser {
         }
     }
 
-    private void parseItemPair(String pair, Seq<ItemStack> to) {
+    private void parseItemPair(String pair, ItemStack[] to) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -217,14 +217,14 @@ public class MultiCrafterParser {
             } else {
                 entry.amount = 1;
             }
-            to.add(entry);
+            to = ItemStack.with(to, entry);
         } catch (Exception e) {
             error("Can't parse an item from <" + pair + ">, so skip it", e);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseFluids(List fluids, Seq<LiquidStack> to) {
+    private void parseFluids(List fluids, LiquidStack[] to) {
         for (Object entryRaw : fluids) {
             if (entryRaw instanceof String) { // if the input is String as "mod-id-item/1"
                 parseFluidPair((String) entryRaw, to);
@@ -237,7 +237,7 @@ public class MultiCrafterParser {
         }
     }
 
-    private void parseFluidPair(String pair, Seq<LiquidStack> to) {
+    private void parseFluidPair(String pair, LiquidStack[] to) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -258,7 +258,7 @@ public class MultiCrafterParser {
             } else {
                 entry.amount = 1f;
             }
-            to.add(entry);
+            to = LiquidStack.with(to, entry);
         } catch (Exception e) {
             error("Can't parse a fluid from <" + pair + ">, so skip it", e);
         }
@@ -267,7 +267,7 @@ public class MultiCrafterParser {
     /**
      * @param pair "mod-id-item/1" or "mod-id-gas"
      */
-    private void parseAnyPair(String pair, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
+    private void parseAnyPair(String pair, ItemStack[] items, LiquidStack[] fluids) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -286,7 +286,7 @@ public class MultiCrafterParser {
                 } else {
                     entry.amount = 1;
                 }
-                items.add(entry);
+                items = ItemStack.with(items, entry);
                 return;
             }
             Liquid fluid = findFluid(id);
@@ -299,7 +299,7 @@ public class MultiCrafterParser {
                 } else {
                     entry.amount = 1f;
                 }
-                fluids.add(entry);
+                fluids = LiquidStack.with(fluids, entry);
                 return;
             }
             error("Can't find the corresponding item or fluid from this <" + pair + ">, so skip it");
@@ -309,7 +309,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseAnyMap(Map map, Seq<ItemStack> items, Seq<LiquidStack> fluids) {
+    private void parseAnyMap(Map map, ItemStack[] items, LiquidStack[] fluids) {
         try {
             Object itemRaw = map.get("item");
             if (itemRaw instanceof String) {
@@ -319,7 +319,7 @@ public class MultiCrafterParser {
                     entry.item = item;
                     Object amountRaw = map.get("amount");
                     entry.amount = parseInt(amountRaw);
-                    items.add(entry);
+                    items = ItemStack.with(items, entry);
                     return;
                 }
             }
@@ -331,7 +331,7 @@ public class MultiCrafterParser {
                     entry.liquid = fluid;
                     Object amountRaw = map.get("amount");
                     entry.amount = parseFloat(amountRaw);
-                    fluids.add(entry);
+                    fluids = LiquidStack.with(fluids, entry);
                     return;
                 }
             }
@@ -342,7 +342,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseItemMap(Map map, Seq<ItemStack> to) {
+    private void parseItemMap(Map map, ItemStack[] to) {
         try {
             ItemStack entry = new ItemStack();
             Object itemID = map.get("item");
@@ -363,14 +363,14 @@ public class MultiCrafterParser {
                 error("Item amount is +" + amount + " <=0, so reset as 1");
                 entry.amount = 1;
             }
-            to.add(entry);
+            to = ItemStack.with(to, entry);
         } catch (Exception e) {
             error("Can't parse an item <" + map + ">, so skip it", e);
         }
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseFluidMap(Map map, Seq<LiquidStack> to) {
+    private void parseFluidMap(Map map, LiquidStack[] to) {
         try {
             LiquidStack entry = new LiquidStack(Liquids.water, 0f);
             Object itemID = map.get("fluid");
@@ -391,7 +391,7 @@ public class MultiCrafterParser {
                 error("Fluids amount is +" + amount + " <=0, so reset as 1.0f");
                 entry.amount = 1f;
             }
-            to.add(entry);
+            to = LiquidStack.with(to, entry);
         } catch (Exception e) {
             error("Can't parse <" + map + ">, so skip it", e);
         }

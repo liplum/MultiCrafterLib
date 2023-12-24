@@ -1,11 +1,11 @@
 package multicraft;
 
-import arc.func.Prov;
-import arc.graphics.Color;
-import arc.graphics.g2d.TextureRegion;
-import arc.util.Nullable;
-import mindustry.content.Fx;
-import mindustry.entities.Effect;
+import arc.func.*;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.util.*;
+import mindustry.content.*;
+import mindustry.entities.*;
 
 public class Recipe {
     public IOEntry input;
@@ -27,28 +27,20 @@ public class Recipe {
         output.cacheUnique();
     }
 
-    /**
-     * Shrink size for safe access of {@link arc.struct.Seq#items}.
-     */
-    public void shrinkSize() {
-        input.shrinkSize();
-        output.shrinkSize();
-    }
-
     public boolean isConsumeItem() {
-        return !input.items.isEmpty();
+        return input.items.length > 0;
     }
 
     public boolean isOutputItem() {
-        return !output.items.isEmpty();
+        return output.items.length > 0;
     }
 
     public boolean isConsumeFluid() {
-        return !input.fluids.isEmpty();
+        return input.fluids.length > 0;
     }
 
     public boolean isOutputFluid() {
-        return !output.fluids.isEmpty();
+        return output.fluids.length > 0;
     }
 
     public boolean isConsumePower() {
@@ -68,11 +60,11 @@ public class Recipe {
     }
 
     public boolean isConsumePayload() {
-        return !input.payloads.isEmpty();
+        return input.payloads.length > 0;
     }
 
     public boolean isOutputPayload() {
-        return !output.payloads.isEmpty();
+        return output.payloads.length > 0;
     }
 
     public boolean hasItems() {
