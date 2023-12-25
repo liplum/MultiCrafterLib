@@ -15,6 +15,7 @@ import mindustry.entities.*;
 import mindustry.entities.units.*;
 import mindustry.gen.*;
 import mindustry.graphics.*;
+import mindustry.io.*;
 import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.ui.*;
@@ -31,9 +32,14 @@ public class MultiCrafter extends PayloadBlock {
     public boolean hasHeat = false;
     public boolean hasPayloads = false;
 
+    public float powerCapacity = 0f;
+    /** maximum payloads this block can carry */
+    public int payloadCapacity = 1;
+
     public float itemCapacityMultiplier = 1f;
     public float fluidCapacityMultiplier = 1f;
     public float powerCapacityMultiplier = 1f;
+    public float payloadCapacityMultiplier = 2f;
     /*
     [ ==> Seq
       { ==> ObjectMap
@@ -104,8 +110,6 @@ public class MultiCrafter extends PayloadBlock {
      * What color of heat for recipe selector.
      */
     public Color heatColor = new Color(1f, 0.22f, 0.22f, 0.8f);
-    public float powerCapacity = 0f;
-
     /**
      * For {@linkplain HeatConsumer},
      * it's used to display something of block or initialize the recipe index.
@@ -194,8 +198,8 @@ public class MultiCrafter extends PayloadBlock {
          */
         public int curRecipeIndex = defaultRecipeIndex;
 
-        //TODO has to be cleared after it's consumed
         public PayloadSeq payloads = new PayloadSeq();
+        public @Nullable Vec2 commandPos;
 
         public void setCurRecipeIndexFromRemote(int index) {
             int newIndex = Mathf.clamp(index, 0, resolvedRecipes.size - 1);
@@ -230,7 +234,8 @@ public class MultiCrafter extends PayloadBlock {
         @Override
         public boolean acceptPayload(Building source, Payload payload) {
             return hasPayloads && this.payload == null &&
-                    getCurRecipe().input.payloadsUnique.contains(payload.content());
+                    getCurRecipe().input.payloadsUnique.contains(payload.content()) &&
+                    payloads.get(payload.content()) < payloadCapacity;
         }
 
         @Override
@@ -240,6 +245,19 @@ public class MultiCrafter extends PayloadBlock {
 
         public void yeetPayload(Payload payload) {
             payloads.add(payload.content(), 1);
+        }
+
+        @Override
+        public Vec2 getCommandPosition() {
+            if (getCurRecipe().isOutputPayload())
+                return this.commandPos;
+            else return null;
+        }
+
+        @Override
+        public void onCommand(Vec2 target) {
+            if (getCurRecipe().isOutputPayload())
+                this.commandPos = target;    
         }
 
         @Override
@@ -287,6 +305,7 @@ public class MultiCrafter extends PayloadBlock {
             
             if (moveInPayload()) {
                 yeetPayload(payload);
+                payload = null;
             }
 
             if (craftTimeNeed <= 0f) {
@@ -480,7 +499,9 @@ public class MultiCrafter extends PayloadBlock {
             write.f(warmup);
             write.i(curRecipeIndex);
             write.f(heat);
+
             payloads.write(write);
+            TypeIO.writeVecNullable(write, commandPos);
         }
 
         @Override
@@ -490,7 +511,10 @@ public class MultiCrafter extends PayloadBlock {
             warmup = read.f();
             curRecipeIndex = Mathf.clamp(read.i(), 0, resolvedRecipes.size - 1);
             heat = read.f();
+
             payloads.read(read);
+            if (revision >= 1)
+                commandPos = TypeIO.readVecNullable(read);
         }
 
         public float warmupTarget() {
@@ -752,6 +776,8 @@ public class MultiCrafter extends PayloadBlock {
         float maxFluidAmount = 0f;
         float maxPower = 0f;
         float maxHeat = 0f;
+        int maxPayloadAmount = 0;
+
         for (Recipe recipe : resolvedRecipes) {
             hasItems |= recipe.hasItems();
             hasLiquids |= recipe.hasFluids();
@@ -763,14 +789,16 @@ public class MultiCrafter extends PayloadBlock {
             maxFluidAmount = Math.max(recipe.maxFluidAmount(), maxFluidAmount);
             maxPower = Math.max(recipe.maxPower(), maxPower);
             maxHeat = Math.max(recipe.maxHeat(), maxHeat);
-            isOutputItem |= recipe.isOutputItem();
-            acceptsItems = isConsumeItem |= recipe.isConsumeItem();
-            isOutputFluid |= recipe.isOutputFluid();
-            isConsumeFluid |= recipe.isConsumeFluid();
-            outputsPower = isOutputPower |= recipe.isOutputPower();
-            consumesPower = isConsumePower |= recipe.isConsumePower();
-            isOutputHeat |= recipe.isOutputHeat();
-            isConsumeHeat |= recipe.isConsumeHeat();
+            maxPayloadAmount = Math.max(recipe.maxPayloadAmount(), maxPayloadAmount);
+
+                             isOutputItem |= recipe.isOutputItem();
+            acceptsItems =   isConsumeItem |= recipe.isConsumeItem();
+                             isOutputFluid |= recipe.isOutputFluid();
+                             isConsumeFluid |= recipe.isConsumeFluid();
+            outputsPower =   isOutputPower |= recipe.isOutputPower();
+            consumesPower =  isConsumePower |= recipe.isConsumePower();
+                             isOutputHeat |= recipe.isOutputHeat();
+                             isConsumeHeat |= recipe.isConsumeHeat();
             outputsPayload = isOutputPayload |= recipe.isOutputPayload();
             acceptsPayload = isConsumePayload |= recipe.isConsumePayload();
         }
@@ -779,6 +807,7 @@ public class MultiCrafter extends PayloadBlock {
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
         powerCapacity = Math.max(maxPower * 60f * powerCapacityMultiplier, powerCapacity);
+        payloadCapacity = Math.max((int) (maxPayloadAmount * payloadCapacityMultiplier), payloadCapacity);
         if (isOutputHeat) {
             rotate = true;
             rotateDraw = false;

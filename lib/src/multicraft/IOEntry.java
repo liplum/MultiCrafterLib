@@ -60,8 +60,8 @@ public class IOEntry {
         return max;
     }
 
-    public float maxPayloadAmount() {
-        float max = 0;
+    public int maxPayloadAmount() {
+        int max = 0;
         for (PayloadStack payload : payloads) {
             max = Math.max(payload.amount, max);
         }

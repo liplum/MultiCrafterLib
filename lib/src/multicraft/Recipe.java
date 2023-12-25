@@ -103,7 +103,7 @@ public class Recipe {
         return Math.max(input.heat, output.heat);
     }
 
-    public float maxPayloadAmount() {
+    public int maxPayloadAmount() {
         return Math.max(input.maxPayloadAmount(), output.maxPayloadAmount());
     }
 
