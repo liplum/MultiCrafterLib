@@ -6,7 +6,6 @@ import arc.graphics.g2d.*;
 import arc.struct.*;
 import arc.util.*;
 import mindustry.content.*;
-import mindustry.ctype.*;
 import mindustry.entities.*;
 import mindustry.entities.effect.*;
 import mindustry.gen.*;
@@ -113,7 +112,6 @@ public class MultiCrafterParser {
                   fluids:[],
                   power:0,
                   heat:0,
-                  payloads:[],
                   icon: Icon.power,
                   iconColor: "#FFFFFF"
                 }
@@ -150,19 +148,6 @@ public class MultiCrafterParser {
             Object heatObj = ioRawMap.get("heat");
             res.heat = parseFloat(heatObj);
 
-            // Payloads
-            Object payloads = ioRawMap.get("payloads");
-            if (payloads != null) {
-                if (payloads instanceof List) { // ["mod-id-payload/1", "mod-id-payload2"]
-                    parsePayloads((List) payloads, res.payloads);
-                } else if (payloads instanceof String) {
-                    parsePayloadPair((String) payloads, res.payloads);
-                } else if (payloads instanceof Map) {
-                    parsePayloadMap((Map) payloads, res.payloads);
-                } else
-                    throw new RecipeParserException("Unsupported type of payloads at " + meta + " from <" + payloads + ">");
-            }
-
             // Icon
             Object iconObj = ioRawMap.get("icon");
             if (iconObj instanceof String) {
@@ -178,9 +163,9 @@ public class MultiCrafterParser {
              */
             for (Object content : (List) ioEntry) {
                 if (content instanceof String) {
-                    parseAnyPair((String) content, res.items, res.fluids, res.payloads);
+                    parseAnyPair((String) content, res.items, res.fluids);
                 } else if (content instanceof Map) {
-                    parseAnyMap((Map) content, res.items, res.fluids, res.payloads);
+                    parseAnyMap((Map) content, res.items, res.fluids);
                 } else {
                     throw new RecipeParserException("Unsupported type of content at " + meta + " from <" + content + ">");
                 }
@@ -189,7 +174,7 @@ public class MultiCrafterParser {
             /*
                 input/output : "item/1"
              */
-            parseAnyPair((String) ioEntry, res.items, res.fluids, res.payloads);
+            parseAnyPair((String) ioEntry, res.items, res.fluids);
         } else {
             throw new RecipeParserException("Unsupported type of " + meta + " <" + ioEntry + ">");
         }
@@ -231,7 +216,7 @@ public class MultiCrafterParser {
             } else {
                 entry.amount = 1;
             }
-            to = ItemStack.with(to, entry);
+            to = addItemStack(to, entry);
         } catch (Exception e) {
             error("Can't parse an item from <" + pair + ">, so skip it", e);
         }
@@ -272,57 +257,16 @@ public class MultiCrafterParser {
             } else {
                 entry.amount = 1f;
             }
-            to = LiquidStack.with(to, entry);
+            to = addLiquidStack(to, entry);
         } catch (Exception e) {
             error("Can't parse a fluid from <" + pair + ">, so skip it", e);
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void parsePayloads(List payloads, PayloadStack[] to) {
-        for (Object entryRaw : payloads) {
-            if (entryRaw instanceof String) { // if the input is String as "mod-id-payload/1"
-                parsePayloadPair((String) entryRaw, to);
-            } else if (entryRaw instanceof Map) {
-                // if the input is Map as { payload : "router", amount : 2}
-                parsePayloadMap((Map) entryRaw, to);
-            } else {
-                error("Unsupported type of payloads <" + entryRaw + ">, so skip thme");
-            }
-        }
-    }
-
-    private void parsePayloadPair(String pair, PayloadStack[] to) {
-        try {
-            String[] id2Amount = pair.split("/");
-            if (id2Amount.length != 1 && id2Amount.length != 2) {
-                error("<" + Arrays.toString(id2Amount) + "> doesn't contain 1 or 2 parts, so skip this");
-                return;
-            }
-            String payloadID = id2Amount[0];
-            UnlockableContent payload = findPayload(payloadID);
-            if (payload == null) {
-                error("<" + payloadID + "> doesn't exist in all payloads, so skip this");
-                return;
-            }
-            PayloadStack entry = new PayloadStack(Blocks.router, 0);
-            entry.item = payload;
-            if (id2Amount.length == 2) {
-                String amountStr = id2Amount[1];
-                entry.amount = Integer.parseInt(amountStr);// throw NumberFormatException
-            } else {
-                entry.amount = 1;
-            }
-            to = PayloadStack.with(to, entry);
-        } catch (Exception e) {
-            error("Can't parse a payload from <" + pair + ">, so skip it", e);
         }
     }
 
     /**
      * @param pair "mod-id-item/1" or "mod-id-gas"
      */
-    private void parseAnyPair(String pair, ItemStack[] items, LiquidStack[] fluids, PayloadStack[] payloads) {
+    private void parseAnyPair(String pair, ItemStack[] items, LiquidStack[] fluids) {
         try {
             String[] id2Amount = pair.split("/");
             if (id2Amount.length != 1 && id2Amount.length != 2) {
@@ -341,7 +285,7 @@ public class MultiCrafterParser {
                 } else {
                     entry.amount = 1;
                 }
-                items = ItemStack.with(items, entry);
+                items = addItemStack(items, entry);
                 return;
             }
             Liquid fluid = findFluid(id);
@@ -354,20 +298,7 @@ public class MultiCrafterParser {
                 } else {
                     entry.amount = 1f;
                 }
-                fluids = LiquidStack.with(fluids, entry);
-                return;
-            }
-            UnlockableContent payload = findPayload(id);
-            if (payload != null) {
-                PayloadStack entry = new PayloadStack(Blocks.router, 0);
-                entry.item = payload;
-                if (id2Amount.length == 2) {
-                    String amountStr = id2Amount[1];
-                    entry.amount = Integer.parseInt(amountStr);// throw NumberFormatException
-                } else {
-                    entry.amount = 1;
-                }
-                payloads = PayloadStack.with(payloads, entry);
+                fluids = addLiquidStack(fluids, entry);
                 return;
             }
             error("Can't find the corresponding item, fluid or payload from this <" + pair + ">, so skip it");
@@ -377,7 +308,7 @@ public class MultiCrafterParser {
     }
 
     @SuppressWarnings("rawtypes")
-    private void parseAnyMap(Map map, ItemStack[] items, LiquidStack[] fluids, PayloadStack[] payloads) {
+    private void parseAnyMap(Map map, ItemStack[] items, LiquidStack[] fluids) {
         try {
             Object itemRaw = map.get("item");
             if (itemRaw instanceof String) {
@@ -387,7 +318,7 @@ public class MultiCrafterParser {
                     entry.item = item;
                     Object amountRaw = map.get("amount");
                     entry.amount = parseInt(amountRaw);
-                    items = ItemStack.with(items, entry);
+                    items = addItemStack(items, entry);
                     return;
                 }
             }
@@ -399,19 +330,7 @@ public class MultiCrafterParser {
                     entry.liquid = fluid;
                     Object amountRaw = map.get("amount");
                     entry.amount = parseFloat(amountRaw);
-                    fluids = LiquidStack.with(fluids, entry);
-                    return;
-                }
-            }
-            Object payloadRaw = map.get("payload");
-            if (payloadRaw instanceof String) {
-                UnlockableContent payload = findPayload((String) payloadRaw);
-                if (payload != null) {
-                    PayloadStack entry = new PayloadStack(Blocks.router, 0);
-                    entry.item = payload;
-                    Object amountRaw = map.get("amount");
-                    entry.amount = parseInt(amountRaw);
-                    payloads = PayloadStack.with(payloads, entry);
+                    fluids = addLiquidStack(fluids, entry);
                     return;
                 }
             }
@@ -443,7 +362,7 @@ public class MultiCrafterParser {
                 error("Item amount is +" + amount + " <= 0, so reset as 1");
                 entry.amount = 1;
             }
-            to = ItemStack.with(to, entry);
+            to = addItemStack(to, entry);
         } catch (Exception e) {
             error("Can't parse an item <" + map + ">, so skip it", e);
         }
@@ -471,41 +390,13 @@ public class MultiCrafterParser {
                 error("Fluids amount is +" + amount + " <= 0, so reset as 1.0f");
                 entry.amount = 1f;
             }
-            to = LiquidStack.with(to, entry);
+            to = addLiquidStack(to, entry);
         } catch (Exception e) {
             error("Can't parse <" + map + ">, so skip it", e);
         }
     }
 
-    @SuppressWarnings("rawtypes")
-    private void parsePayloadMap(Map map, PayloadStack[] to) {
-        try {
-            PayloadStack entry = new PayloadStack(Blocks.router, 0);
-            Object payloadID = map.get("payload");
-            if (payloadID instanceof String) {
-                UnlockableContent payload = findPayload((String) payloadID);
-                if (payload == null) {
-                    error(payloadID + " doesn't exist in all payloads, so skip this");
-                    return;
-                }
-                entry.item = payload;
-            } else {
-                error("Can't recognize an item from <" + map + ">");
-                return;
-            }
-            int amount = parseInt(map.get("amount"));
-            entry.amount = amount;
-            if (amount <= 0f) {
-                error("Payloads amount is +" + amount + " <= 0, so reset as 1");
-                entry.amount = 1;
-            }
-            to = PayloadStack.with(to, entry);
-        } catch (Exception e) {
-            error("Can't parse <" + map + ">, so skip it", e);
-        }
-    }
-
-
+    
     private void error(String content) {
         error(content, null);
     }

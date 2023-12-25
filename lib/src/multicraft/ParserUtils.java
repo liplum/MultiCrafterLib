@@ -1,13 +1,11 @@
 package multicraft;
 
-import arc.struct.ObjectMap;
-import arc.struct.Seq;
-import arc.util.Nullable;
-import arc.util.serialization.JsonValue;
+import arc.struct.*;
+import arc.util.*;
+import arc.util.serialization.*;
+import mindustry.type.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class ParserUtils {
 
@@ -121,5 +119,17 @@ public class ParserUtils {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static ItemStack[] addItemStack(ItemStack[] stackArray, ItemStack stack) {
+        ArrayList<ItemStack> newItemStack = new ArrayList<ItemStack>(Arrays.asList(stackArray));
+        newItemStack.add(stack);
+        return newItemStack.toArray(stackArray);
+    }
+
+    public static LiquidStack[] addLiquidStack(LiquidStack[] stackArray, LiquidStack stack) {
+        ArrayList<LiquidStack> newLiquidStack = new ArrayList<LiquidStack>(Arrays.asList(stackArray));
+        newLiquidStack.add(stack);
+        return newLiquidStack.toArray(stackArray);
     }
 }
