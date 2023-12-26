@@ -19,6 +19,7 @@ import mindustry.io.*;
 import mindustry.logic.*;
 import mindustry.type.*;
 import mindustry.ui.*;
+import mindustry.world.*;
 import mindustry.world.blocks.heat.*;
 import mindustry.world.blocks.payloads.*;
 import mindustry.world.consumers.*;
@@ -374,6 +375,20 @@ public class MultiCrafter extends PayloadBlock {
                 for (int i = 0; i < fluids.length; i++) {
                     int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
                     dumpLiquid(fluids[i].liquid, 2f, dir);
+                }
+            }
+            
+            //TODO fix infinite output
+            if (cur.isOutputPayload()) {
+                for (PayloadStack output : cur.output.payloads) {
+                    Payload payloadOutput = null;
+                    if (output.item instanceof Block)
+                        payloadOutput = new BuildPayload((Block) output.item, this.team);
+                    else if (output.item instanceof UnitType)
+                        payloadOutput = new UnitPayload(((UnitType)output.item).constructor.get());
+                    
+                    if (payloadOutput != null)
+                        movePayload(payloadOutput);
                 }
             }
         }
