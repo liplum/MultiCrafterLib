@@ -1,6 +1,6 @@
-# Json & Javascript
+# JSON & Javascript
 
-=== "Hjson"
+=== "HJSON"
 
     Create a file, for example, a `mine-crafter.hjson`, in the `content/blocks` folder.
     ```
@@ -47,7 +47,7 @@
     ]
     ```
 
-=== "Json"
+=== "JSON"
 
     Create a file, for example, a `mine-crafter.json`, in the `content/blocks` folder.
     ```
@@ -94,7 +94,7 @@
 
 === "JavaScript"
 
-    In a javascript file, you should import the `MultiCrafter` class from `multi-cafter`
+    In a JavaScript file, you should import the `MultiCrafter` class from `multi-cafter`
     ```javascript
     const multi = require("multi-crafter/lib")
     const mineCrafter = multi.MultiCrafter("mine-crafter")
@@ -119,8 +119,8 @@
       craftTime: 210.0
     }]
     ```
-        
-    
+
+
 ### Recipe
 
 A recipe has several fields:
@@ -129,8 +129,8 @@ A recipe has several fields:
 |-------------|--------------------------|---------------------------------------------|
 | input       | Object, String or List   | alias: [`in`,`i`]                           |
 | output      | Object, String or List   | alias: [`out`,`o`]                          |
-| crafterTime | number &#124  unit: tick | how long to do a synthesis, can be 0.       |
-| icon        | String                   | such as `Icon.lock-open`. see [icon](#icon) |
+| crafterTime | Number &#124  unit: tick | how long to do a synthesis, can be 0.       |
+| icon        | String                   | such as `Icon.lock-open`. See [Icon](#icon) |
 | iconColor   | String                   | a hex color for icon                        |
 
 ### Input and Output
@@ -141,14 +141,14 @@ The `input` or `output` can be a `String`.
 If so, it will be considered as an item or fluid.
 
 If there is no amount given, `1` will be the amount as default.
-=== "Hjson"
+=== "HJSON"
 
     ```hjson
     input: copper/2
     output: water/1.2
     ```
 
-=== "Json"
+=== "JSON"
 
     ```json
     "input": "copper/2",
@@ -167,14 +167,14 @@ If there is no amount given, `1` will be the amount as default.
 The `input` or `output` can be a `List`.
 If so, every element will be treated as an item or fluid.
 
-=== "Hjson"
+=== "HJSON"
 
     ```hjson
     input: [copper/2,lead/3]
     output: slag/2.5
     ```
 
-=== "Json"
+=== "JSON"
 
     ```json
     "input": ["copper/2","lead/3"],
@@ -193,17 +193,17 @@ If so, every element will be treated as an item or fluid.
 The `input` or `output` can be an `Object`.
 With this style, its power is unlimited.
 
-| Key         | Type                           | Optional | Note                                            |
-|-------------|--------------------------------|:--------:|-------------------------------------------------|
-| items       | String or List                 |    ✔️    | how much item for input/output, default: empty  |
-| fluids      | String or List                 |    ✔️    | how much fluid for input/output, default: empty |
-| power       | Number &#124  unit: power/tick |    ✔️    | how much power for input/output, default: 0     |
-| heat        | Number                         |    ✔️    | how much heat for input/output, default: 0      |
-| icon        | String                         |    ✔️    | such as `Icon.lock-open`. see [icon](#icon)     |
-| iconColor   | String                         |    ✔️    | a hex color for icon                            |
-| craftEffect | String                         |    ✔️    | an independent craft effect for each recipe     |
+| Key         | Type                           | Note                                            |
+|-------------|--------------------------------|-------------------------------------------------|
+| items       | String or List                 | how much item for input/output, default: empty  |
+| fluids      | String or List                 | how much fluid for input/output, default: empty |
+| power       | Number &#124  unit: power/tick | how much power for input/output, default: 0     |
+| heat        | Number                         | how much heat for input/output, default: 0      |
+| icon        | String                         | such as `Icon.lock-open`. See [Icon](#icon)     |
+| iconColor   | String                         | a hex color for icon                            |
+| craftEffect | String                         | an independent craft effect for each recipe     |
 
-=== "Hjson"
+=== "HJSON"
 
     ```hjson
     input: {
@@ -219,7 +219,7 @@ With this style, its power is unlimited.
     }
     ```
 
-=== "Json"
+=== "JSON"
 
     ```json
     "input": {
@@ -269,7 +269,7 @@ For example:
     <br>
     iconColor: F30000
     </summary>
-    ```
+    ```hjson
     recipes: [
     {
       input: ozone/1.5
@@ -299,9 +299,9 @@ For example:
 
     <details>
     <summary>
-    icon: mono
+    icon = mono
     </summary>
-    ```
+    ```hjson
     menu: Simple
     recipes:
     [

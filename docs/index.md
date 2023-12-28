@@ -9,13 +9,13 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
 |   Method   | Json | JavaScript |  Java   |              Note              |
 |:----------:|:----:|:----------:|:-------:|:------------------------------:|
-| Dependency |  ✔️  |     ✔️     |   ✔️    | Players need download this mod |
-| Injection  |  ✔️  |     ✔️     | No Need |    Keep your mod standalone    |
-|  Jitpack   |      |            |   ✔️    |   Full sources code support    |
+| Dependency |  ✔️  |     ✔️    |   ✔️    | Players need download this mod |
+| Injection  |  ✔️  |     ✔️    | No Need |    Keep your mod standalone     |
+|  Jitpack   |  ❌  |     ❌    |   ✔️    |   Full sources code support    |
 
 === "Dependency"
 
-    **For a Json, JavaScript or Java mod.**
+    **For a JSON, JavaScript or Java mod.**
 
     If you want your mod to depend on MultiCrafter and only focus on your contents, it's for your use case.
     
@@ -35,7 +35,7 @@ or search it on the Mod Browser with its name, `MultiCrafter Lib`.
 
 === "Injection"
 
-    **For a Json or JavaScript mod.**
+    **For a JSON or JavaScript mod.**
 
     *Injection makes your mod an actual Java mod, so it must fit the structure of Java mod.*
 

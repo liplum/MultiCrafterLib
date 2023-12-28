@@ -45,7 +45,7 @@ nav:
       - Built-in: customize/builtin.md
       - Drawer: customize/drawer.md
   - API:
-      - Multicrafter: api/multicrafter.md
+      - MultiCrafter: api/multicrafter.md
       - Drawer: api/drawer.md
 
 markdown_extensions:

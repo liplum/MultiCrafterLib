@@ -3,7 +3,7 @@
 You can select which menu style detailed-described blow you want with a case-insensitive name.
 The default menu style is `Transform`.
 
-=== "Hjson"
+=== "HJSON"
 
     Suppose you have such structure with a MultiCrafter, named `mine-crafter`  
     ```
@@ -16,7 +16,7 @@ The default menu style is `Transform`.
     menu: Transform
     ```
 
-=== "Json"
+=== "JSON"
 
     Suppose you have such structure with a MultiCrafter, named `mine-crafter`  
     ```

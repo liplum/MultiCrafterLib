@@ -29,7 +29,7 @@ sprites/
 
 ![DrawRecipe example](../assets/draw-recipes.gif){ loading=lazy width="280" }
 
-=== "Hjson"
+=== "HJSON"
 
     ```hjson
     drawer: {
@@ -63,7 +63,7 @@ sprites/
     }
     ```
 
-=== "Json"
+=== "JSON"
 
     ```json
     "drawer": {
