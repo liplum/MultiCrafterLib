@@ -1,5 +1,5 @@
 name: Build Push Changes
-on: push
+on: [push, workflow_dispatch]
 
 jobs:
   build:
