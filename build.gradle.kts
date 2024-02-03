@@ -8,15 +8,8 @@ buildscript {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-        maven {
-            url = uri("https://www.jitpack.io")
-        }
-        maven {
-            url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository")
-        }
-        maven {
-            url = uri("https://maven.xpdustry.com/anuken")
-        }
+        maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
+        maven { url = uri("https://www.jitpack.io") }
     }
 }
 allprojects {
@@ -24,22 +17,14 @@ allprojects {
     version = "1.8"
     buildscript {
         repositories {
-            maven { url = uri("https://www.jitpack.io") }
             maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
-            maven { url = uri("https://maven.xpdustry.com/anuken") }
+            maven { url = uri("https://www.jitpack.io") }
         }
     }
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://www.jitpack.io")
-        }
-        maven {
-            url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository")
-        }
-        maven {
-            url = uri("https://maven.xpdustry.com/anuken")
-        }
+        maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
+        maven { url = uri("https://www.jitpack.io") }
     }
 
     tasks.withType<Test>().configureEach {

@@ -10,16 +10,12 @@ buildscript{
 }
 repositories {
     mavenCentral()
-    maven {
-        url = uri("https://www.jitpack.io")
-    }
+    maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
+    maven { url = uri("https://www.jitpack.io") }
 }
 sourceSets {
     main {
         java.srcDir("src")
-    }
-    test {
-        java.srcDir("test")
     }
 }
 dependencies {
