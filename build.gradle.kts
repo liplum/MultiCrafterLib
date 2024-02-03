@@ -20,22 +20,22 @@ allprojects {
             maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
             maven { url = uri("https://www.jitpack.io") }
         }
-
-        //force arc version
-        configurations.all {
-            resolutionStrategy {
-                eachDependency {
-                    if(this.requested.group == "com.github.Anuken.Arc") {
-                        this.useVersion("v146")
-                    }
-                }
-            }
-        } 
     }
     repositories {
         mavenCentral()
         maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
         maven { url = uri("https://www.jitpack.io") }
+    }
+
+    //force arc version
+    configurations.all {
+        resolutionStrategy {
+            eachDependency {
+                if(this.requested.group == "com.github.Anuken.Arc") {
+                    this.useVersion("v146")
+                }
+            }
+        }
     }
 
     tasks.withType<Test>().configureEach {
