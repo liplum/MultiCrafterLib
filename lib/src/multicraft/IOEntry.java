@@ -14,7 +14,7 @@ public class IOEntry {
     public LiquidStack[] fluids = LiquidStack.empty;
     public float power = 0f;
     public float heat = 0f;
-    public PayloadStack[] payloads = PayloadStack.with();
+    public PayloadStack[] payloads = {}; // Equivalent of empty
 
     public ObjectSet<Item> itemsUnique = new ObjectSet<>();
     public ObjectSet<Liquid> fluidsUnique = new ObjectSet<>();
@@ -34,7 +34,7 @@ public class IOEntry {
             fluidsUnique.add(fluid.liquid);
         }
         for (PayloadStack payload : payloads) {
-            // "item" can be any UnlockableContent (items, liquids, blocks, units)
+            // "item" can be any UnlockableContent
             payloadsUnique.add(payload.item);
         }
     }

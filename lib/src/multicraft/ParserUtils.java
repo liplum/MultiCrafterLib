@@ -132,4 +132,10 @@ public class ParserUtils {
         newLiquidStack.add(stack);
         return newLiquidStack.toArray(stackArray);
     }
+
+    public static PayloadStack[] addPayloadStack(PayloadStack[] stackArray, PayloadStack stack) {
+        ArrayList<PayloadStack> newPayloadStack = new ArrayList<PayloadStack>(Arrays.asList(stackArray));
+        newPayloadStack.add(stack);
+        return newPayloadStack.toArray(stackArray);
+    }
 }
