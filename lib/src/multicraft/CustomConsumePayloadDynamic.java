@@ -43,13 +43,13 @@ public class CustomConsumePayloadDynamic extends Consume {
 
     @Override
     public void build(Building build, Table table){
-        PayloadStack[] current = {payloads.get(build)[0]};
+        PayloadStack[][] current = {payloads.get(build)};
 
         table.table(cont -> {
             table.update(() -> {
-                if(current[0] != payloads.get(build)[0]){
+                if(current[0] != payloads.get(build)){
                     rebuild(build, cont);
-                    current[0] = payloads.get(build)[0];
+                    current[0] = payloads.get(build);
                 }
             });
 
