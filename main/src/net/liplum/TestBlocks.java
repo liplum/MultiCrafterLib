@@ -50,7 +50,9 @@ public class TestBlocks {
                         fluids = LiquidStack.with(
                             Liquids.oil, 0.2f
                         );
-                        power = 5f;
+                        payloads = PayloadStack.with(
+                            UnitTypes.dagger, 1
+                        );
                     }};
                     craftTime = 150f;
                 }}

@@ -18,9 +18,7 @@ public class Recipe {
 
     public Effect craftEffect = Fx.none;
 
-    public Recipe() {
-        
-    }
+    public Recipe() {}
 
     public void cacheUnique() {
         input.cacheUnique();

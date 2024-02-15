@@ -158,11 +158,12 @@ public class MultiCrafter extends PayloadBlock {
         hasPayloads = false;
         outputsPower = false;
         outputsPayload = false;
+
         final MultiCrafterParser parser = new MultiCrafterParser();
         // if the recipe is already set in another way, don't analyze it again.
         if (resolvedRecipes == null && recipes != null) resolvedRecipes = parser.parse(this, recipes);
         if (resolvedRecipes == null || resolvedRecipes.isEmpty())
-            throw new ArcRuntimeException(MultiCrafterParser.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items or fluids they need. Check your `last_log.txt` to obtain more information.");
+            throw new ArcRuntimeException(MultiCrafterParser.genName(this) + " has no recipe! It's perhaps because all recipes didn't find items, fluids or payloads they need. Check your `last_log.txt` to obtain more information.");
         if (switchStyle == null) switchStyle = RecipeSwitchStyle.get(menu);
         decorateRecipes();
         setupBlockByRecipes();
@@ -342,6 +343,9 @@ public class MultiCrafter extends PayloadBlock {
                 //if there is no space left for any fluid, it can't reproduce
                 if (allFull) return false;
             }
+            if (hasPayloads) for (PayloadStack output : cur.output.payloads)
+                if (payloads.get(output.item) + output.amount > payloadCapacity)
+                    return false;
             return enabled;
         }
 
@@ -367,8 +371,24 @@ public class MultiCrafter extends PayloadBlock {
 
         public void dumpOutputs() {
             Recipe cur = getCurRecipe();
-            if (cur.isOutputItem() && timer(timerDump, dumpTime / timeScale))
-                for (ItemStack output : cur.output.items) dump(output.item);
+            if (timer(timerDump, dumpTime / timeScale)) {
+                if (cur.isOutputItem())
+                    for (ItemStack output : cur.output.items) dump(output.item);
+                
+                //TODO fix infinite output
+                if (cur.isOutputPayload()) {
+                    for (PayloadStack output : cur.output.payloads) {
+                        Payload payloadOutput = null;
+                        if (output.item instanceof Block)
+                            payloadOutput = new BuildPayload((Block) output.item, this.team);
+                        else if (output.item instanceof UnitType)
+                            payloadOutput = new UnitPayload(((UnitType) output.item).create(this.team));
+                        
+                        if (payloadOutput != null)
+                            dumpPayload(payloadOutput);
+                    }
+                }
+            }
 
             if (cur.isOutputFluid()) {
                 LiquidStack[] fluids = cur.output.fluids;
@@ -376,21 +396,7 @@ public class MultiCrafter extends PayloadBlock {
                     int dir = fluidOutputDirections.length > i ? fluidOutputDirections[i] : -1;
                     dumpLiquid(fluids[i].liquid, 2f, dir);
                 }
-            }
-            
-            //TODO fix infinite output
-            if (cur.isOutputPayload()) {
-                for (PayloadStack output : cur.output.payloads) {
-                    Payload payloadOutput = null;
-                    if (output.item instanceof Block)
-                        payloadOutput = new BuildPayload((Block) output.item, this.team);
-                    else if (output.item instanceof UnitType)
-                        payloadOutput = new UnitPayload(((UnitType)output.item).constructor.get());
-                    
-                    if (payloadOutput != null)
-                        movePayload(payloadOutput);
-                }
-            }
+            }            
         }
 
         /**
@@ -515,8 +521,11 @@ public class MultiCrafter extends PayloadBlock {
             write.i(curRecipeIndex);
             write.f(heat);
 
-            payloads.write(write);
-            TypeIO.writeVecNullable(write, commandPos);
+            //TODO Fix save corruption
+            if(getCurRecipe().isConsumePayload())
+                payloads.write(write);
+            if (getCurRecipe().isOutputPayload())
+                TypeIO.writeVecNullable(write, commandPos);
         }
 
         @Override
@@ -527,8 +536,10 @@ public class MultiCrafter extends PayloadBlock {
             curRecipeIndex = Mathf.clamp(read.i(), 0, resolvedRecipes.size - 1);
             heat = read.f();
 
-            payloads.read(read);
-            if (revision >= 1)
+            //TODO Fix save corruption
+            if(getCurRecipe().isConsumePayload())
+                payloads.read(read);
+            if (revision >= 1 && getCurRecipe().isOutputPayload())
                 commandPos = TypeIO.readVecNullable(read);
         }
 
@@ -653,20 +664,20 @@ public class MultiCrafter extends PayloadBlock {
         for (ItemStack stack : entry.items) {
             Cell<ItemImage> iconCell = mat.add(new ItemImage(stack.item.uiIcon, stack.amount))
                     .pad(2f);
-            if (showNameTooltip)
-                iconCell.tooltip(stack.item.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
+            if (showNameTooltip)
+                iconCell.tooltip(stack.item.localizedName);
             if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
         for (LiquidStack stack : entry.fluids) {
             Cell<FluidImage> iconCell = mat.add(new FluidImage(stack.liquid.uiIcon, stack.amount * 60f))
                     .pad(2f);
-            if (showNameTooltip)
-                iconCell.tooltip(stack.liquid.localizedName);
             if (isInput) iconCell.left();
             else iconCell.right();
+            if (showNameTooltip)
+                iconCell.tooltip(stack.liquid.localizedName);
             if (i != 0 && i % 2 == 0) mat.row();
             i++;
         }
@@ -817,7 +828,6 @@ public class MultiCrafter extends PayloadBlock {
             outputsPayload = isOutputPayload |= recipe.isOutputPayload();
             acceptsPayload = isConsumePayload |= recipe.isConsumePayload();
         }
-        ;
 
         itemCapacity = Math.max((int) (maxItemAmount * itemCapacityMultiplier), itemCapacity);
         liquidCapacity = Math.max((int) (maxFluidAmount * 60f * fluidCapacityMultiplier), liquidCapacity);
