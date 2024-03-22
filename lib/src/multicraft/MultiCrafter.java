@@ -807,7 +807,7 @@ public class MultiCrafter extends PayloadBlock {
         for (Recipe recipe : resolvedRecipes) {
             hasItems |= recipe.hasItems();
             hasLiquids |= recipe.hasFluids();
-            hasPower |= recipe.hasPower();
+            conductivePower = hasPower |= recipe.hasPower();
             hasHeat |= recipe.hasHeat();
             hasPayloads |= recipe.hasPayloads();
 
@@ -819,7 +819,7 @@ public class MultiCrafter extends PayloadBlock {
 
                              isOutputItem |= recipe.isOutputItem();
             acceptsItems =   isConsumeItem |= recipe.isConsumeItem();
-                             isOutputFluid |= recipe.isOutputFluid();
+            outputsLiquid =  isOutputFluid |= recipe.isOutputFluid();
                              isConsumeFluid |= recipe.isConsumeFluid();
             outputsPower =   isOutputPower |= recipe.isOutputPower();
             consumesPower =  isConsumePower |= recipe.isConsumePower();
