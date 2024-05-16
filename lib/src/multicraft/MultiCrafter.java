@@ -191,6 +191,7 @@ public class MultiCrafter extends PayloadBlock {
          * Serialized
          */
         public float craftingTime;
+        public float totalProgress;
         /**
          * Serialized
          */
@@ -304,6 +305,7 @@ public class MultiCrafter extends PayloadBlock {
                 if (wasVisible && Mathf.chanceDelta(updateEffectChance))
                     updateEffect.at(x + Mathf.range(size * 4f), y + Mathf.range(size * 4));
             } else warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
+            totalProgress += warmup * Time.delta;
             
             if (moveInPayload()) {
                 yeetPayload(payload);
@@ -579,6 +581,11 @@ public class MultiCrafter extends PayloadBlock {
         public float progress() {
             Recipe cur = getCurRecipe();
             return Mathf.clamp(cur.craftTime > 0f ? craftingTime / cur.craftTime : 1f);
+        }
+
+        @Override
+        public float totalProgress(){
+            return totalProgress;
         }
 
         @Override
