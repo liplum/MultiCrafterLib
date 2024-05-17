@@ -31,16 +31,12 @@ import mindustry.ui.Bar;
 import mindustry.ui.ItemImage;
 import mindustry.world.Block;
 import mindustry.world.blocks.heat.*;
-import mindustry.world.blocks.heat.HeatConductor.*;
-import mindustry.world.blocks.power.*;
 import mindustry.world.consumers.*;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.*;
 
 import multicraft.ui.*;
-
-import java.util.*;
 
 import static mindustry.Vars.tilesize;
 
@@ -186,6 +182,7 @@ public class MultiCrafter extends Block {
          * Serialized
          */
         public float craftingTime;
+        public float totalProgress;
         /**
          * Serialized
          */
@@ -267,6 +264,7 @@ public class MultiCrafter extends Block {
                 if (wasVisible && Mathf.chanceDelta(updateEffectChance))
                     updateEffect.at(x + Mathf.range(size * 4f), y + Mathf.range(size * 4));
             } else warmup = Mathf.approachDelta(warmup, 0f, warmupSpeed);
+            totalProgress += warmup * Time.delta;
 
             if (craftTimeNeed <= 0f) {
                 if (efficiency > 0f)
@@ -502,6 +500,11 @@ public class MultiCrafter extends Block {
         public float progress() {
             Recipe cur = getCurRecipe();
             return Mathf.clamp(cur.craftTime > 0f ? craftingTime / cur.craftTime : 1f);
+        }
+
+        @Override
+        public float totalProgress() {
+            return totalProgress;
         }
 
         @Override
