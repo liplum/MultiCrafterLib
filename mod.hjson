@@ -11,7 +11,7 @@ including A crafter that supporting multiple recipes for items, fluids, power, a
 Please check the repository below to learn more.
 Work on both v136 and v137.
 '''
-version: "1.8"
+version: "1.9"
 minGameVersion: "136"
 java: true
 hidden: true

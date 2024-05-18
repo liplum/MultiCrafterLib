@@ -14,7 +14,7 @@ buildscript {
 }
 allprojects {
     group = "net.liplum"
-    version = "1.8"
+    version = "1.9"
     buildscript {
         repositories {
             maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
