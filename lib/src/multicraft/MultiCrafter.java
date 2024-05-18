@@ -10,12 +10,12 @@ import arc.math.geom.*;
 import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.*;
-import arc.struct.EnumSet;
 import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
-import mindustry.content.Fx;
+import mindustry.content.*;
+import mindustry.core.*;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
@@ -272,13 +272,13 @@ public class MultiCrafter extends Block {
             } else if (craftingTime >= craftTimeNeed)
                 craft();
 
-            updateBars();
             dumpOutputs();
+            updateBars();
         }
 
         public void updateBars() {
             barMap.clear();
-            setBars();
+            setBars(this);
         }
 
         @Override
@@ -637,10 +637,56 @@ public class MultiCrafter extends Block {
     }
 
     @Override
-    public void setBars() {
-        super.setBars();
+    public void setBars() {}
 
-        if (hasPower) 
+    public void setBars(MultiCrafterBuild build) {
+        addBar("health", entity -> new Bar("stat.health", Pal.health, entity::healthf).blink(Color.white));
+
+        if(consPower != null){
+            boolean buffered = consPower.buffered;
+            float capacity = consPower.capacity;
+
+            addBar("power", entity -> new Bar(
+                () -> buffered ? Core.bundle.format("bar.poweramount", Float.isNaN(entity.power.status * capacity) ? "<ERROR>" : UI.formatAmount((int)(entity.power.status * capacity))) :
+                Core.bundle.get("bar.power"),
+                () -> Pal.powerBar,
+                () -> Mathf.zero(consPower.requestedPower(entity)) && entity.power.graph.getPowerProduced() + entity.power.graph.getBatteryStored() > 0f ? 1f : entity.power.status)
+            );
+        }
+
+        if(hasItems && configurable){
+            addBar("items", entity -> new Bar(
+                () -> Core.bundle.format("bar.items", entity.items.total()),
+                () -> Pal.items,
+                () -> (float)entity.items.total() / itemCapacity)
+            );
+        }
+
+        if(unitCapModifier != 0){
+            stats.add(Stat.maxUnits, (unitCapModifier < 0 ? "-" : "+") + Math.abs(unitCapModifier));
+        }
+
+        //liquids added last
+        if(hasLiquids) {
+            boolean added = false;
+            for (Consume consumer : consumers) {
+                if (consumer instanceof ConsumeFluidDynamic) {
+                    ConsumeFluidDynamic liq = (ConsumeFluidDynamic) consumer;
+                    added = true;
+                    
+                    for (LiquidStack stack : liq.fluids.get(build)) {
+                        addLiquidBar(stack.liquid);
+                    }
+                }
+            }
+
+            //nothing was added, so it's safe to add a dynamic liquid bar (probably?)
+            if (!added) {
+                addLiquidBar(build.liquids.current());
+            }
+        }
+
+        if (hasPower)
             addBar("power", (MultiCrafterBuild b) -> new Bar(
                 b.getCurRecipe().isOutputPower() ? Core.bundle.format("bar.poweroutput", Strings.fixed(b.getPowerProduction() * 60f * b.timeScale(), 1)) : "bar.power",
                 Pal.powerBar,
