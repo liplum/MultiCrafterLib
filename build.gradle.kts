@@ -2,6 +2,7 @@ import io.github.liplum.mindustry.minGameVersion
 
 plugins {
     `maven-publish`
+    java
     id("io.github.liplum.mgpp") version "1.3.1"
 }
 buildscript {
@@ -12,9 +13,16 @@ buildscript {
         maven { url = uri("https://www.jitpack.io") }
     }
 }
+
+java {
+    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+}
+
 allprojects {
     group = "net.liplum"
     version = "1.9"
+    
     buildscript {
         repositories {
             maven { url = uri("https://raw.githubusercontent.com/Zelaux/MindustryRepo/master/repository") }
@@ -46,6 +54,7 @@ allprojects {
         }
     }
 }
+
 mindustry {
     dependency {
         mindustry on "v146"
@@ -77,7 +86,7 @@ tasks.register("retrieveMeta") {
         println("::set-output name=header::${rootProject.name} v$version on Mindustry v${mindustry.meta.minGameVersion}")
         println("::set-output name=version::v$version")
         try {
-            val releases = java.net.URL("https://api.github.com/repos/liplum/MultiCrafterLib/releases").readText()
+            val releases = uri("https://api.github.com/repos/liplum/MultiCrafterLib/releases").toURL().readText()
             val gson = com.google.gson.Gson()
             val info = gson.fromJson<List<Map<String, Any>>>(releases, List::class.java)
             val tagExisted = info.any {

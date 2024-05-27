@@ -17,10 +17,6 @@ sourceSets {
     }
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 dependencies {
     importMindustry()
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")

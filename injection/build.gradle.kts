@@ -15,10 +15,6 @@ sourceSets {
         java.srcDir("test")
     }
 }
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 mindustryAssets {
     root at "$projectDir/assets"
 }
