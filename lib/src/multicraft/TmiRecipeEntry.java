@@ -44,24 +44,39 @@ class MultiCrafterParser extends RecipeParser<MultiCrafter> {
         .setBlock(getWrap(crafter))
         .setTime(recipe.craftTime);
       for (ItemStack stack : recipe.input.items) {
-        tmiRecipe.addMaterial(getWrap(stack.item), stack.amount);
+        if (stack.amount > 0) {
+          tmiRecipe.addMaterial(getWrap(stack.item), stack.amount);
+        }
       }
       for (LiquidStack stack : recipe.input.fluids) {
-        tmiRecipe.addMaterial(getWrap(stack.liquid), stack.amount);
+        if (stack.amount > 0) {
+          tmiRecipe.addMaterial(getWrap(stack.liquid), stack.amount).setPersecFormat();
+        }
       }
-      tmiRecipe.addMaterial(HeatMark.INSTANCE, recipe.input.heat);
-      tmiRecipe.addMaterial(PowerMark.INSTANCE, recipe.input.power);
-
+      if (recipe.input.heat > 0) {
+        tmiRecipe.addMaterial(HeatMark.INSTANCE, recipe.input.heat);
+      }
+      if (recipe.input.power > 0) {
+        tmiRecipe.addMaterial(PowerMark.INSTANCE, recipe.input.power).setPersecFormat();
+      }
       // output
       for (ItemStack stack : recipe.output.items) {
-        tmiRecipe.addProduction(getWrap(stack.item), stack.amount);
+        if (stack.amount > 0) {
+          tmiRecipe.addProduction(getWrap(stack.item), stack.amount);
+        }
       }
       for (LiquidStack stack : recipe.output.fluids) {
-        tmiRecipe.addProduction(getWrap(stack.liquid), stack.amount);
+        if (stack.amount > 0) {
+          tmiRecipe.addProduction(getWrap(stack.liquid), stack.amount).setPersecFormat();
+        }
       }
 
-      tmiRecipe.addProduction(HeatMark.INSTANCE, recipe.output.heat);
-      tmiRecipe.addProduction(PowerMark.INSTANCE, recipe.output.power);
+      if (recipe.output.heat > 0) {
+        tmiRecipe.addProduction(HeatMark.INSTANCE, recipe.output.heat);
+      }
+      if (recipe.output.heat > 0) {
+        tmiRecipe.addProduction(PowerMark.INSTANCE, recipe.output.power).setPersecFormat();
+      }
       result.add(tmiRecipe);
     }
 
