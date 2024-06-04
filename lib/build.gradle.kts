@@ -6,6 +6,12 @@ plugins {
     `maven-publish`
     id("io.github.liplum.mgpp")
 }
+repositories {
+    mavenCentral()
+    maven {
+        url = uri("https://jitpack.io")
+    }
+}
 sourceSets {
     main {
         java.srcDir("src")
@@ -22,6 +28,8 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testImplementation("com.github.liplum:TestUtils:v0.1")
+    // For Too many items: https://github.com/EB-wilson/TooManyItems
+    compileOnly("com.github.EB-wilson:TooManyItems:2.2")
 }
 
 java {
