@@ -670,11 +670,11 @@ public class MultiCrafter extends Block {
         if(hasLiquids) {
             boolean added = false;
             for (Consume consumer : consumers) {
-                if (consumer instanceof ConsumeFluidDynamic) {
-                    ConsumeFluidDynamic liq = (ConsumeFluidDynamic) consumer;
+                if (consumer instanceof ConsumeLiquidsDynamic) {
+                    ConsumeLiquidsDynamic liq = (ConsumeLiquidsDynamic) consumer;
                     added = true;
                     
-                    for (LiquidStack stack : liq.fluids.get(build)) {
+                    for (LiquidStack stack : liq.liquids.get(build)) {
                         addLiquidBar(stack.liquid);
                     }
                 }
@@ -800,7 +800,7 @@ public class MultiCrafter extends Block {
             // items seq is already shrunk, it's safe to access
             (MultiCrafterBuild b) -> b.getCurRecipe().input.items.items
         ));
-        if (isConsumeFluid) consume(new ConsumeFluidDynamic(
+        if (isConsumeFluid) consume(new ConsumeLiquidsDynamic(
             // fluids seq is already shrunk, it's safe to access
             (MultiCrafterBuild b) -> b.getCurRecipe().input.fluids.items
         ));
