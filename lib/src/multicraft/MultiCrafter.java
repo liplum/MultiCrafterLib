@@ -10,12 +10,12 @@ import arc.math.geom.*;
 import arc.scene.ui.layout.Cell;
 import arc.scene.ui.layout.Table;
 import arc.struct.*;
+import arc.struct.EnumSet;
 import arc.util.*;
 import arc.util.io.Reads;
 import arc.util.io.Writes;
 import mindustry.Vars;
 import mindustry.content.*;
-import mindustry.core.*;
 import mindustry.entities.Effect;
 import mindustry.entities.units.BuildPlan;
 import mindustry.gen.Building;
@@ -31,12 +31,15 @@ import mindustry.ui.Bar;
 import mindustry.ui.ItemImage;
 import mindustry.world.Block;
 import mindustry.world.blocks.heat.*;
+import mindustry.world.blocks.heat.HeatConductor.*;
 import mindustry.world.consumers.*;
 import mindustry.world.draw.DrawBlock;
 import mindustry.world.draw.DrawDefault;
 import mindustry.world.meta.*;
 
 import multicraft.ui.*;
+
+import java.util.*;
 
 import static mindustry.Vars.tilesize;
 
@@ -199,6 +202,7 @@ public class MultiCrafter extends Block {
                 createEffect(changeRecipeEffect);
                 craftingTime = 0f;
                 if (!Vars.headless) rebuildHoveredInfo();
+                updateBars();
             }
         }
 
@@ -273,7 +277,6 @@ public class MultiCrafter extends Block {
                 craft();
 
             dumpOutputs();
-            updateBars();
         }
 
         public void updateBars() {
@@ -284,7 +287,8 @@ public class MultiCrafter extends Block {
         @Override
         public boolean shouldConsume() {
             Recipe cur = getCurRecipe();
-            if (hasItems) for (ItemStack output : cur.output.items) if (items.get(output.item) + output.amount > itemCapacity) return false;
+            if (hasItems) for (ItemStack output : cur.output.items)
+                if (items.get(output.item) + output.amount > itemCapacity) return false;
 
             if (hasLiquids) if (cur.isOutputFluid() && !ignoreLiquidFullness) {
                 boolean allFull = true;
@@ -297,6 +301,7 @@ public class MultiCrafter extends Block {
                 //if there is no space left for any fluid, it can't reproduce
                 if (allFull) return false;
             }
+
             return enabled;
         }
 
@@ -373,24 +378,71 @@ public class MultiCrafter extends Block {
         }
 
         @Override
-        public float calculateHeat(float[] sideHeat) {
+        public float calculateHeat(float[] sideHeat, IntSet cameFrom) {
+            Arrays.fill(sideHeat, 0.0f);
+            if (cameFrom != null) {
+                cameFrom.clear();
+            }
+
+            float heat = 0.0f;
             Point2[] edges = this.block.getEdges();
-            int length = edges.length;
-            for (int i=0; i < length; ++i) {
+
+            for (int i=0; i < edges.length; ++i) {
                 Point2 edge = edges[i];
-                Building build = this.nearby(edge.x, edge.y);
-                if (build != null && build.team == this.team && build instanceof HeatBlock) {
-                    HeatBlock heater = (HeatBlock)build;
-                    // Only calculate heat if the block is a heater or a multicrafter heat output
-                    if (heater instanceof MultiCrafterBuild) {
-                        MultiCrafterBuild multi = (MultiCrafterBuild)heater;
-                        if (multi.getCurRecipe().isOutputHeat())
-                            return this.calculateHeat(sideHeat, (IntSet)null);
-                    } else return this.calculateHeat(sideHeat, (IntSet)null);
+                Building nearBuild = this.nearby(edge.x, edge.y);
+                if (nearBuild != null && nearBuild.team == this.team && nearBuild instanceof HeatBlock heater) {
+                    if (heater instanceof MultiCrafterBuild multi && !multi.getCurRecipe().isOutputHeat()) {
+                        continue;
+                    }
+                    if (heater instanceof HeatConductorBuild cond) {
+                        cond.updateHeat();
+                    }
+
+                    boolean shouldSplit;
+                    //TODO need a proper name, comes from decompiled source
+                    label65: {
+                        Block block = nearBuild.block;
+                        if (block instanceof HeatConductor cond) {
+                            if (cond.splitHeat) {
+                                shouldSplit = true;
+                                break label65;
+                            }
+                        }
+
+                        shouldSplit = false;
+                    }
+
+                    boolean split = shouldSplit;
+                    if (!nearBuild.block.rotate || !split && (this.relativeTo(nearBuild) + 2) % 4 == nearBuild.rotation || split && this.relativeTo(nearBuild) != nearBuild.rotation) {
+                        //TODO need a proper name, comes from decompiled source
+                        label74: {
+                            if (nearBuild instanceof HeatConductorBuild hcBuild) {
+                                if (hcBuild.cameFrom.contains(this.id())) {
+                                    break label74;
+                                }
+                            }
+
+                            float add = heater.heat() / (float)nearBuild.block.size;
+                            if (split) {
+                                add /= 3.0f;
+                            }
+                            //TODO need a proper name, comes from decompiled source
+                            int var10001 = Mathf.mod(this.relativeTo(nearBuild), 4);
+                            sideHeat[var10001] += add;
+                            heat += add;
+                        }
+
+                        if (cameFrom != null) {
+                            cameFrom.add(nearBuild.id);
+                            if (nearBuild instanceof HeatConductorBuild hcBuild) {
+                                cameFrom.addAll(hcBuild.cameFrom);
+                            }
+                        }
+                    }
                 }
             }
 
-            return 0.0f;
+            return heat;
         }
 
         @Override
@@ -642,17 +694,17 @@ public class MultiCrafter extends Block {
     public void setBars(MultiCrafterBuild build) {
         addBar("health", entity -> new Bar("stat.health", Pal.health, entity::healthf).blink(Color.white));
 
-        if(consPower != null){
-            boolean buffered = consPower.buffered;
-            float capacity = consPower.capacity;
+        // if(consPower != null){
+        //     boolean buffered = consPower.buffered;
+        //     float capacity = consPower.capacity;
 
-            addBar("power", entity -> new Bar(
-                () -> buffered ? Core.bundle.format("bar.poweramount", Float.isNaN(entity.power.status * capacity) ? "<ERROR>" : UI.formatAmount((int)(entity.power.status * capacity))) :
-                Core.bundle.get("bar.power"),
-                () -> Pal.powerBar,
-                () -> Mathf.zero(consPower.requestedPower(entity)) && entity.power.graph.getPowerProduced() + entity.power.graph.getBatteryStored() > 0f ? 1f : entity.power.status)
-            );
-        }
+        //     addBar("power", entity -> new Bar(
+        //         () -> buffered ? Core.bundle.format("bar.poweramount", Float.isNaN(entity.power.status * capacity) ? "<ERROR>" : UI.formatAmount((int)(entity.power.status * capacity))) :
+        //         Core.bundle.get("bar.power"),
+        //         () -> Pal.powerBar,
+        //         () -> Mathf.zero(consPower.requestedPower(entity)) && entity.power.graph.getPowerProduced() + entity.power.graph.getBatteryStored() > 0f ? 1f : entity.power.status)
+        //     );
+        // }
 
         if(hasItems && configurable){
             addBar("items", entity -> new Bar(
@@ -667,22 +719,9 @@ public class MultiCrafter extends Block {
         }
 
         //liquids added last
-        if(hasLiquids) {
-            boolean added = false;
-            for (Consume consumer : consumers) {
-                if (consumer instanceof ConsumeLiquidsDynamic) {
-                    ConsumeLiquidsDynamic liq = (ConsumeLiquidsDynamic) consumer;
-                    added = true;
-                    
-                    for (LiquidStack stack : liq.liquids.get(build)) {
-                        addLiquidBar(stack.liquid);
-                    }
-                }
-            }
-
-            //nothing was added, so it's safe to add a dynamic liquid bar (probably?)
-            if (!added) {
-                addLiquidBar(build.liquids.current());
+        if (hasLiquids) {           
+            for (var stack : build.getCurRecipe().input.fluids) {
+                addLiquidBar(stack.liquid);
             }
         }
 
