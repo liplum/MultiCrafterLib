@@ -1,47 +1,36 @@
 package multicraft;
 
 import arc.*;
-import arc.graphics.Color;
-import arc.graphics.g2d.Draw;
-import arc.graphics.g2d.TextureRegion;
-import arc.math.Interp;
-import arc.math.Mathf;
+import arc.graphics.*;
+import arc.graphics.g2d.*;
+import arc.math.*;
 import arc.math.geom.*;
-import arc.scene.ui.layout.Cell;
-import arc.scene.ui.layout.Table;
+import arc.scene.ui.layout.*;
 import arc.struct.*;
 import arc.struct.EnumSet;
 import arc.util.*;
-import arc.util.io.Reads;
-import arc.util.io.Writes;
-import mindustry.Vars;
+import arc.util.io.*;
+import mindustry.*;
 import mindustry.content.*;
-import mindustry.entities.Effect;
-import mindustry.entities.units.BuildPlan;
-import mindustry.gen.Building;
-import mindustry.gen.Sounds;
-import mindustry.gen.Tex;
-import mindustry.graphics.Pal;
-import mindustry.logic.LAccess;
-import mindustry.type.Item;
-import mindustry.type.ItemStack;
-import mindustry.type.Liquid;
-import mindustry.type.LiquidStack;
-import mindustry.ui.Bar;
-import mindustry.ui.ItemImage;
-import mindustry.world.Block;
+import mindustry.entities.*;
+import mindustry.entities.units.*;
+import mindustry.gen.*;
+import mindustry.graphics.*;
+import mindustry.logic.*;
+import mindustry.type.*;
+import mindustry.ui.*;
+import mindustry.world.*;
 import mindustry.world.blocks.heat.*;
 import mindustry.world.blocks.heat.HeatConductor.*;
 import mindustry.world.consumers.*;
-import mindustry.world.draw.DrawBlock;
-import mindustry.world.draw.DrawDefault;
+import mindustry.world.draw.*;
 import mindustry.world.meta.*;
 
 import multicraft.ui.*;
 
 import java.util.*;
 
-import static mindustry.Vars.tilesize;
+import static mindustry.Vars.*;
 
 public class MultiCrafter extends Block {
     public float itemCapacityMultiplier = 1f;
