@@ -3,3 +3,4 @@
 build
 /local.properties
 standalone/injection
+.DS_Store
