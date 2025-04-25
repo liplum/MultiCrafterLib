@@ -44,6 +44,8 @@ Some mods using *MultiCrafter Lib* are listed here, you may learn from them.
 
 - [Java] [Aeyama: The New World](https://github.com/Aeyama-Mod/aeyama) by `FredyJabe` & `Jojo`
 
+- [Java] [Technologium](https://github.com/retodera/technologium) by `retodera`
+
 Make a pull request to tell us if your mod is using MultiCrafter Lib. :rocket::rocket::rocket:
 
 ## Licence
