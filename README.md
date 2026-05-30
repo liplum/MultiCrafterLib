@@ -1,3 +1,6 @@
+# This mod is no longer maintained, please use the rewrite of it: https://github.com/JojoFR1/MultiCrafter/
+
+
 <div align="center">
 
 # [MultiCrafter Lib](https://liplum.github.io/MultiCrafterLib/) [![Discord](GFX/Discord.png)](https://discord.gg/PDwyxM3waw)
